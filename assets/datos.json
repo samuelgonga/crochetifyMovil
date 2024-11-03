@@ -1,0 +1,348 @@
+[
+    {
+        "nombre": "Messi Goat",
+        "descripcion": "Es un muñeco de crochet de Messi en la temporada de 2015-2016, con la equipación de local. Aunque muchos lo niegen, es el papá de Cristiano Ronaldo jaja",
+        "precio": 230,
+        "valoracion": 5,
+        "imagenesPorColor": [
+            {
+                "color": "Rojo",
+                "imagenes": [
+                    "https://i.etsystatic.com/29033588/r/il/498c91/5185664302/il_1140xN.5185664302_n8g3.jpg",
+                    "https://i.etsystatic.com/29033588/r/il/14c4e0/5233886431/il_1140xN.5233886431_i3f1.jpg",
+                    "https://i.etsystatic.com/29033588/r/il/28cd5b/5185662914/il_1140xN.5185662914_2jau.jpg"
+                ],
+                "colorHex": "#E4080A"
+            },
+            {
+                "color": "Rosa",
+                "imagenes": [
+                    "https://i.etsystatic.com/22740133/r/il/17afc6/5193919081/il_fullxfull.5193919081_1pkx.jpg",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOCI37no34OgP0WR-wqwrfoQVRINShIndyuA&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaxThxxpuJtqYDoojsNEQfGdQjYgAxtbHYZw&s"
+                ],
+                "colorHex": "#FF0080"
+            },
+            {
+                "color": "Azul",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpk47pA7TcUAWQkTDh6g1Vtfi0YvTHu-uAsA&s",
+                    "https://i.pinimg.com/736x/aa/40/b4/aa40b4ff6910adcc94eff3612967e721.jpg"
+                ],
+                "colorHex": "#0000FF"
+            },
+            {
+                "color": "Azul cielo",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHMrMdc_mp3g0IitgalgVbfj0QKFTdyHwZ9Q&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzwEP2mbwmCkKuyxVZH9VILW1D7AmPTFZNLQ&s"
+                ],
+                "colorHex": "#5DE2E7"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Gran detalle, lo recomiendo perfectamente",
+                "valoracion": 4
+            },
+            {
+                "comentario": "Lo compré porque me gusta Messi, siu",
+                "valoracion": 5
+            }
+        ]
+    },
+    {
+        "nombre": "Harry Potter Wand",
+        "descripcion": "Réplica de la varita de Harry Potter, hecha de resina y pintada a mano.",
+        "precio": 150,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Marrón Oscuro",
+                "imagenes": [
+                    "https://crochetverse.com/wp-content/uploads/2017/10/CrochetHarryPotterWand-1024x1024.png",
+                    "https://images4-a.ravelrycache.com/uploads/VelvetKey/285182368/DSCN2466_medium2.JPG",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSW9wYRcnuM7BvOsuvGC61OooqV0sE6CIHTRA&s"
+                ],
+                "colorHex": "#8B4513"
+            },
+            {
+                "color": "Negro",
+                "imagenes": [
+                    "https://i.ytimg.com/vi/MC0DHEJ7OOU/maxresdefault.jpg"
+                ],
+                "colorHex": "#000000"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Muy bien hecha, parece real",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Un poco pequeña, pero bonita",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de mudkip",
+        "descripcion": "Es un bonito pokemon inicial de tipo agua, no sé de que generación, soy noob, pero lo tengo en normal y en shiny",
+        "precio": 120,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Azul",
+                "imagenes": [
+                    "https://i.pinimg.com/474x/58/94/f8/5894f881b58a09de5e863c70b40e3fb4.jpg"
+                ],
+                "colorHex": "#28BDC3"
+            },
+            {
+                "color": "Morado",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQECvIP4nJRYe0Ii7Ga8WvoKt8Il76PS69s2w&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3ZFNJoFT5_R9Uuq8nV1phHyg7FE4RUEU0bA&s",
+                    "https://preview.redd.it/i-crocheted-mudkip-v0-bbt0aqmhuwuc1.jpg?width=1080&crop=smart&auto=webp&s=9cca53699406954ebb9a6ecc2ceefdf90840a016"
+                ],
+                "colorHex": "#CC6CE7"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Perfecto para mi escritorio",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Es muy adorable",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de Iron Man",
+        "descripcion": "Figura de Iron Man de colección, con pintura metálica y detalles en los ojos iluminados.",
+        "precio": 300,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Rojo",
+                "imagenes": [
+                    "https://theamigurumi.com/wp-content/uploads/2024/01/Crochet-Iron-Man-1.jpg",
+                    "https://i.ytimg.com/vi/VLFReMh7Zy0/hq720.jpg"
+                ],
+                "colorHex": "#FF0000"
+            },
+            {
+                "color": "Oro",
+                "imagenes": [
+                    "https://i.ytimg.com/vi/oJMxTnLi3C8/maxresdefault.jpg"
+                ],
+                "colorHex": "#FFD700"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Increíble detalle",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Pintura brillante, me encanta",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de Superman",
+        "descripcion": "Estatua de Superman en su pose clásica, perfecta para coleccionistas.",
+        "precio": 280,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Azul",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJF4Bgj_vvDmO6Meub9vKxtu23AJsn-pFXZw&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzw0siTHpNXXVIGy5R8zAVhuUL2P5TOk_A3w&s"
+                ],
+                "colorHex": "#0000FF"
+            },
+            {
+                "color": "Rojo",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzw0siTHpNXXVIGy5R8zAVhuUL2P5TOk_A3w&s"
+                ],
+                "colorHex": "#FF0000"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Impresionante calidad",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Mejor de lo que esperaba",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Llavero de Pikachu",
+        "descripcion": "Llavero de goma de Pikachu, perfecto para fans de Pokémon.",
+        "precio": 15,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Amarillo",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpBCkk_xQZ0G4UnZQpnQ2OSu95jBeBOhVXSQ&s",
+                    "https://i.ytimg.com/vi/VLFReMh7Zy0/hq720.jpg",
+                    "https://m.media-amazon.com/images/I/81T2GisoGIL._AC_UF894,1000_QL80_.jpg"
+                ],
+                "colorHex": "#FFFF00"
+            },
+            {
+                "color": "Negro",
+                "imagenes": [
+                    "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/285c449d-705d-4392-ba88-b840fdef227b/ddi8ehp-3835cf8f-da0f-4572-8511-943fc022bd74.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzI4NWM0NDlkLTcwNWQtNDM5Mi1iYTg4LWI4NDBmZGVmMjI3YlwvZGRpOGVocC0zODM1Y2Y4Zi1kYTBmLTQ1NzItODUxMS05NDNmYzAyMmJkNzQuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.rBPxJXEt7qlQ9vgbCpFclocBup7tLtjfG-jxx1fhvac",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc91klnPS5GkJ9hTl6NMdaAbbWTtNuh4nfSw&s"
+                ],
+                "colorHex": "#000000"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Muy lindo y económico",
+                "valoracion": 4
+            },
+            {
+                "comentario": "Perfecto para las llaves",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de Spiderman",
+        "descripcion": "Figura de Spiderman con su traje clásico, poseable y de gran calidad.",
+        "precio": 250,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Rojo",
+                "imagenes": [
+                    "https://i.ytimg.com/vi/VLFReMh7Zy0/hq720.jpg",
+                    "https://m.media-amazon.com/images/I/81T2GisoGIL._AC_UF894,1000_QL80_.jpg"
+                ],
+                "colorHex": "#FF0000"
+            },
+            {
+                "color": "Azul",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSc91klnPS5GkJ9hTl6NMdaAbbWTtNuh4nfSw&s"
+                ],
+                "colorHex": "#0000FF"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Excelente calidad y detalle",
+                "valoracion": 5
+            },
+            {
+                "comentario": "El tamaño es perfecto",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de Darth Vader",
+        "descripcion": "Figura de Darth Vader con su sable de luz rojo, detalle perfecto para fans.",
+        "precio": 320,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Negro",
+                "imagenes": [
+                    "https://i.pinimg.com/originals/71/ff/6b/71ff6b257ea8ed87d31e484071b1b6c5.jpg",
+                    "https://i.pinimg.com/474x/02/3e/a4/023ea4e202212aa01d91fa3a638c2bf9.jpg"
+                ],
+                "colorHex": "#000000"
+            },
+            {
+                "color": "Rojo",
+                "imagenes": [
+                    "https://i.etsystatic.com/22757535/r/il/c1c041/2862142874/il_570xN.2862142874_28oe.jpg"
+                ],
+                "colorHex": "#FF0000"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Ideal para cualquier fan de Star Wars",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Se ve imponente",
+                "valoracion": 4
+            }
+        ]
+    },
+    {
+        "nombre": "Hulk",
+        "descripcion": "Camiseta verde inspirada en Hulk, talla única y unisex.",
+        "precio": 45,
+        "valoracion": 3,
+        "imagenesPorColor": [
+            {
+                "color": "Verde",
+                "imagenes": [
+                    "https://i.pinimg.com/736x/a7/2a/31/a72a31c746899205032a1edf832f9b7b.jpg",
+                    "https://i.pinimg.com/736x/57/fe/22/57fe222cb72d13ca678a37396ecfe0f5.jpg"
+                ],
+                "colorHex": "#008000"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Muy cómoda y de buena calidad",
+                "valoracion": 4
+            },
+            {
+                "comentario": "El color es vibrante",
+                "valoracion": 3
+            }
+        ]
+    },
+    {
+        "nombre": "Figura de Goku Super Saiyan",
+        "descripcion": "Figura de Goku en su transformación Super Saiyan, de colección.",
+        "precio": 270,
+        "valoracion": 4,
+        "imagenesPorColor": [
+            {
+                "color": "Naranja",
+                "imagenes": [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnvarrjSXaBNUWghLGRg9UP3HvUMuyYVjyzA&s",
+                    "https://i.etsystatic.com/13937937/r/il/1803e7/4338799549/il_fullxfull.4338799549_hw5y.jpg"
+                ],
+                "colorHex": "#FFA500"
+            },
+            {
+                "color": "Amarillo",
+                "imagenes": [
+                    "https://i.pinimg.com/736x/b1/df/72/b1df72388ea753f534908ee82fc0a1b7.jpg"
+                ],
+                "colorHex": "#FFFF00"
+            }
+        ],
+        "comentariosProducto": [
+            {
+                "comentario": "Perfecta para fans de Dragon Ball",
+                "valoracion": 5
+            },
+            {
+                "comentario": "Se ve increíble en mi estantería",
+                "valoracion": 4
+            }
+        ]
+    }
+]
