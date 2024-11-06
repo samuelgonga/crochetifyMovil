@@ -5,7 +5,7 @@ import 'package:crochetify_movil/models/product.dart';
 class ProductDetail extends StatefulWidget {
   final Product product;
 
-  const ProductDetail({Key? key, required this.product}) : super(key: key);
+  const ProductDetail({super.key, required this.product});
 
   @override
   _ProductDetailState createState() => _ProductDetailState();

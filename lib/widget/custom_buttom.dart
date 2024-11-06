@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 class CustomButton extends StatefulWidget {
   final String text;
 
-  const CustomButton({Key? key, required this.text}) : super(key: key);
+  const CustomButton({super.key, required this.text});
 
   @override
   _CustomButtonState createState() => _CustomButtonState();
@@ -36,7 +36,7 @@ class _CustomButtonState extends State<CustomButton> {
                   255, 167, 161, 161), // Cambia el color del borde
           width: 1,
         ),
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
             vertical: 8.0, horizontal: 12.0), // Espaciado interno
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),

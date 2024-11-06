@@ -10,7 +10,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 class ImageCarousel extends StatefulWidget {
   final List<String> imageUrls;
 
-  const ImageCarousel({Key? key, required this.imageUrls}) : super(key: key);
+  const ImageCarousel({super.key, required this.imageUrls});
 
   @override
   _ImageCarouselState createState() => _ImageCarouselState();
@@ -23,13 +23,13 @@ class _ImageCarouselState extends State<ImageCarousel> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity, // Ocupará todo el ancho de la pantalla
           height: 90.0, // Ajusta la altura del carrusel
           child: CarouselSlider(
             options: CarouselOptions(
               autoPlay: true,
-              autoPlayInterval: Duration(seconds: 3),
+              autoPlayInterval: const Duration(seconds: 3),
               enlargeCenterPage: true,
               onPageChanged: (index, reason) {
                 setState(() {
