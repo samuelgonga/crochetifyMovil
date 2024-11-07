@@ -1,6 +1,8 @@
-import 'package:crochetify_movil/views/register_view.dart';
+import 'package:crochetify_movil/views/login/register_view.dart';
 import 'package:flutter/material.dart';
-import 'home_view.dart';
+import '../home/home_view.dart';
+import '../profile/profile_view.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -69,7 +71,7 @@ class _LoginScreenState extends State<LoginView> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const ProductList()), // Define tu vista de destino aquí
+                                  HomeScreen()), // Define tu vista de destino aquí
                         );
                       },
                       style: ElevatedButton.styleFrom(

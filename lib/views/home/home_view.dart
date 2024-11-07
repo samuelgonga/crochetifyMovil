@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
-import 'package:crochetify_movil/views/detail_view.dart';
+import 'package:crochetify_movil/views/home/detail_view.dart';
 import 'package:crochetify_movil/widget/custom_buttom.dart';
 import 'package:crochetify_movil/widget/carousel.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -17,8 +18,8 @@ class _ProductListState extends State<ProductList> {
   String _searchQuery = '';
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _fetchProductsFuture =
         Provider.of<ProductViewModel>(context, listen: false).fetchProducts();
   }
