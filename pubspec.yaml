@@ -64,6 +64,9 @@ flutter:
   assets:
       - assets/datos.json
       - assets/CrochetifyLogobyDesigner.png
+      - assets/categories.json
+      - assets/products.json
+      - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

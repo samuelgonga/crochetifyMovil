@@ -1,0 +1,11 @@
+[
+    {"id": 1, "name": "Videojuegos", "status": 1},
+    {"id": 2, "name": "Caricaturas", "status": 1},
+    {"id": 3, "name": "Peliculas", "status": 1},
+    {"id": 4, "name": "Anime", "status": 1},
+    {"id": 5, "name": "Animales", "status": 1},
+    {"id": 6, "name": "Fantasia", "status": 1},
+    {"id": 7, "name": "Monstruos", "status": 1},
+    {"id": 8, "name": "Flores", "status": 1}
+  ]
+  
