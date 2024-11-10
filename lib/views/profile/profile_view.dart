@@ -1,3 +1,4 @@
+import 'package:crochetify_movil/views/profile/profile_edit.dart';
 import 'package:flutter/material.dart';
 import 'about_us_view.dart';
 import 'addres_view.dart';
@@ -37,11 +38,13 @@ class ProfileScreen extends StatelessWidget {
               ),
               // Botón de editar encima
               Positioned(
-                right: 0,
+                right: -10,
                 bottom: 0,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Acción al editar perfil
+                  // Acción al editar perfil
+                  Navigator.push(context, 
+                  MaterialPageRoute(builder: (context) => ProfileEdit()));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),

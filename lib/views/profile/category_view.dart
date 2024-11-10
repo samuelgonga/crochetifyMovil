@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/models/category.dart';
 import 'package:crochetify_movil/views/profile/category_product_view.dart';
-import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 
 class CategoryScreen extends StatefulWidget {
   @override
