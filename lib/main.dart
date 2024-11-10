@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
+import 'package:crochetify_movil/viewmodels/user_viewmodel.dart'; // Importa el UserViewModel
 import 'views/login/login_view.dart';
 
 void main() {
@@ -12,8 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProductViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductViewModel()),
+        ChangeNotifierProvider(
+            create: (_) => UserViewModel()), // Añadir UserViewModel aquí
+      ],
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.blue,

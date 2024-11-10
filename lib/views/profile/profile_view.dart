@@ -66,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _buildProfileOption(
-                    context, 'Mis Direcciones', DireccionesScreen()),
+                    context, 'Mis Direcciones', AddressesScreen()),
                 _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),
                 _buildProfileOption(context, 'Categorías', CategoryScreen()),
                 _buildProfileOption(
