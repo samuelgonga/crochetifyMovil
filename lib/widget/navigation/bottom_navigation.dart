@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _views = [
     const ProductList(),
     const ViewOrders(),
-    CartScreen(),
+    CartView(),
     ProfileScreen(),
   ];
 
