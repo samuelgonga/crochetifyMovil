@@ -68,11 +68,11 @@ class _ProductListState extends State<ProductList> {
           // Aquí usamos el carrusel de imágenes
           const Center(
             child: ImageCarousel(imageUrls: [
-              'https://s3-alpha-sig.figma.com/img/5ba7/c384/d3b42b8834ec09c9a86c570f9654cfb0?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=BIXrVIr6Me8Yhkp52X5Zd622sKFaMBGlPZcKX9SkvIOO6YUS4SpXW7oz2-Nk0iQ2uQw4e7Vj0sqN5ngCNWmSkAX3Muu0E2o4OWhiwG91oHPM3UQZupOV-HIW5sY5MREiznDo~0f9spfmqAb9e2zca-FhwmpYQis2Wvs~ZS6Pe-yGLdnwdFpQKciuh7T-Kj0mU-vXL001y8gBlcNvXmlNQjex6GqQ1q6TgkO1IrD5fCvLq6LnO6JAXTtZI1sektGrBCR2SvDC5aCM7TcQZISPkvyC55qw~saRibUc6w04cCtt8K21vq-rGGSnFwX9IP7YUx0XhFteHCC7bOG-4hdg8A__',
-              'https://i.ytimg.com/vi/wj6N6knIHes/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB2qaMdlw5QRW2C-QRT_d7Ca9h7Ew',
-              'https://i.pinimg.com/originals/6f/5e/6b/6f5e6b8e22c6cbbd69195c16fd1aec36.jpg',
-              'https://www.supergurumi.com/wp-content/uploads/2022/10/Patrones-de-Crochet-Amigurumi-Gratis.jpg',
-              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
+              // 'https://s3-alpha-sig.figma.com/img/5ba7/c384/d3b42b8834ec09c9a86c570f9654cfb0?Expires=1731283200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=BIXrVIr6Me8Yhkp52X5Zd622sKFaMBGlPZcKX9SkvIOO6YUS4SpXW7oz2-Nk0iQ2uQw4e7Vj0sqN5ngCNWmSkAX3Muu0E2o4OWhiwG91oHPM3UQZupOV-HIW5sY5MREiznDo~0f9spfmqAb9e2zca-FhwmpYQis2Wvs~ZS6Pe-yGLdnwdFpQKciuh7T-Kj0mU-vXL001y8gBlcNvXmlNQjex6GqQ1q6TgkO1IrD5fCvLq6LnO6JAXTtZI1sektGrBCR2SvDC5aCM7TcQZISPkvyC55qw~saRibUc6w04cCtt8K21vq-rGGSnFwX9IP7YUx0XhFteHCC7bOG-4hdg8A__',
+              // 'https://i.ytimg.com/vi/wj6N6knIHes/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB2qaMdlw5QRW2C-QRT_d7Ca9h7Ew',
+              // 'https://i.pinimg.com/originals/6f/5e/6b/6f5e6b8e22c6cbbd69195c16fd1aec36.jpg',
+              // 'https://www.supergurumi.com/wp-content/uploads/2022/10/Patrones-de-Crochet-Amigurumi-Gratis.jpg',
+              // 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
             ]),
           ),
           // FutureBuilder para la lista de productos

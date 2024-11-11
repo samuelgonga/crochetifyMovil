@@ -49,8 +49,7 @@ class _CategoriesScreenState extends State<CategoryScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        ProductsScreen(categoryName: 'Videojuegos'),
+                    builder: (context) => const CategoryProductView(),
                   ),
                 );
               },
