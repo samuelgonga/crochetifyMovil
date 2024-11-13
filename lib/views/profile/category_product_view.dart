@@ -222,7 +222,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                             child: Text(product.nombre,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
+                                                  fontSize: 20,
                                                 )),
                                           ),
                                           Text(

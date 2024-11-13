@@ -41,7 +41,7 @@ class Address {
   final String address;
   final String colonia;
   final String country;
-  final int phone;
+  final String phone;  // Cambiado de int a String
   final bool main;
 
   Address({
@@ -59,7 +59,7 @@ class Address {
       address: json['address'],
       colonia: json['colonia'],
       country: json['country'],
-      phone: json['phone'],
+      phone: json['phone'].toString(),
       main: json['main'],
     );
   }
