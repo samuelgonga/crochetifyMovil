@@ -161,7 +161,7 @@ class _ProductDetailState extends State<ProductDetail> {
               // Nombre y precio
               Center(
                 child: Text(
-                  product.nombre,
+                  product.name,
                   textAlign: TextAlign.center, // Alineación centrada
                   style: const TextStyle(
                     fontWeight: FontWeight.bold, // Texto en negrita
@@ -169,19 +169,19 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
               ),
-              Center(
-                child: Text(
-                  '\$${product.precio.toStringAsFixed(2)}',
-                  textAlign: TextAlign.center, // Alineación centrada
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, // Texto en negrita
-                      fontSize: 22, // Ajusta el tamaño según lo necesites
-                      color: Colors.blue),
-                ),
-              ),
+              // Center(
+              //   child: Text(
+              //     '\$${product.precio.toStringAsFixed(2)}', //Comentare esto
+              //     textAlign: TextAlign.center, // Alineación centrada
+              //     style: const TextStyle(
+              //         fontWeight: FontWeight.bold, // Texto en negrita
+              //         fontSize: 22, // Ajusta el tamaño según lo necesites
+              //         color: Colors.blue),
+              //   ),
+              // ),
               // Descripción
               const SizedBox(height: 16),
-              Text(product.descripcion),
+              Text(product.description),
               const SizedBox(height: 16),
 
               // Comentarios

@@ -88,7 +88,7 @@ class _ProductListState extends State<ProductList> {
                       // Filtra la lista de productos según la búsqueda
                       final filteredProducts =
                           viewModel.products.where((product) {
-                        return product.nombre
+                        return product.name
                             .toLowerCase()
                             .contains(_searchQuery);
                       }).toList();
@@ -148,14 +148,14 @@ class _ProductListState extends State<ProductList> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Center(
-                                            child: Text(product.nombre,
+                                            child: Text(product.name,
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15,
                                                 )),
                                           ),
                                           Text(
-                                            product.descripcion,
+                                            product.description,
                                             textAlign: TextAlign.justify,
                                             style: const TextStyle(fontSize: 8),
                                           ),

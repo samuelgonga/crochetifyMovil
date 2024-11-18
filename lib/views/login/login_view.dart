@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginView> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  HomeScreen()), // Define tu vista de destino aquí
+                                  ProfileScreen()), //Aqui debe ir HomeScreen, yo le moví sergio
                         );
                       },
                       style: ElevatedButton.styleFrom(
