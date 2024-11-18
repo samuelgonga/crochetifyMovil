@@ -1,4 +1,7 @@
 import 'package:crochetify_movil/views/profile/profile_edit.dart';
+import 'package:provider/provider.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'about_us_view.dart';
 import 'addres_view.dart';
@@ -42,9 +45,9 @@ class ProfileScreen extends StatelessWidget {
                 bottom: 0,
                 child: ElevatedButton(
                   onPressed: () {
-                  // Acción al editar perfil
-                  Navigator.push(context, 
-                  MaterialPageRoute(builder: (context) => ProfileEdit()));
+                    // Acción al editar perfil
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ProfileEdit()));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: CircleBorder(),
@@ -76,6 +79,39 @@ class ProfileScreen extends StatelessWidget {
                     context, 'Acerca de Nosotros', AcercaScreen()),
                 _buildProfileOption(context, 'Ayuda', AyudaScreen()),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                bottom: 20.0), // Espacio en la parte inferior
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Actualiza el estado de inicio de sesión
+                  Provider.of<AuthViewModel>(context, listen: false).logout();
+                  // Navega a la HomeScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(150, 40), // Ajuste del tamaño
+                  backgroundColor: const Color.fromARGB(255, 224, 20, 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20), // Borde redondeado
+                  ),
+                ),
+                child: const Text(
+                  'Cerrar Sesión',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
         ],

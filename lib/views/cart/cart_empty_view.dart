@@ -1,5 +1,4 @@
 import 'package:crochetify_movil/views/profile/profile_view.dart';
-import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:crochetify_movil/views/cart/cart_view.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +39,9 @@ class CartEmpty extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => (ProfileScreen()), ///Aqui debe ir HomeScreen yo le movi Sergio
+                      builder: (context) => (ProfileScreen()),
+
+                      ///Aqui debe ir HomeScreen yo le movi Sergio
                     ),
                   );
                 },

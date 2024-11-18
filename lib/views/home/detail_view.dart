@@ -18,7 +18,7 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-
+    /*
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalles del Producto'),
@@ -29,11 +29,11 @@ class _ProductDetailState extends State<ProductDetail> {
             child: Row(
               children: [
                 const Icon(Icons.star, color: Colors.yellow, size: 34),
-                const SizedBox(width: 4),
+                const SizedBox(width: 4),                
                 Text(
                   "${product.valoracion}",
                   style: const TextStyle(color: Colors.black, fontSize: 24),
-                ),
+                ),                
               ],
             ),
           ),
@@ -305,6 +305,10 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
       ),
+    );
+    */
+    return Scaffold(
+      body: Text("detalles"),
     );
   }
 }

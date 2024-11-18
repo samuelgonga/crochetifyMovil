@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../home/home_view.dart';
 import '../profile/profile_view.dart';
 import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
+import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -54,24 +56,18 @@ class _LoginScreenState extends State<LoginView> {
                       ),
                       obscureText: true,
                     ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () {
-                          // Acción para "Olvidaste tu contraseña?"
-                        },
-                        child: Text('¿Olvidaste tu contraseña?'),
-                      ),
-                    ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
+                        // Actualiza el estado de inicio de sesión
+                        Provider.of<AuthViewModel>(context, listen: false)
+                            .login();
+                        // Navega a la HomeScreen
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileScreen()), //Aqui debe ir HomeScreen, yo le moví sergio
+                            builder: (context) => HomeScreen(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
