@@ -7,7 +7,7 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['idCategory'], // Ajuste para coincidir con la clave en la respuesta
+      id: json['idCategory'],
       name: json['name'],
       status: json['status'],
     );

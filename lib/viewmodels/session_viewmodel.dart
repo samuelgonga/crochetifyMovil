@@ -23,7 +23,7 @@ class AuthViewModel extends ChangeNotifier {
   // Método para verificar si ya hay una sesión activa (para fines de prueba)
   Future<void> checkSession() async {
     // Simulación de verificación de sesión. Aquí podrías revisar un token almacenado en el almacenamiento local.
-    await Future.delayed(Duration(seconds: 1)); // Simula un retardo
+    await Future.delayed(const Duration(seconds: 1)); // Simula un retardo
     _isLoggedIn =
         false; // Cambia a true si deseas probar como si el usuario ya estuviera logueado
     print("Estado de sesión (isLoggedIn): $_isLoggedIn");
