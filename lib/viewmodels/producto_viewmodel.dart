@@ -11,6 +11,8 @@ class ProductViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> fetchProducts() async {
+    if (_isLoading)
+      return; // Prevenir llamadas múltiples mientras se está cargando
     _isLoading = true;
     notifyListeners();
     try {

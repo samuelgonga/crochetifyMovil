@@ -4,6 +4,7 @@ import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
 import 'package:crochetify_movil/views/home/detail_view.dart';
 import 'package:crochetify_movil/widget/home/custom_buttom.dart';
 import 'package:crochetify_movil/widget/home/carousel.dart';
+import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -13,14 +14,14 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
-  late Future<void> _fetchProductsFuture;
-  String _searchQuery = '';
+  late Future<void> _fetchStocksFuture;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _fetchProductsFuture =
-        Provider.of<ProductViewModel>(context, listen: false).fetchProducts();
+  void initState() {
+    super.initState();
+    // Obtiene los datos solo una vez al inicializar el widget
+    _fetchStocksFuture =
+        Provider.of<StockViewModel>(context, listen: false).fetchStocks();
   }
 
   @override
@@ -43,12 +44,6 @@ class _ProductListState extends State<ProductList> {
                   ),
                   prefixIcon: const Icon(Icons.search),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery =
-                        value.toLowerCase(); // Actualiza el texto de búsqueda
-                  });
-                },
               ),
             ),
           ),
@@ -69,116 +64,96 @@ class _ProductListState extends State<ProductList> {
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
             ]),
           ),
-          /*
-          FutureBuilder para la lista de productos
           Expanded(
-            child: FutureBuilder(
-              future: _fetchProductsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+            child: Consumer<StockViewModel>(
+              builder: (context, stockViewModel, child) {
+                if (stockViewModel.isLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else {
-                  return Consumer<ProductViewModel>(
-                    builder: (context, viewModel, child) {
-                      // Filtra la lista de productos según la búsqueda
-                      final filteredProducts =
-                          viewModel.products.where((product) {
-                        return product.name
-                            .toLowerCase()
-                            .contains(_searchQuery);
-                      }).toList();
+                }
+                if (stockViewModel.stocks.isEmpty) {
+                  return const Center(child: Text('No hay stocks disponibles'));
+                }
 
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.7,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                        ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          final firstImage = product
-                                      .imagenesPorColor.isNotEmpty &&
-                                  product
-                                      .imagenesPorColor[0].imagenes.isNotEmpty
-                              ? product.imagenesPorColor[0].imagenes[0]
-                              : ''; // Obtiene la primera imagen del primer color disponible
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: stockViewModel.stocks.length,
+                  itemBuilder: (context, index) {
+                    final stock = stockViewModel.stocks[index];
+                    final firstImage =
+                        stock.images.isNotEmpty ? stock.images[0] : '';
 
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 4.0),
-                            child: Card(
-                              elevation: 4,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetail(product: product),
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 6.0, vertical: 4.0),
+                      child: Card(
+                        elevation: 4,
+                        child: InkWell(
+                          onTap: () {
+                            // Navegación u otra lógica
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(4)),
+                                  child: Image.network(
+                                    firstImage,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Center(
+                                      child: Icon(Icons.image_not_supported),
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(15.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            const BorderRadius.vertical(
-                                                top: Radius.circular(4)),
-                                        child: Image.network(
-                                          firstImage,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        ),
+                                    Center(
+                                      child: Text(
+                                        stock.product.name,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Text(product.name,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                )),
-                                          ),
-                                          Text(
-                                            product.description,
-                                            textAlign: TextAlign.justify,
-                                            style: const TextStyle(fontSize: 8),
-                                          ),
-                                          Center(
-                                            child: Text(
-                                              '\$${product.precio.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          )
-                                        ],
+                                    Text(
+                                      'Cantidad: ${stock.quantity}',
+                                      textAlign: TextAlign.justify,
+                                      style: const TextStyle(fontSize: 10),
+                                    ),
+                                    Center(
+                                      child: Text(
+                                        '\$${stock.price.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                }
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),
-          */
         ],
       ),
     );
