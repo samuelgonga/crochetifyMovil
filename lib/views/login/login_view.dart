@@ -1,10 +1,10 @@
-import 'package:crochetify_movil/views/login/register_view.dart';
-import 'package:flutter/material.dart';
-import '../home/home_view.dart';
-import '../profile/profile_view.dart';
-import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
-import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
+import 'package:flutter/material.dart';
+import 'package:crochetify_movil/services/session_service.dart';
+import 'package:provider/provider.dart';
+import '../home/home_view.dart';
+import 'register_view.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -12,6 +12,54 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginView> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  final AuthService _authService = AuthService();
+
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, completa todos los campos')),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      // Llama al método login del AuthViewModel
+      await Provider.of<AuthViewModel>(context, listen: false)
+          .login(email, password);
+
+      // Redirige al HomeScreen
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+        (route) => false, // Elimina todas las rutas anteriores
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Error al iniciar sesión: Usuario y Contraseña Incorrectos')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +89,16 @@ class _LoginScreenState extends State<LoginView> {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    const TextField(
+                    TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const TextField(
+                    TextField(
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(),
@@ -57,31 +107,22 @@ class _LoginScreenState extends State<LoginView> {
                       obscureText: true,
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Actualiza el estado de inicio de sesión
-                        Provider.of<AuthViewModel>(context, listen: false)
-                            .login();
-                        // Navega a la HomeScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
+                    _isLoading
+                        ? CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50),
+                              backgroundColor: Colors.blue,
+                            ),
+                            child: const Text(
+                              'Entrar',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: const Text(
-                        'Entrar',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

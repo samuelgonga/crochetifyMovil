@@ -1,19 +1,25 @@
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 import 'package:crochetify_movil/models/user.dart';
 
 class UserService {
+  final String baseUrl = 'http://192.168.0.11:8080/api/crochetify';
+
   Future<User> fetchUser() async {
-    try {
-      // Cargar el archivo JSON desde assets
-      final response = await rootBundle.loadString('assets/user.json');
-      final Map<String, dynamic> data = jsonDecode(response);
-      print(data);
-      // Convertir el JSON en una instancia de User
+    final url =
+        Uri.parse('$baseUrl/users/1'); // Endpoint para obtener un usuario
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      // Devuelve una instancia de User
       return User.fromJson(data);
-    } catch (e) {
-      print("Algo salió mal: $e");
-      throw Exception("Failed to load user data");
+    } else {
+      throw Exception(
+          'Error al obtener los datos del usuario: ${response.statusCode}');
     }
   }
 }

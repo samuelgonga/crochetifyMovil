@@ -4,10 +4,10 @@ import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'about_us_view.dart';
-import 'addres_view.dart';
 import 'category_view.dart';
 import 'orders_view.dart';
 import 'help_view.dart';
+import 'package:crochetify_movil/views/login/login_view.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           const Center(
             child: Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                   top: 40.0,
                   bottom: 20), // Ajusta el valor según lo que necesites
               child: Text(
@@ -71,8 +71,6 @@ class ProfileScreen extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _buildProfileOption(
-                    context, 'Mis Direcciones', AddressesScreen()),
                 _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),
                 _buildProfileOption(context, 'Categorías', CategoryScreen()),
                 _buildProfileOption(
@@ -86,15 +84,15 @@ class ProfileScreen extends StatelessWidget {
                 bottom: 20.0), // Espacio en la parte inferior
             child: Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // Actualiza el estado de inicio de sesión
-                  Provider.of<AuthViewModel>(context, listen: false).logout();
-                  // Navega a la HomeScreen
-                  Navigator.push(
+                onPressed: () async {
+                  // Llama al método logout del AuthViewModel
+                  await Provider.of<AuthViewModel>(context, listen: false)
+                      .logout();
+                  // Redirige al LoginView y elimina todas las rutas anteriores
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => LoginView()),
+                    (route) => false, // Elimina todas las rutas anteriores
                   );
                 },
                 style: ElevatedButton.styleFrom(

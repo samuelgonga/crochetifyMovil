@@ -1,61 +1,40 @@
-// viewmodels/auth_viewmodel.dart
+import 'package:crochetify_movil/services/session_service.dart';
 import 'package:flutter/material.dart';
-//import 'package:crochetify_movil/models/session.dart';
-//import 'package:crochetify_movil/services/session_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/session.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  //PRUEBAS
+  final AuthService _authService = AuthService();
   bool _isLoggedIn = false;
+  Session? _session;
 
   bool get isLoggedIn => _isLoggedIn;
+  Session? get session => _session;
 
-  // Métodos para iniciar y cerrar sesión de prueba
-  void login() {
-    _isLoggedIn = true;
-    notifyListeners();
-  }
-
-  void logout() {
-    _isLoggedIn = false;
-    notifyListeners();
-  }
-
-  // Método para verificar si ya hay una sesión activa (para fines de prueba)
-  Future<void> checkSession() async {
-    // Simulación de verificación de sesión. Aquí podrías revisar un token almacenado en el almacenamiento local.
-    await Future.delayed(const Duration(seconds: 1)); // Simula un retardo
-    _isLoggedIn =
-        false; // Cambia a true si deseas probar como si el usuario ya estuviera logueado
-    print("Estado de sesión (isLoggedIn): $_isLoggedIn");
-
-    notifyListeners();
-  }
-
-  //
-  /*
-  final AuthService _authService = AuthService();
-  Session? _user;
-
-  Session? get user => _user;
-  bool get isLoggedIn => _user != null;
-
+  // Verifica si ya hay una sesión activa
   Future<void> checkSession() async {
     final token = await _authService.getToken();
-    if (token != null) {
-      _user = Session(token: token, role: 'USER');
+    _isLoggedIn = token != null;
+    if (_isLoggedIn) {
+      _session = Session(token: token!);
     }
     notifyListeners();
   }
-  
+
+  // Maneja el inicio de sesión
   Future<void> login(String email, String password) async {
-    _user = await _authService.login(email, password);
+    _session = await _authService.login(email, password);
+    if (_session != null) {
+      _isLoggedIn = true;
+    }
     notifyListeners();
   }
 
+  // Maneja el cierre de sesión
   Future<void> logout() async {
     await _authService.logout();
-    _user = null;
+    _isLoggedIn = false;
+    _session = null;
     notifyListeners();
   }
-  */
 }

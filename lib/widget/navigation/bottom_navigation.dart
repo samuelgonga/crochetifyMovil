@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:crochetify_movil/views/profile/profile_view.dart';
 import 'package:crochetify_movil/views/home/home_view.dart';
 import 'package:crochetify_movil/views/shipping/shipping_view.dart';
 import 'package:crochetify_movil/views/cart/cart_view.dart';
 import 'package:crochetify_movil/views/login/login_view.dart';
-import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:crochetify_movil/widget/home/noLoging.dart';
 
@@ -16,20 +16,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
+  // Vistas para usuarios autenticados
   final List<Widget> _viewsLogin = [
-    const ProductList(),
-    const ViewOrders(),
-    CartView(),
-    ProfileScreen(),
+    const ProductList(), // Página de productos
+    const ViewOrders(), // Página de pedidos/entregas
+    CartView(), // Página del carrito
+    ProfileScreen(), // Página del perfil
   ];
 
+  // Vistas para usuarios no autenticados
   final List<Widget> _views = [
-    const ProductList(),
-    LoginPromptWidget(),
-    LoginPromptWidget(),
-    LoginView(),
+    const ProductList(), // Página de productos
+    LoginPromptWidget(), // Mensaje de inicio de sesión requerido
+    LoginPromptWidget(), // Mensaje de inicio de sesión requerido
+    LoginView(), // Vista de inicio de sesión
   ];
 
+  /// Maneja el cambio de pestañas en la barra de navegación
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -40,47 +43,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Consumer<AuthViewModel>(
       builder: (context, authViewModel, child) {
-        if (authViewModel.isLoggedIn) {
-          return Scaffold(
-            body: _viewsLogin[_selectedIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home), label: 'Inicio'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.calendar_today), label: 'Envíos'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_cart), label: 'Carrito'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Perfil'),
-              ],
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.grey,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
-          );
-        } else {
-          return Scaffold(
-            body: _views[_selectedIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home), label: 'Inicio'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.calendar_today), label: 'Envíos'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.shopping_cart), label: 'Carrito'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person), label: 'Perfil'),
-              ],
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.grey,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-            ),
-          );
-        }
+        // Verifica si el usuario está autenticado
+        final bool isLoggedIn = authViewModel.isLoggedIn;
+
+        // Cambia dinámicamente las vistas según el estado de autenticación
+        final List<Widget> currentViews = isLoggedIn ? _viewsLogin : _views;
+
+        return Scaffold(
+          body: currentViews[_selectedIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_today), label: 'Envíos'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_cart), label: 'Carrito'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: 'Perfil'),
+            ],
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.grey,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
+        );
       },
     );
   }

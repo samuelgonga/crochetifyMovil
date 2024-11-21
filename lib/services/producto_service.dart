@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/producto.dart';
 
 class ProductService {
-  final String baseUrl = 'http://localhost:8080/api/crochetify/products';
+  final String baseUrl = 'http://192.168.0.11:8080/api/crochetify/products';
 
   Future<List<Product>> fetchProducts() async {
     final response = await http.get(Uri.parse(baseUrl));

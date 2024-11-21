@@ -10,7 +10,7 @@ class UserViewModel extends ChangeNotifier {
 
   Future<void> fetchUser() async {
     try {
-      _user = await _userService.fetchUser();
+      _user = await _userService.fetchUser(); // Asigna la instancia de User
       notifyListeners();
     } catch (e) {
       print("Error fetching user data: $e");

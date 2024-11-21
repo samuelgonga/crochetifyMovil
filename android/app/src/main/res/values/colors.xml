@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colores principales -->
+    <color name="primary">#6200EE</color> <!-- Color primario -->
+    <color name="primary_dark">#3700B3</color> <!-- Color primario oscuro -->
+    <color name="accent">#03DAC5</color> <!-- Color de acento -->
+    <color name="white">#FFFFFF</color> <!-- Color blanco -->
+    <color name="black">#000000</color> <!-- Color negro -->
+</resources>

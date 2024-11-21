@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:crochetify_movil/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:crochetify_movil/models/user.dart';
+import 'package:crochetify_movil/services/user_service.dart';
 
 class ProfileEdit extends StatefulWidget {
   @override
@@ -13,21 +12,33 @@ class ProfileEdit extends StatefulWidget {
 class _ProfileEditScreenState extends State<ProfileEdit> {
   PickedFile? _image;
   final ImagePicker _picker = ImagePicker();
+  final UserService _userService =
+      UserService(); // Servicio para obtener datos del usuario
   User? _user;
 
-  // Método para cargar datos del usuario desde el archivo JSON
+  bool _isLoading = true; // Indicador de carga
+
+  // Método para cargar datos del usuario desde el servicio
   Future<void> _loadUserData() async {
-    final String response = await rootBundle.loadString('assets/user.json');
-    final data = json.decode(response);
-    setState(() {
-      _user = User.fromJson(data);
-    });
+    try {
+      final userData = await _userService.fetchUser();
+      setState(() {
+        _user = userData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error al cargar datos del usuario: $e");
+      setState(() {
+        _isLoading =
+            false; // Detenemos el indicador de carga incluso si hay error
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadUserData(); // Cargar datos al iniciar la vista
   }
 
   Future<void> _pickImage() async {
@@ -47,11 +58,11 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
             Navigator.pop(context);
           },
         ),
-        title: Text('Mi Perfil'),
+        title: Text('Editar Perfil'),
         centerTitle: true,
       ),
-      body: _user == null
-          ? Center(child: CircularProgressIndicator())
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator()) // Indicador de carga
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -64,7 +75,10 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                           radius: 60,
                           backgroundImage: _image != null
                               ? FileImage(File(_image!.path))
-                              : NetworkImage(_user!.image) as ImageProvider,
+                              : (_user?.image != null
+                                      ? NetworkImage(_user!.image!)
+                                      : AssetImage('assets/default_avatar.png'))
+                                  as ImageProvider,
                           backgroundColor: Colors.grey[200],
                         ),
                         Positioned(
@@ -88,7 +102,7 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                   SizedBox(height: 20),
                   // Campo para el nombre
                   TextFormField(
-                    initialValue: _user!.name,
+                    initialValue: _user?.name ?? '',
                     decoration: InputDecoration(
                       labelText: 'Nombre',
                       labelStyle: TextStyle(color: Color(0xFF3A86FF)),
@@ -106,9 +120,9 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                   SizedBox(height: 10),
                   // Campo para el correo electrónico
                   TextFormField(
-                    initialValue: _user!.email,
+                    initialValue: _user?.email ?? '',
                     decoration: InputDecoration(
-                      labelText: 'Correo',
+                      labelText: 'Correo Electrónico',
                       labelStyle: TextStyle(color: Color(0xFF3A86FF)),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFF3A86FF)),
@@ -122,87 +136,6 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  SizedBox(height: 10),
-                  // Campo para la contraseña actual
-                  TextFormField(
-                    initialValue: _user!.password,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña Actual',
-                      labelStyle: TextStyle(color: Color(0xFF3A86FF)),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF44B7AC)),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 10),
-                  // Campo para la nueva contraseña
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Nueva Contraseña',
-                      labelStyle: TextStyle(color: Color(0xFF3A86FF)),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF44B7AC)),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 10),
-                  // Campo para repetir la nueva contraseña
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Repetir Contraseña',
-                      labelStyle: TextStyle(color: Color(0xFF3A86FF)),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF44B7AC)),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
-                  SizedBox(height: 10),
-                  // Campo para mostrar la dirección principal en un solo campo
-                  if (_user!.address.isNotEmpty) ...[
-                    TextFormField(
-                      initialValue: '${_user!.address[0].name}, '
-                          '${_user!.address[0].address}, '
-                          '${_user!.address[0].colonia}, '
-                          '${_user!.address[0].country}, '
-                          'Tel: ${_user!.address[0].phone}, '
-                          '${_user!.address[0].main ? "Predeterminada" : "No predeterminada"}',
-                      decoration: InputDecoration(
-                        labelText: 'Dirección Principal',
-                        labelStyle: TextStyle(color: Color(0xFF3A86FF)),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF3A86FF)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF44B7AC)),
-                        ),
-                      ),
-                      maxLines: 3,
-                    ),
-                  ],
                   SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -214,7 +147,8 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text('Confirmación'),
-                            content: Text('¿Realmente desea guardar los cambios?'),
+                            content:
+                                Text('¿Realmente desea guardar los cambios?'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -222,16 +156,8 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                                 },
                                 style: ButtonStyle(
                                   backgroundColor:
-                                      MaterialStateProperty.all<Color>(Colors.blueGrey),
-                                  overlayColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                      if (states.contains(MaterialState.hovered)) {
-                                        return Colors.grey.shade400;
-                                      }
-                                      return Colors.white;
-                                    },
-                                  ),
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.blueGrey),
                                 ),
                                 child: Text(
                                   'Cancelar',
@@ -243,17 +169,9 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                                   Navigator.of(context).pop(true);
                                 },
                                 style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(
-                                      Color(0xFF768ABA)),
-                                  overlayColor:
-                                      MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                      if (states.contains(MaterialState.hovered)) {
-                                        return Color(0xFF768ABA).withOpacity(0.8);
-                                      }
-                                      return Color(0xFF768ABA);
-                                    },
-                                  ),
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Color(0xFF768ABA)),
                                 ),
                                 child: Text(
                                   'Guardar',

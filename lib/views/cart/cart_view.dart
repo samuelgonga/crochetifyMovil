@@ -17,8 +17,6 @@ class CartView extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               children: <Widget>[
                 ItemCart(),
-                ItemCart(),
-                ItemCart(),
               ],
             ),
           ),
