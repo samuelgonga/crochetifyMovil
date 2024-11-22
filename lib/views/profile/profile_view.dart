@@ -91,7 +91,7 @@ class ProfileScreen extends StatelessWidget {
                   // Redirige al LoginView y elimina todas las rutas anteriores
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginView()),
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
                     (route) => false, // Elimina todas las rutas anteriores
                   );
                 },
