@@ -14,24 +14,19 @@ class StockViewModel extends ChangeNotifier {
   Future<void> fetchStocks() async {
     if (_isLoading)
       return; // Prevenir llamadas múltiples mientras se está cargando
+
     _isLoading = true;
-    // Posponemos notifyListeners() para no llamarlo durante el ciclo de construcción
-    Future.delayed(Duration.zero, () {
-      notifyListeners(); // Esto asegura que notifyListeners no se llame durante la construcción
-    });
+    notifyListeners(); // Notificar que está en carga
 
     try {
-      _stocks = await _stockService.fetchStocks();
-      print(_stocks);
+      _stocks = await _stockService.fetchStocks(); // Obtener los stocks
+      print(_stocks); // Para depuración
     } catch (e) {
       print('Error al obtener stocks: $e');
-      _stocks = []; // Asegurarse de no dejar la lista vacía en caso de error
+      _stocks = []; // En caso de error, dejar la lista vacía
     } finally {
       _isLoading = false;
-      // Posponemos notifyListeners() nuevamente
-      Future.delayed(Duration.zero, () {
-        notifyListeners();
-      });
+      notifyListeners(); // Notificar que la carga ha terminado
     }
   }
 }

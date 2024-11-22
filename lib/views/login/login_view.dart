@@ -1,10 +1,9 @@
-import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
-import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
+import 'package:crochetify_movil/views/login/register_view.dart';
 import 'package:flutter/material.dart';
-import 'package:crochetify_movil/services/session_service.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:provider/provider.dart';
-import '../home/home_view.dart';
-import 'register_view.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
+import 'package:crochetify_movil/services/session_service.dart';
 
 class LoginView extends StatefulWidget {
   @override
