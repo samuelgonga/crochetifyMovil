@@ -4,7 +4,7 @@ import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'about_us_view.dart';
-import 'category_view.dart';
+import '../category/category_view.dart';
 import 'orders_view.dart';
 import 'help_view.dart';
 import 'package:crochetify_movil/views/login/login_view.dart';
@@ -71,8 +71,7 @@ class ProfileScreen extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),
-                _buildProfileOption(context, 'Categorías', CategoryScreen()),
+                _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),                
                 _buildProfileOption(
                     context, 'Acerca de Nosotros', AcercaScreen()),
                 _buildProfileOption(context, 'Ayuda', AyudaScreen()),

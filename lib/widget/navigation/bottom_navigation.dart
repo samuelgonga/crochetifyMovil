@@ -1,3 +1,4 @@
+import 'package:crochetify_movil/views/category/category_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/views/profile/profile_view.dart';
@@ -7,6 +8,8 @@ import 'package:crochetify_movil/views/cart/cart_view.dart';
 import 'package:crochetify_movil/views/login/login_view.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:crochetify_movil/widget/home/noLoging.dart';
+import 'package:crochetify_movil/views/category/category_product_view.dart';
+import 'package:crochetify_movil/views/category/category_view.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,8 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Vistas para usuarios autenticados
   final List<Widget> _viewsLogin = [
-    const ProductList(), // Página de productos
-    const ViewOrders(), // Página de pedidos/entregas
+    const ProductList(), // Página de productos 
+    CategoryScreen(),
+    CategoryProductView(),
     CartView(), // Página del carrito
     ProfileScreen(), // Página del perfil
   ];
@@ -53,9 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
           body: currentViews[_selectedIndex],
           bottomNavigationBar: BottomNavigationBar(
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),              
               BottomNavigationBarItem(
-                  icon: Icon(Icons.calendar_today), label: 'Envíos'),
+                  icon: Icon(Icons.category), label: 'Categorias'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.shopping_cart), label: 'Carrito'),
               BottomNavigationBarItem(

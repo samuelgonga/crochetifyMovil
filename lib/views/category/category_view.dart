@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/services/category_service.dart'; // El servicio que creamos
 import 'package:crochetify_movil/models/category.dart'; // Tu modelo de datos
-import 'package:crochetify_movil/views/profile/category_product_view.dart';
+import 'package:crochetify_movil/views/category/category_product_view.dart';
 
 class CategoryScreen extends StatefulWidget {
   @override
