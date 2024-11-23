@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart'; // Librería para decodificar el token
 import '../models/session.dart';
 
 class AuthService {
   static const _tokenKey = 'user_token';
 
   Future<Session?> login(String email, String password) async {
-    final url = Uri.parse('http://192.168.106.68:8080/api/crochetify/login');
+    final url = Uri.parse('http://192.168.0.200:8080/api/crochetify/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -21,7 +22,12 @@ class AuthService {
       if (data['success'] == true && data['response'] != null) {
         final token = data['response']['token'] as String?;
         if (token != null && token.isNotEmpty) {
-          final session = Session(token: token);
+          // Decodificar el token para obtener el userId
+          final decodedToken = JwtDecoder.decode(token);
+          final userId = decodedToken['idUser']; // Suponiendo que el id está en el token
+
+          // Crear la sesión con el userId extraído del token
+          final session = Session(token: token, userId: userId);
           await _saveToken(token);
           return session;
         } else {
@@ -31,8 +37,7 @@ class AuthService {
         throw Exception('Error en la respuesta del servidor');
       }
     } else {
-      throw Exception(
-          'Error al conectar con el servidor: ${response.statusCode}');
+      throw Exception('Error al conectar con el servidor: ${response.statusCode}');
     }
   }
 

@@ -3,24 +3,24 @@ class User {
   final String name;
   final String email;
   final bool status;
-  final String? image;
+  final String image;
 
   User({
     required this.id,
     required this.name,
     required this.email,
     required this.status,
-    this.image,
+    required this.image,
   });
 
-  // Constructor para crear una instancia de User desde JSON
+  // Método para crear un objeto User desde un JSON
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['idUser'] ?? 0,
+      id: json['id'],
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      status: json['status'] ?? false,
-      image: json['image'],
+      status: json['status'] ?? true,
+      image: json['image'] ?? '',
     );
   }
 }

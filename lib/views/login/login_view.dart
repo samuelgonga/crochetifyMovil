@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(
-                'Error al iniciar sesión: Usuario y Contraseña Incorrectos')),
+                'Error al iniciar sesión: Usuario y Contraseña Incorrectos, ${error}')),
       );
     } finally {
       setState(() {

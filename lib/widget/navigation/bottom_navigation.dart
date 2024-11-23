@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _viewsLogin = [
     const ProductList(), // Página de productos 
     CategoryScreen(),
-    CategoryProductView(),
+    //CategoryProductView(),
     CartView(), // Página del carrito
     ProfileScreen(), // Página del perfil
   ];
