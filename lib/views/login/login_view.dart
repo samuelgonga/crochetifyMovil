@@ -14,6 +14,7 @@ class _LoginScreenState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // Estado para la visibilidad de la contraseña
 
   final AuthService _authService = AuthService();
 
@@ -101,9 +102,20 @@ class _LoginScreenState extends State<LoginView> {
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.visibility_off),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
-                      obscureText: true,
+                      obscureText: !_isPasswordVisible, // Cambia según el estado
                     ),
                     const SizedBox(height: 16),
                     _isLoading
