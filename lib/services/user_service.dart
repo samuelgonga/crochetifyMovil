@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:crochetify_movil/models/user.dart';
 
 class UserService {
-  final String baseUrl = 'http://192.168.0.200:8080/api/crochetify';
+  final String baseUrl = 'http://192.168.100.5:8080/api/crochetify';
 
   Future<User> fetchUser() async {
     final url =

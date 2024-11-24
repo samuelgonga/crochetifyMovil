@@ -42,11 +42,39 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await _picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      _image = pickedFile;
-    });
+    try {
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _image = PickedFile(pickedFile
+              .path); // Asegurar compatibilidad si sigues usando `PickedFile`
+        });
+      }
+    } catch (e) {
+      _showErrorDialog('Error al seleccionar la imagen: $e');
+    }
   }
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
