@@ -33,8 +33,8 @@ class ProfileScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: user!.image != null && user.image!.isNotEmpty
-                    ? NetworkImage(user.image!) // Usamos la imagen del usuario si existe
+                backgroundImage: user!.image.isNotEmpty
+                    ? NetworkImage(user.image) // Usamos la imagen del usuario si existe
                     : const NetworkImage(
                         'https://affinitaslegal.com/wp-content/uploads/2023/10/imagen-perfil-sin-foto.jpg', // Imagen predeterminada
                       ),
