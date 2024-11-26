@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class RegisterService {
   static const _tokenKey = 'user_token';
-  final String baseUrl = 'http://192.168.100.5:8080/api/crochetify';
+  final String baseUrl = 'http://192.168.111.125:8080/api/crochetify';
 
   Future<void> registerUser(String name, String email, String password) async {
     final url = Uri.parse('$baseUrl/users');

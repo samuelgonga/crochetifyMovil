@@ -5,6 +5,19 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:crochetify_movil/services/session_service.dart';
 
+// Definición de excepciones
+class InvalidPasswordException implements Exception {
+  String toString() => 'Contraseña incorrecta.';
+}
+
+class UserNotFoundException implements Exception {
+  String toString() => 'El usuario no fue encontrado.';
+}
+
+class IncorrectEmailFormatException implements Exception {
+  String toString() => 'El formato del correo electrónico es incorrecto.';
+}
+
 class LoginView extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -14,9 +27,29 @@ class _LoginScreenState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isPasswordVisible = false; // Variable para controlar la visibilidad de la contraseña
+  bool _isPasswordVisible = false;
 
   final AuthService _authService = AuthService();
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: Text('Cerrar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _login() async {
     setState(() {
@@ -27,9 +60,7 @@ class _LoginScreenState extends State<LoginView> {
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, completa todos los campos')),
-      );
+      _showErrorDialog('Por favor, completa todos los campos');
       setState(() {
         _isLoading = false;
       });
@@ -37,22 +68,32 @@ class _LoginScreenState extends State<LoginView> {
     }
 
     try {
-      // Llama al método login del AuthViewModel
-      await Provider.of<AuthViewModel>(context, listen: false)
-          .login(email, password);
+      // Aquí verificar el formato del correo
+      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+        throw IncorrectEmailFormatException();
+      }
 
-      // Redirige al HomeScreen
+      await Provider.of<AuthViewModel>(context, listen: false).login(email, password);
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
-        (route) => false, // Elimina todas las rutas anteriores
+        (route) => false,
       );
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                'Error al iniciar sesión: Usuario y Contraseña Incorrectos, ${error}')),
-      );
+      String errorMessage;
+
+      if (error is InvalidPasswordException) {
+        errorMessage = 'Contraseña incorrecta. Por favor, inténtalo de nuevo.';
+      } else if (error is UserNotFoundException) {
+        errorMessage = 'El correo electrónico no está registrado.';
+      } else if (error is IncorrectEmailFormatException) {
+        errorMessage = 'El formato del correo electrónico es incorrecto.';
+      } else {
+        errorMessage = 'Error al iniciar sesión. Intenta de nuevo más tarde.';
+      }
+
+      _showErrorDialog(errorMessage);
     } finally {
       setState(() {
         _isLoading = false;
@@ -85,8 +126,7 @@ class _LoginScreenState extends State<LoginView> {
                   children: [
                     const Text(
                       'Bienvenido!',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -104,19 +144,16 @@ class _LoginScreenState extends State<LoginView> {
                         border: OutlineInputBorder(),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            // Cambiar el icono según la visibilidad
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
-                              _isPasswordVisible = !_isPasswordVisible; // Alternar visibilidad
+                              _isPasswordVisible = !_isPasswordVisible;
                             });
                           },
                         ),
                       ),
-                      obscureText: !_isPasswordVisible, // Mostrar u ocultar contraseña
+                      obscureText: !_isPasswordVisible,
                     ),
                     const SizedBox(height: 16),
                     _isLoading
@@ -143,10 +180,11 @@ class _LoginScreenState extends State<LoginView> {
                         TextButton(
                           onPressed: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterView(),
-                                ));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RegisterView(),
+                              ),
+                            );
                           },
                           child: const Text('Regístrate ahora'),
                         ),
