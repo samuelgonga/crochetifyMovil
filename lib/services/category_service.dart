@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/category.dart';
 
 class CategoryService {
-  final String baseUrl = "http://192.168.100.5:8080/api/crochetify";
+  final String baseUrl = "http://192.168.0.200:8080/api/crochetify";
 
   Future<List<Category>> fetchCategories() async {
     try {

@@ -17,13 +17,13 @@ class AuthViewModel extends ChangeNotifier {
   User? get user => _user;
 
   // Verifica si ya hay una sesión activa
-  Future<void> checkSession() async {
+  Future<void> checkSession() async {    
     final token = await _authService.getToken();
     _isLoggedIn = token != null;
     if (_isLoggedIn) {
       _session = Session(token: token!, userId: _extractUserId(token));
       await fetchUserDetails(); // Obtiene los detalles del usuario
-    }
+    }    
     notifyListeners();
   }
 

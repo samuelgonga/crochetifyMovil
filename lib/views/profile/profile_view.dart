@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'about_us_view.dart';
 import 'orders_view.dart';
 import 'help_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
+import 'direction_view.dart';
 
 class ProfileScreen extends StatelessWidget {  
   @override
@@ -68,6 +66,7 @@ class ProfileScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
                 _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),
+                _buildProfileOption(context, 'Mis direcciones', DirectionView()),
                 _buildProfileOption(context, 'Acerca de Nosotros', AcercaScreen()),
                 _buildProfileOption(context, 'Ayuda', AyudaScreen()),
               ],

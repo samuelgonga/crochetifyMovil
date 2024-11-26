@@ -8,7 +8,7 @@ class AuthService {
   static const _tokenKey = 'user_token';
 
   Future<Session?> login(String email, String password) async {
-    final url = Uri.parse('http://192.168.100.5:8080/api/crochetify/login');
+    final url = Uri.parse('http://192.168.0.200:8080/api/crochetify/login');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
