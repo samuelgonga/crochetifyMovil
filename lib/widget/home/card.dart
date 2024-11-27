@@ -5,128 +5,168 @@ import 'package:crochetify_movil/views/home/detail_view.dart';
 import 'package:crochetify_movil/models/stock.dart';
 
 class StockGrid extends StatelessWidget {
+  const StockGrid({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<StockViewModel>(builder: (context, stockViewModel, child) {
-      if (stockViewModel.isLoading) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      if (stockViewModel.stocks.isEmpty) {
-        return const Center(child: Text('No hay stocks disponibles'));
-      }
-      Map<int, List<Stock>> groupedStocks = {};
-      for (var stock in stockViewModel.stocks) {
-        if (!groupedStocks.containsKey(stock.product.idProduct)) {
-          groupedStocks[stock.product.idProduct] = [];
+    return Consumer<StockViewModel>(
+      builder: (context, stockViewModel, child) {
+        if (stockViewModel.isLoading) {
+          return const Center(child: CircularProgressIndicator());
         }
-        groupedStocks[stock.product.idProduct]?.add(stock);
-      }
+        if (stockViewModel.stocks.isEmpty) {
+          return const Center(child: Text('No hay stocks disponibles'));
+        }
 
-      return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
-        ),
-        itemCount: groupedStocks.length,
-        itemBuilder: (context, index) {
-          final productId = groupedStocks.keys.toList()[index];
-          final productStocks = groupedStocks[productId]!;
+        // Agrupar productos por `idProduct`
+        final groupedStocks = _groupStocksByProduct(stockViewModel.stocks);
 
-          final stock = productStocks.first;
-          final firstImage = stock.images.isNotEmpty ? stock.images[0] : '';
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            // Calcular el número de columnas dinámicamente
+            final crossAxisCount = constraints.maxWidth < 600 ? 2 : 4;
 
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-            child: Card(
-              elevation: 4,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailScreen(
-                        product: stock.product,
-                        stocks: productStocks,
-                      ),
-                    ),
-                  );
-                },
+            return GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 0.8,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+              ),
+              itemCount: groupedStocks.length,
+              itemBuilder: (context, index) {
+                final productId = groupedStocks.keys.toList()[index];
+                final productStocks = groupedStocks[productId]!;
+                final stock = productStocks.first;
+
+                return _buildProductCard(
+                  context: context,
+                  stock: stock,
+                  productStocks: productStocks,
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Método para agrupar stocks por `idProduct`
+  Map<int, List<Stock>> _groupStocksByProduct(List<Stock> stocks) {
+    final groupedStocks = <int, List<Stock>>{};
+    for (var stock in stocks) {
+      groupedStocks.putIfAbsent(stock.product.idProduct, () => []).add(stock);
+    }
+    return groupedStocks;
+  }
+
+  /// Método para construir la tarjeta de un producto
+  Widget _buildProductCard({
+    required BuildContext context,
+    required Stock stock,
+    required List<Stock> productStocks,
+  }) {
+    final firstImage = stock.images.isNotEmpty ? stock.images[0] : '';
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+      child: Card(
+        elevation: 4,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailScreen(
+                  product: stock.product,
+                  stocks: productStocks,
+                ),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(4)),
+                  child: Image.network(
+                    firstImage,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(child: Icon(Icons.image_not_supported)),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4)),
-                        child: Image.network(
-                          firstImage,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Center(
-                            child: Icon(Icons.image_not_supported),
-                          ),
+                    Center(
+                      child: Text(
+                        stock.product.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              stock.product.name,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
+                    const SizedBox(height: 4),
+                    Text(
+                      stock.product.description,
+                      style: const TextStyle(
+                        fontSize: 8,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: productStocks.map((stock) {
+                        return Container(
+                          margin: const EdgeInsets.only(right: 4.0),
+                          width: 16.0,
+                          height: 16.0,
+                          decoration: BoxDecoration(
+                            color: _tryParseColor(stock.color),
+                            shape: BoxShape.circle,
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            stock.product.description,
-                            style: const TextStyle(
-                                fontSize: 8, color: Colors.black87),
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: productStocks.map((stock) {
-                              return Container(
-                                margin: const EdgeInsets.only(right: 4.0),
-                                width: 16.0,
-                                height: 16.0,
-                                decoration: BoxDecoration(
-                                  color: Color(int.parse(
-                                      '0xff${stock.color.substring(1)}')),
-                                  shape: BoxShape.circle,
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          SizedBox(height: 8),
-                          Center(
-                            child: Text(
-                              '\$${stock.price.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
-                            ),
-                          ),
-                        ],
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        '\$${stock.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          );
-        },
-      );
-    });
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Método para intentar parsear un color
+  Color _tryParseColor(String color) {
+    try {
+      return Color(int.parse('0xff${color.substring(1)}'));
+    } catch (_) {
+      return Colors.grey; // Color predeterminado si el formato es inválido
+    }
   }
 }

@@ -1,0 +1,183 @@
+[
+    {
+      "id_stock": 1,
+      "color": "Rojo",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 10,
+      "status": 1,
+      "price": 99.99,
+      "product_id": 1
+    },
+    {
+      "id_stock": 2,
+      "color": "Azul",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 20,
+      "status": 1,
+      "price": 89.99,
+      "product_id": 1
+    },
+    {
+      "id_stock": 3,
+      "color": "Verde",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 15,
+      "status": 1,
+      "price": 79.99,
+      "product_id": 2
+    },
+    {
+      "id_stock": 4,
+      "color": "Negro",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 5,
+      "status": 1,
+      "price": 109.99,
+      "product_id": 2
+    },
+    {
+      "id_stock": 5,
+      "color": "Blanco",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 25,
+      "status": 1,
+      "price": 69.99,
+      "product_id": 3
+    },
+    {
+      "id_stock": 6,
+      "color": "Amarillo",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 8,
+      "status": 1,
+      "price": 59.99,
+      "product_id": 3
+    },
+    {
+      "id_stock": 7,
+      "color": "Gris",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 30,
+      "status": 1,
+      "price": 49.99,
+      "product_id": 4
+    },
+    {
+      "id_stock": 8,
+      "color": "Rosa",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 12,
+      "status": 1,
+      "price": 39.99,
+      "product_id": 4
+    },
+    {
+      "id_stock": 9,
+      "color": "Morado",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 18,
+      "status": 1,
+      "price": 119.99,
+      "product_id": 5
+    },
+    {
+      "id_stock": 10,
+      "color": "Naranja",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 22,
+      "status": 1,
+      "price": 129.99,
+      "product_id": 5
+    },
+    {
+      "id_stock": 11,
+      "color": "Dorado",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 14,
+      "status": 1,
+      "price": 139.99,
+      "product_id": 6
+    },
+    {
+      "id_stock": 12,
+      "color": "Plateado",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 7,
+      "status": 1,
+      "price": 149.99,
+      "product_id": 6
+    },
+    {
+      "id_stock": 13,
+      "color": "Marrón",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 9,
+      "status": 1,
+      "price": 89.99,
+      "product_id": 7
+    },
+    {
+      "id_stock": 14,
+      "color": "Turquesa",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 4,
+      "status": 1,
+      "price": 79.99,
+      "product_id": 7
+    },
+    {
+      "id_stock": 15,
+      "color": "Celeste",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 17,
+      "status": 1,
+      "price": 69.99,
+      "product_id": 8
+    },
+    {
+      "id_stock": 16,
+      "color": "Lila",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 6,
+      "status": 1,
+      "price": 59.99,
+      "product_id": 8
+    },
+    {
+      "id_stock": 17,
+      "color": "Violeta",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 21,
+      "status": 1,
+      "price": 49.99,
+      "product_id": 9
+    },
+    {
+      "id_stock": 18,
+      "color": "Cian",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 13,
+      "status": 1,
+      "price": 39.99,
+      "product_id": 9
+    },
+    {
+      "id_stock": 19,
+      "color": "Beige",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 11,
+      "status": 1,
+      "price": 129.99,
+      "product_id": 10
+    },
+    {
+      "id_stock": 20,
+      "color": "Caqui",
+      "image": "https://theamigurumi.com/wp-content/uploads/2024/01/Free-Crochet-Little-Peacock-Amigurumi-Pattern.jpg",
+      "quantity": 3,
+      "status": 1,
+      "price": 119.99,
+      "product_id": 10
+    }
+  ]
+  

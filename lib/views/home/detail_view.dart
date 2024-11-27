@@ -1,7 +1,10 @@
+import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:crochetify_movil/models/stock.dart';
 import 'package:crochetify_movil/models/producto.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -121,7 +124,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 }).toList(),
               ),
             ),
-
             SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.all(2.0),
@@ -186,10 +188,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.all(4),
                     child: Text(
-                      "Disponible: ${_selectedStock.quantity}", // Muestra cantidad disponible
+                      "Disponible: ${_selectedStock.quantity}",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -216,13 +218,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               }).toList(),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .center, // Centra los elementos horizontalmente
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   onPressed: _decrementQuantity,
-                  icon: const Icon(Icons.remove,
-                      color: Colors.blue), // Icono en azul
+                  icon: const Icon(Icons.remove, color: Colors.blue),
                 ),
                 Text(
                   "$_quantity",
@@ -234,7 +234,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ],
             ),
-            // Total a pagar
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
@@ -248,7 +247,57 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 60.0),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Lógica para agregar al carrito
+                  final authViewModel =
+                      Provider.of<AuthViewModel>(context, listen: false);
+                  final idUser = authViewModel.user!.id.toString();
+
+                  if (idUser == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Inicia sesión para agregar al carrito')),
+                    );
+                    return;
+                  }
+
+                  final cartViewModel =
+                      Provider.of<CartViewModel>(context, listen: false);
+
+                  // Verificamos si el carrito ya existe
+                  cartViewModel.fetchCart(5).then((_) {
+                    if (cartViewModel.cartData != null) {
+                      print("El carrito existe. Actualizando...");
+                      cartViewModel.updateCart(
+                        int.parse(idUser),
+                        _selectedStock.idStock,
+                        _quantity,
+                      );
+                    } else {
+                      print("El carrito no existe. Creando uno nuevo...");
+                      cartViewModel
+                          .addToCart(
+                        int.parse(idUser),
+                        _selectedStock.idStock,
+                        _quantity,
+                      )
+                          .then((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Producto agregado al carrito')),
+                        );
+                      }).catchError((e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Error al agregar al carrito: $e')),
+                        );
+                      });
+                    }
+                  }).catchError((e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('Error al verificar el carrito: $e')),
+                    );
+                  });
                 },
                 label: const Text(
                   'Agregar al carrito',
@@ -256,7 +305,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 icon: const Icon(Icons.arrow_forward, color: Colors.white),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Botón azul
+                  backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   minimumSize: Size(double.infinity, 50),
                 ),

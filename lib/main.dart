@@ -1,3 +1,5 @@
+import 'package:crochetify_movil/services/cart_service.dart';
+import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 import 'package:crochetify_movil/views/login/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +32,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthViewModel()..checkSession()),
         ChangeNotifierProvider(create: (_) => ProductViewModel()),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
+        ChangeNotifierProvider(
+          create: (_) => CartViewModel(cartService: CartService()),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

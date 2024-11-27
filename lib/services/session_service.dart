@@ -24,7 +24,8 @@ class AuthService {
         if (token != null && token.isNotEmpty) {
           // Decodificar el token para obtener el userId
           final decodedToken = JwtDecoder.decode(token);
-          final userId = decodedToken['idUser']; // Suponiendo que el id está en el token
+          final userId =
+              decodedToken['idUser']; // Suponiendo que el id está en el token
 
           // Crear la sesión con el userId extraído del token
           final session = Session(token: token, userId: userId);
@@ -37,7 +38,8 @@ class AuthService {
         throw Exception('Error en la respuesta del servidor');
       }
     } else {
-      throw Exception('Error al conectar con el servidor: ${response.statusCode}');
+      throw Exception(
+          'Error al conectar con el servidor: ${response.statusCode}');
     }
   }
 

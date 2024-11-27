@@ -4,6 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PagarWidget extends StatefulWidget {
+  final double total; // Recibir el total como parámetro
+
+  const PagarWidget({Key? key, required this.total}) : super(key: key);
+
   @override
   _PagarWidgetState createState() => _PagarWidgetState();
 }
@@ -20,7 +24,8 @@ class _PagarWidgetState extends State<PagarWidget> {
 
   Future<void> _makePayment() async {
     try {
-      paymentIntentData = await _createPaymentIntent('390', 'usd');
+      paymentIntentData = await _createPaymentIntent(
+          widget.total.toString(), 'usd'); // Usar el total recibido
       if (paymentIntentData != null) {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -153,7 +158,7 @@ class _PagarWidgetState extends State<PagarWidget> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2.0),
                     child: Text(
-                      '\$390.00',
+                      '\$${widget.total.toStringAsFixed(2)}', // Mostrar el total recibido
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
@@ -172,7 +177,7 @@ class _PagarWidgetState extends State<PagarWidget> {
                 backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
               ),
-              onPressed: _makePayment, // Llama a la lógica de Stripe
+              onPressed: _makePayment,
               child: Text(
                 'Pagar',
                 style: TextStyle(color: Colors.white),
