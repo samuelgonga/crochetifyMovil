@@ -9,27 +9,29 @@ class Stock {
   final Product product;
   final List<String> images;
 
-  Stock(
-      {required this.idStock,
-      required this.color,
-      required this.quantity,
-      required this.price,
-      required this.status,
-      required this.product,
-      required this.images});
+  Stock({
+    required this.idStock,
+    required this.color,
+    required this.quantity,
+    required this.price,
+    required this.status,
+    required this.product,
+    required this.images,
+  });
 
   factory Stock.fromJson(Map<String, dynamic> json) {
-    var imagesList =
-        (json['images'] as List).map((i) => i['image'] as String).toList();
+  // Asegúrate de que cada elemento sea una cadena y maneja el caso de nulo
+  var imagesList = (json['images'] as List?)?.map((image) => image.toString()).toList() ?? [];
 
-    return Stock(
-      idStock: json['idStock'],
-      color: json['color'],
-      quantity: json['quantity'],
-      price: json['price'].toDouble(),
-      status: json['status'],
-      product: Product.fromJson(json['product']),
-      images: imagesList,
-    );
-  }
+  return Stock(
+    idStock: json['idStock'],
+    color: json['color'],
+    quantity: json['quantity'],
+    price: json['price'].toDouble(),
+    status: json['status'],
+    product: Product.fromJson(json['product']),
+    images: imagesList,
+  );
+}
+
 }

@@ -14,12 +14,14 @@ class StockGrid extends StatelessWidget {
       if (stockViewModel.stocks.isEmpty) {
         return const Center(child: Text('No hay stocks disponibles'));
       }
+      // Agrupar los stocks por `idProduct`
       Map<int, List<Stock>> groupedStocks = {};
       for (var stock in stockViewModel.stocks) {
-        if (!groupedStocks.containsKey(stock.product.idProduct)) {
-          groupedStocks[stock.product.idProduct] = [];
+        final productId = stock.product.idProduct;
+        if (!groupedStocks.containsKey(productId)) {
+          groupedStocks[productId] = [];
         }
-        groupedStocks[stock.product.idProduct]?.add(stock);
+        groupedStocks[productId]?.add(stock);
       }
 
       return GridView.builder(
@@ -83,7 +85,7 @@ class StockGrid extends StatelessWidget {
                                   fontWeight: FontWeight.bold, fontSize: 18),
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             stock.product.description,
                             style: const TextStyle(
@@ -91,7 +93,7 @@ class StockGrid extends StatelessWidget {
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: productStocks.map((stock) {
@@ -107,7 +109,7 @@ class StockGrid extends StatelessWidget {
                               );
                             }).toList(),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Center(
                             child: Text(
                               '\$${stock.price.toStringAsFixed(2)}',

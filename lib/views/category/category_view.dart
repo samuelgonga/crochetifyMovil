@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:crochetify_movil/services/category_service.dart'; // El servicio que creamos
-import 'package:crochetify_movil/models/category.dart'; // Tu modelo de datos
+import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/category_viewmodel.dart';
 import 'package:crochetify_movil/views/category/category_product_view.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -9,65 +9,114 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  late Future<List<Category>> futureCategories;
-
   @override
   void initState() {
     super.initState();
-    futureCategories = CategoryService().fetchCategories(); // Llama al servicio ajustado
+    // Inicializa las categorías de forma segura después de que se construya el widget
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CategoryViewModel>(context, listen: false).initializeCategories();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final categoryViewModel = Provider.of<CategoryViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Categorías',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30.0),
-        child: FutureBuilder<List<Category>>(
-          future: futureCategories,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text("No hay categorías disponibles"));
-            } else {
-              final categories = snapshot.data!;
-              return ListView.builder(
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return ListTile(
-                    title: Text(
-                      category.name, // Muestra el nombre de la categoría
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    trailing: Icon(
-                      Icons.arrow_forward_rounded,
-                      color: Colors.blue,
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CategoryProductView(),
+      body: categoryViewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : categoryViewModel.errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error, color: Colors.red, size: 60),
+                      const SizedBox(height: 10),
+                      Text(
+                        categoryViewModel.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
-                      );
-                    },
-                  );
-                },
-              );
-            }
-          },
-        ),
-      ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: categoryViewModel.fetchCategories,
+                        child: const Text("Reintentar"),
+                      ),
+                    ],
+                  ),
+                )
+              : categoryViewModel.categories.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No hay categorías disponibles.",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20.0,
+                        horizontal: 10.0,
+                      ),
+                      child: ListView.builder(
+                        itemCount: categoryViewModel.categories.length,
+                        itemBuilder: (context, index) {
+                          final category = categoryViewModel.categories[index];
+                          return Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(10.0),
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.blue[100],
+                                child: Text(
+                                  category.name.substring(0, 1).toUpperCase(),
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                category.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              trailing: const Icon(
+                                Icons.arrow_forward_rounded,
+                                color: Colors.blue,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CategoryProductView(
+                                      categoryTitle: category.name,
+                                      categoryId: category.idCategory,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
     );
   }
 }

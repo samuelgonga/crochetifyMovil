@@ -1,195 +1,186 @@
 import 'package:flutter/material.dart';
-import 'package:crochetify_movil/models/product.dart';
-import 'package:crochetify_movil/services/product_service.dart';
+import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
 
 class CategoryProductView extends StatefulWidget {
-  const CategoryProductView({super.key});
+  final String categoryTitle;
+  final int categoryId;
+
+  const CategoryProductView({
+    Key? key,
+    required this.categoryTitle,
+    required this.categoryId,
+  }) : super(key: key);
 
   @override
   _CategoryProductViewState createState() => _CategoryProductViewState();
 }
 
 class _CategoryProductViewState extends State<CategoryProductView> {
-  late Future<List<Product>> _fetchProductsFuture;
-  String _searchQuery = '';
-
   @override
   void initState() {
     super.initState();
-    _fetchProductsFuture = ProductService().fetchProducts();
+    // Ejecuta la carga inicial de los stocks de forma segura
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("Iniciando carga de stocks para la categoría: ${widget.categoryId}");
+      Provider.of<StockViewModel>(context, listen: false)
+          .fetchStocksByCategory(widget.categoryId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final stockViewModel = Provider.of<StockViewModel>(context);
+
+    print("Estado de carga: ${stockViewModel.isLoading}");
+    print("Stocks cargados: ${stockViewModel.stocks}");
+    print("Error en la carga: ${stockViewModel.errorMessage}");
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Productos'),
+        title: Text(
+          widget.categoryTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          // Campo de búsqueda
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Buscar productos...',
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                prefixIcon: const Icon(Icons.search),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value.toLowerCase();
-                });
-              },
-            ),
-          ),
-          // FutureBuilder para mostrar la lista de productos
-          Expanded(
-            child: FutureBuilder<List<Product>>(
-              future: _fetchProductsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "Error al cargar los productos:\n${snapshot.error}",
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text("No hay productos disponibles"),
-                  );
-                } else {
-                  // Filtra productos según la búsqueda
-                  final filteredProducts = snapshot.data!.where((product) {
-                    return product.name.toLowerCase().contains(_searchQuery);
-                  }).toList();
+      body: stockViewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : stockViewModel.errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error, color: Colors.red, size: 60),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Error: ${stockViewModel.errorMessage}",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          print("Reintentando carga de stocks...");
+                          stockViewModel.fetchStocksByCategory(widget.categoryId);
+                        },
+                        child: const Text("Reintentar"),
+                      ),
+                    ],
+                  ),
+                )
+              : stockViewModel.stocks.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No hay productos disponibles en esta categoría.",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      ),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: stockViewModel.stocks.length,
+                      itemBuilder: (context, index) {
+                        final stock = stockViewModel.stocks[index];
 
-                  return filteredProducts.isEmpty
-                      ? const Center(
-                          child: Text("No se encontraron productos"),
-                        )
-                      : GridView.builder(
-                          padding: const EdgeInsets.all(8.0),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Dos tarjetas por fila
-                            crossAxisSpacing: 5.0,
-                            mainAxisSpacing: 5.0,
-                            childAspectRatio: 0.75,
+                        // Uso de imagen de marcador de posición si no hay imágenes disponibles
+                        final firstImage = stock.images.isNotEmpty
+                            ? stock.images[0]
+                            : 'https://via.placeholder.com/150';
+
+                        print("Renderizando stock: ${stock.product.name}");
+
+                        return Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          itemCount: filteredProducts.length,
-                          itemBuilder: (context, index) {
-                            final product = filteredProducts[index];
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              elevation: 5.0,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Imagen del producto
-                                  Container(
-                                    height: 100.0,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(16.0),
-                                        topRight: Radius.circular(16.0),
-                                      ),
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/ness.jpeg'),
-                                        fit: BoxFit.cover,
-                                      ),
+                          child: InkWell(
+                            onTap: () {
+                              print("Stock seleccionado: ${stock.product.name}");
+                              // Aquí puedes implementar navegación a una vista de detalles
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(10),
+                                    ),
+                                    child: Image.network(
+                                      firstImage,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        print("Error al cargar imagen: $error");
+                                        return const Center(
+                                          child: Icon(Icons.image_not_supported),
+                                        );
+                                      },
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Nombre del producto
-                                        Text(
-                                          product.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                          ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        stock.product.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                         ),
-                                        const SizedBox(height: 10.0),
-                                        // Descripción del producto
-                                        Text(
-                                          product.description,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 12.0,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10.0),
-                                        // Precio
-                                        Text(
-                                          '\$235', // Ajusta con el precio real si está disponible
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Botón de añadir al carrito
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Container(
-                                      width: 50.0, // Ancho del contenedor
-                                      height: 50.0, // Alto del contenedor
-                                      decoration: BoxDecoration(
-                                        shape:
-                                            BoxShape.circle, // Forma circular
-                                        color: Colors.blue.withOpacity(
-                                            0.08), // Color de fondo opcional
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      child: IconButton(
-                                        iconSize: 40.0, // Tamaño del ícono
-                                        icon: const Icon(
-                                          Icons.add_circle,
-                                          color: Colors.blue,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        stock.product.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
                                         ),
-                                        onPressed: () {
-                                          // Acción al añadir al carrito
-                                        },
                                       ),
-                                    ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Precio: \$${stock.price.toStringAsFixed(2)}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Cantidad: ${stock.quantity}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
-                          },
+                                ),
+                              ],
+                            ),
+                          ),
                         );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
+                      },
+                    ),
     );
   }
 }
