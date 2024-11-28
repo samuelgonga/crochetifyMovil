@@ -113,14 +113,10 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                         CircleAvatar(
                           radius: 60,
                           backgroundImage: _image != null
-                              ? (File(_image!.path).existsSync()
-                                  ? FileImage(File(_image!.path))
-                                  : const NetworkImage(
-                                      'https://affinitaslegal.com/wp-content/uploads/2023/10/imagen-perfil-sin-foto.jpg'))
+                              ? FileImage(File(_image!.path))
                               : (user?.image != null
-                                  ? NetworkImage(user!.image)
-                                  : const NetworkImage(
-                                      'https://affinitaslegal.com/wp-content/uploads/2023/10/imagen-perfil-sin-foto.jpg'))
+                                      ? NetworkImage(user!.image)
+                                      : AssetImage('assets/images/default_avatar.png'))
                                   as ImageProvider,
                           backgroundColor: Colors.grey[200],
                         ),
@@ -233,44 +229,44 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                           },
                         );
 
-                        try {
-                          String? imageBase64;
-                          if (_image != null) {
-                            File imageFile = File(_image!.path);
-                            imageBase64 = await compressAndConvertImageToBase64(
-                                imageFile);
-                          }
+                        // try {
+                        //   String? imageBase64;
+                        //   if (_image != null) {
+                        //     File imageFile = File(_image!.path);
+                        //     imageBase64 = await compressAndConvertImageToBase64(
+                        //         imageFile);
+                        //   }
 
-                          final success = await _userService.updateUser(
-                            userId: user!.id,
-                            name: user.name,
-                            imageBase64:
-                                imageBase64, // Pasar la imagen como base64
-                          );
+                        //   final success = await _userService.updateUser(
+                        //     userId: user!.id,
+                        //     name: user.name,
+                        //     imageBase64:
+                        //         imageBase64, // Pasar la imagen como base64
+                        //   );
 
-                          Navigator.pop(
-                              context); // Cierra el indicador de carga
+                        //   Navigator.pop(
+                        //       context); // Cierra el indicador de carga
 
-                          if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Perfil actualizado con éxito')),
-                            );
-                            Navigator.pop(context, true);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text('Error al actualizar el perfil')),
+                        //   if (success) {
+                        //     ScaffoldMessenger.of(context).showSnackBar(
+                        //       SnackBar(
+                        //           content:
+                        //               Text('Perfil actualizado con éxito')),
+                        //     );
+                        //     Navigator.pop(context, true);
+                        //   } else {
+                        //     ScaffoldMessenger.of(context).showSnackBar(
+                        //       SnackBar(
+                        //           content:
+                        //               Text('Error al actualizar el perfil')),
 
-                            );
-                          }
-                        } catch (e) {
-                          Navigator.pop(
-                              context); // Cierra el indicador de carga
-                          _showErrorDialog('Error al guardar los cambios: $e');
-                        }
+                        //     );
+                        //   }
+                        // } catch (e) {
+                        //   Navigator.pop(
+                        //       context); // Cierra el indicador de carga
+                        //   _showErrorDialog('Error al guardar los cambios: $e');
+                        // }
                       }
                     },
                     child: Text(

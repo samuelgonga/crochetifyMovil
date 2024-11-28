@@ -20,14 +20,20 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchDirectionsByUserId(int userId) async {
-    try {
-      _directions = await _userService.fetchDirectionsByUserId(userId);
-      notifyListeners();
-    } catch (e) {
-      print("Error fetching directions: $e");
-    }
+Future<void> fetchDirectionsByUserId(int userId) async {
+  try {
+    // Llamada al servicio para obtener las direcciones del usuario
+    _directions = await _userService.fetchDirectionsByUserId(userId);
+    
+    // Imprimir las direcciones para ver si se han cargado correctamente
+    print("Direcciones cargadas para el usuario $userId: $_directions");
+    
+    notifyListeners();
+  } catch (e) {
+    print("Error fetching directions: $e");
   }
+}
+
 
   Future<void> addDirection(Direction direction) async {
   try {

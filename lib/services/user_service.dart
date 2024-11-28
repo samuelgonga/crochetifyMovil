@@ -87,13 +87,14 @@ class UserService {
       if (data['success']) {
         final directionsMap = data['response'] as Map<String, dynamic>;
         final directions = directionsMap.values.map((value) {
-          return Direction(
-              userId: userId,
-              direction: value['direction'] ??
-                  '', // Si 'direction' es null, asigna una cadena vacía
-              phone: value['phone'] ??
-                  '', // Si 'phone' es null, asigna una cadena vacía
-              idDirection: 0);
+          return Direction(  
+            userId: userId,          
+            direction: value['direction'] ??
+                '', // Si 'direction' es null, asigna una cadena vacía
+            phone: value['phone'] ??
+                '', // Si 'phone' es null, asigna una cadena vacía
+            idDirection: value['idDirection'] ?? 0,        
+          );
         }).toList();
 
         return directions;
@@ -122,36 +123,36 @@ class UserService {
     return token;
   }
 
-  Future<void> updateUserWithImage(int userId, String name) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  // Future<void> updateUserWithImage(int userId, String name) async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      final imageFile = File(pickedFile.path);
-      String? base64Image = await compressImage(
-          imageFile); // Comprimir la imagen y convertirla a base64
+  //   if (pickedFile != null) {
+  //     final imageFile = File(pickedFile.path);
+  //     String? base64Image = await compressImage(
+  //         imageFile); // Comprimir la imagen y convertirla a base64
 
-      if (base64Image != null) {
-        // Llamar al método de actualización con la imagen convertida a base64
-        final success = await updateUser(
-            userId: userId,
-            name: name,
-            imageBase64:
-                base64Image // Pasa la imagen comprimida y convertida a base64
-            );
+  //     if (base64Image != null) {
+  //       // Llamar al método de actualización con la imagen convertida a base64
+  //       final success = await updateUser(
+  //           userId: userId,
+  //           name: name,
+  //           imageBase64:
+  //               base64Image // Pasa la imagen comprimida y convertida a base64
+  //           );
 
-        if (success) {
-          print('Usuario actualizado correctamente');
-        } else {
-          print('Error al actualizar el usuario');
-        }
-      } else {
-        print('No se pudo comprimir la imagen');
-      }
-    } else {
-      print('No se seleccionó ninguna imagen');
-    }
-  }
+  //       if (success) {
+  //         print('Usuario actualizado correctamente');
+  //       } else {
+  //         print('Error al actualizar el usuario');
+  //       }
+  //     } else {
+  //       print('No se pudo comprimir la imagen');
+  //     }
+  //   } else {
+  //     print('No se seleccionó ninguna imagen');
+  //   }
+  // }
 
   Future<bool> updateUser({
     required int userId,

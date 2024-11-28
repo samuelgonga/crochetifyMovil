@@ -4,7 +4,7 @@ import 'package:crochetify_movil/models/sent_cart.dart';
 import 'package:crochetify_movil/models/cart.dart'; // Importa ApiResponse
 
 class CartService {
-  final String baseUrl = "http://192.168.1.65:8080/api/crochetify/cart";
+  final String baseUrl = "http://18.215.115.34:8087/api/crochetify/cart";
 
   // Obtener Carrito por id
   Future<ApiResponse?> getCart(int cartId) async {

@@ -38,7 +38,7 @@ dependencies:
   http: ^1.1.0
   flutter_stripe: 11.3.0
   jwt_decoder: ^2.0.1
-  image: ^4.3.0
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +71,7 @@ flutter:
       - assets/images/
       - assets/user.json
       - assets/cart.json
+      
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

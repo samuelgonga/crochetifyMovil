@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.category), label: 'Categorias'),
+                  icon: Icon(Icons.category), label: 'Categorías'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.shopping_cart), label: 'Carrito'),
               BottomNavigationBarItem(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/category_viewmodel.dart';
 import 'package:crochetify_movil/views/category/category_product_view.dart';
+import 'dart:math';
 
 class CategoryScreen extends StatefulWidget {
   @override
@@ -16,6 +17,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CategoryViewModel>(context, listen: false).initializeCategories();
     });
+  }
+
+  // Función para generar colores aleatorios
+  Color getRandomColor() {
+    Random random = Random();
+    return Color.fromRGBO(
+      random.nextInt(256), // Rojo
+      random.nextInt(256), // Verde
+      random.nextInt(256), // Azul
+      1, // Opacidad
+    );
   }
 
   @override
@@ -82,11 +94,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(10.0),
                               leading: CircleAvatar(
-                                backgroundColor: Colors.blue[100],
+                                backgroundColor: getRandomColor(), // Color aleatorio
                                 child: Text(
                                   category.name.substring(0, 1).toUpperCase(),
                                   style: const TextStyle(
-                                    color: Colors.blue,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

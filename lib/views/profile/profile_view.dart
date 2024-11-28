@@ -25,42 +25,34 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Imagen de perfil y botón Editar
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: (user?.image != null && user!.image.isNotEmpty)
-                    ? NetworkImage(user.image) // Usamos la imagen del usuario si existe
-                    : const NetworkImage(
-                        'https://affinitaslegal.com/wp-content/uploads/2023/10/imagen-perfil-sin-foto.jpg', // Imagen predeterminada
-                      ),
+          // Se ha eliminado el CircleAvatar
+          // Solo dejamos el botón de editar en el lugar adecuado
+          Positioned(
+            right: -10,
+            bottom: 0,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfileEdit()));
+              },
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(10),
+                backgroundColor: Colors.blue,
               ),
-              Positioned(
-                right: -10,
-                bottom: 0,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ProfileEdit()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: CircleBorder(),
-                    padding: EdgeInsets.all(10),
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: Icon(Icons.edit, color: Colors.white),
-                ),
-              ),
-            ],
+              child: Icon(Icons.edit, color: Colors.white),
+            ),
           ),
           const SizedBox(height: 10),
           Text(
-            user?.name ?? 'Correo no disponible',
+            user?.email ?? 'Correo no disponible',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 30),          
+          const SizedBox(height: 30),
+          Text(
+            "¡Hola ${user?.name ?? 'Usuario'}!", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),  
+          const SizedBox(height: 10),        
           Expanded(
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 16),
