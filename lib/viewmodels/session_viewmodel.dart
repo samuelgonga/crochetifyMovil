@@ -5,9 +5,11 @@ import '../models/session.dart';
 import 'package:crochetify_movil/models/user.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:crochetify_movil/services/user_service.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
   bool _isLoggedIn = false;
   Session? _session;
   User? _user;
@@ -16,56 +18,60 @@ class AuthViewModel extends ChangeNotifier {
   Session? get session => _session;
   User? get user => _user;
 
-  // Verifica si ya hay una sesión activa
-  Future<void> checkSession() async {    
+  Future<void> checkSession() async {
     final token = await _authService.getToken();
     _isLoggedIn = token != null;
+
     if (_isLoggedIn) {
-      _session = Session(token: token!, userId: _extractUserId(token));
-      await fetchUserDetails(); // Obtiene los detalles del usuario
-    }    
+      // Verificar si el token ha expirado
+      if (token != null && JwtDecoder.isExpired(token)) {
+        await logout(); // Si el token ha expirado, cerrar la sesión
+      } else if (token != null) {
+        _session = Session(token: token, userId: _extractUserId(token));
+        await fetchUserDetails(); // Obtiene los detalles del usuario
+      }
+    }
     notifyListeners();
   }
 
   // Extrae el userId del token
   int _extractUserId(String token) {
     final decodedToken = JwtDecoder.decode(token);
-    return decodedToken['idUser'];
+    final userId = decodedToken['idUser'];
+
+    // Verifica si el userId es null o no está presente
+    if (userId == null) {
+      throw Exception('El userId no está presente en el token.');
+    }
+
+    return userId;
   }
 
   // Obtiene los detalles del usuario desde el servidor usando el userId
   Future<void> fetchUserDetails() async {
     if (_session != null) {
-      // Decodificar el token y extraer el userId
       final tokenData = JwtDecoder.decode(_session!.token);
       final userId = tokenData['idUser']; // Extraer el userId del token
 
-      // Aquí hacemos una solicitud GET al servidor para obtener los detalles del usuario
       final url =
-          Uri.parse('http://18.215.115.34:8087/api/crochetify/users/$userId');
+          Uri.parse('http://192.168.100.5:8080/api/crochetify/users/$userId');
       final response = await http.get(url, headers: {
-        //'Authorization': 'Bearer ${_session!.token}', // Usamos el token para autenticación
+        'Authorization':
+            'Bearer ${_session!.token}', // Usamos el token para autenticación
       });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(
-            'Respuesta del servidor: $data'); // Ver lo que realmente está regresando el servidor
 
         if (data['success'] == true && data['response'] != null) {
-          final userData =
-              data['response']['user']; // Acceder a la información del usuario
+          final userData = data['response']['user'];
 
           _user = User(
-            id: userData['idUser'], // Extraemos el idUser de la respuesta
-            name: userData['name'] ??
-                '', // Si no tiene nombre, asignamos una cadena vacía
-            email: userData['email'] ??
-                '', // Si no tiene email, asignamos una cadena vacía
-            status: userData['status'] ??
-                true, // Asignamos un valor por defecto si no existe
-            image: userData['image'] ??
-                '', // Asignamos una cadena vacía si no tiene imagen
+            id: userData['idUser'],
+            name: userData['name'] ?? '',
+            email: userData['email'] ?? '',
+            status: userData['status'] ?? true,
+            image: userData['image'] ?? '',
           );
         } else {
           throw Exception(

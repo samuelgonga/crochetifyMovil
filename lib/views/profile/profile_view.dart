@@ -31,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 50,
-                backgroundImage: user!.image.isNotEmpty
+                backgroundImage: (user?.image != null && user!.image.isNotEmpty)
                     ? NetworkImage(user.image) // Usamos la imagen del usuario si existe
                     : const NetworkImage(
                         'https://affinitaslegal.com/wp-content/uploads/2023/10/imagen-perfil-sin-foto.jpg', // Imagen predeterminada
@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            user.email ?? 'Correo no disponible',
+            user?.name ?? 'Correo no disponible',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 30),          
