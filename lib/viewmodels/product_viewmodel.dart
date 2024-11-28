@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:crochetify_movil/models/product.dart';
+import 'package:crochetify_movil/models/stock.dart';
 import 'package:crochetify_movil/services/product_service.dart';
 
 class ProductViewModel extends ChangeNotifier {
-  final ProductService _productService = ProductService();
-  List<Product> _products = [];
+  final ProductService _productService;
+  List<Stock> _stocks = [];
+  String? _errorMessage;
 
-  List<Product> get products => _products;
+  ProductViewModel(this._productService); // Requiere ProductService como dependencia
 
-  Future<void> fetchProducts() async {
+  List<Stock> get stocks => _stocks;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> fetchStocksByCategory(int categoryId) async {
     try {
-      _products = await _productService.fetchProducts();
-      notifyListeners();
+      _errorMessage = null; // Limpia cualquier error previo
+      _stocks = await _productService.fetchStocksByCategory(categoryId);
+      notifyListeners(); // Notifica cambios a los listeners
     } catch (e) {
-      print("Error fetching products: $e");
+      _errorMessage = "Error fetching stocks: $e";
+      print(_errorMessage);
+      notifyListeners(); // Notifica cambios a los listeners
     }
   }
 }

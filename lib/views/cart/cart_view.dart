@@ -52,8 +52,7 @@ class _CartViewState extends State<CartView> {
                     },
                   ),
           ),
-          PagarWidget(
-              total: 69), // Puedes actualizar el total según sea necesario
+          PagarWidget(), // Puedes actualizar el total según sea necesario
         ],
       ),
     );

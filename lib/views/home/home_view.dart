@@ -1,27 +1,24 @@
-import 'package:crochetify_movil/widget/home/card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
 import 'package:crochetify_movil/widget/home/custom_buttom.dart';
 import 'package:crochetify_movil/widget/home/carousel.dart';
-import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
+import 'package:crochetify_movil/widget/home/card.dart';
 
 class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+  const ProductList({Key? key}) : super(key: key);
 
   @override
   _ProductListState createState() => _ProductListState();
 }
 
 class _ProductListState extends State<ProductList> {
-  late Future<void> _fetchStocksFuture;
-
   @override
   void initState() {
     super.initState();
-    // Usamos addPostFrameCallback para asegurarnos de que el contexto esté disponible.
+    // Cargar todos los stocks al inicio
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchStocksFuture =
-          Provider.of<StockViewModel>(context, listen: false).fetchStocks();
+      Provider.of<StockViewModel>(context, listen: false).fetchStocksByCategory(0);
     });
   }
 
@@ -66,7 +63,7 @@ class _ProductListState extends State<ProductList> {
             ]),
           ),
           Expanded(
-            child: StockGrid(),
+            child: StockGrid(), // Mostrar todos los stocks en el StockGrid
           ),
         ],
       ),

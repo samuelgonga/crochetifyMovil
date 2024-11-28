@@ -1,32 +1,31 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:crochetify_movil/models/product.dart';
+import 'package:crochetify_movil/models/stock.dart';
 
 class ProductService {
-  final String baseUrl = "http://192.168.111.125:8080/api/crochetify";
+  final String baseUrl = "http://18.215.115.34:8087/api/crochetify";
 
-  Future<List<Product>> fetchProducts() async {
+  Future<List<Stock>> fetchStocksByCategory(int categoryId) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/products'));
+      final response =
+          await http.get(Uri.parse('$baseUrl/stocks?categoryId=$categoryId'));
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body);
 
-        // Verificar si la clave "response" y luego "products" existen
         if (jsonResponse['response'] != null &&
-            jsonResponse['response']['products'] != null) {
-          final List<dynamic> products =
-              jsonResponse['response']['products']; // Aquí se corrige el error
-          return products.map((json) => Product.fromJson(json)).toList();
+            jsonResponse['response']['stocks'] != null) {
+          final stocks = jsonResponse['response']['stocks'] as List;
+          return stocks.map((json) => Stock.fromJson(json)).toList();
         } else {
-          throw Exception("No se encontraron productos");
+          throw Exception("Estructura de respuesta inesperada");
         }
       } else {
         throw Exception(
-            "Error al cargar los productos: ${response.statusCode}");
+            "Error en la respuesta del servidor: ${response.statusCode}");
       }
     } catch (e) {
-      throw Exception('Error de red o servidor: $e');
+      throw Exception("Error al intentar cargar stocks: $e");
     }
   }
 }
