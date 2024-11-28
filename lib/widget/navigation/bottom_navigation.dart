@@ -21,10 +21,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Vistas para usuarios autenticados
   final List<Widget> _viewsLogin = [
-    const ProductList(), // Página de productos 
+    const ProductList(), // Página de productos
     CategoryScreen(),
     //CategoryProductView(),
-    CartView(), // Página del carrito
+    CartView(
+      cartId: 5,
+    ), // Página del carrito
     ProfileScreen(), // Página del perfil
   ];
 
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           body: currentViews[_selectedIndex],
           bottomNavigationBar: BottomNavigationBar(
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),              
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.category), label: 'Categorias'),
               BottomNavigationBarItem(

@@ -1,33 +1,27 @@
-import 'dart:convert';
-
-import 'package:crochetify_movil/models/cart.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 import 'package:crochetify_movil/views/cart/item_cart.dart';
 import 'package:crochetify_movil/widget/payment/pagar_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class CartView extends StatefulWidget {
+  final int cartId;
+
+  const CartView({Key? key, required this.cartId}) : super(key: key);
+
   @override
   _CartViewState createState() => _CartViewState();
 }
 
 class _CartViewState extends State<CartView> {
-  List<Cart> cartItems = [];
-
   @override
   void initState() {
     super.initState();
-    _loadCartItems();
-  }
 
-  Future<void> _loadCartItems() async {
-    final String jsonString = await rootBundle.loadString('assets/cart.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
-
-    setState(() {
-      cartItems = jsonData.map((item) => Cart.fromJson(item)).toList();
+    // Llama a fetchCart después de que el árbol de widgets esté construido
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<CartViewModel>(context, listen: false);
+      viewModel.fetchCart(widget.cartId);
     });
   }
 
@@ -41,16 +35,29 @@ class _CartViewState extends State<CartView> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: cartItems.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      // Cambiado 'id' a 'idCart'
-                      return CartItem(cartId: cartItems[index].idCart);
-                    },
-                  ),
+            child: Consumer<CartViewModel>(
+              builder: (context, viewModel, child) {
+                if (viewModel.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (viewModel.hasError) {
+                  return const Center(
+                      child: Text('Error al cargar el carrito'));
+                }
+                if (viewModel.cartProducts.isEmpty) {
+                  return const Center(
+                      child: Text('No hay productos en el carrito'));
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  itemCount: viewModel.cartProducts.length,
+                  itemBuilder: (context, index) {
+                    final product = viewModel.cartProducts[index];
+                    return CartItem(cartId: 5); // CartItem renderizado
+                  },
+                );
+              },
+            ),
           ),
           PagarWidget(), // Puedes actualizar el total según sea necesario
         ],

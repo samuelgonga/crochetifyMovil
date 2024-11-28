@@ -6,7 +6,8 @@ import 'package:crochetify_movil/services/cart_service.dart';
 class CartViewModel extends ChangeNotifier {
   final CartService _cartService;
 
-  CartViewModel({required CartService cartService}) : _cartService = cartService;
+  CartViewModel({required CartService cartService})
+      : _cartService = cartService;
 
   ApiResponse? _cartData;
   bool _isLoading = false;
@@ -15,21 +16,26 @@ class CartViewModel extends ChangeNotifier {
   ApiResponse? get cartData => _cartData;
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
-  List<CartProduct> get cartProducts => _cartData?.cart.cartProducts ?? [];
+
+  // Modificación aquí para evitar el error de "null"
+  List<CartProduct> get cartProducts {
+    // Verifica si _cartData es null antes de acceder a cartProducts
+    return _cartData?.response.cart.cartProducts ?? [];
+  }
 
   // Método para obtener el carrito por ID
   Future<void> fetchCart(int cartId) async {
-    _isLoading = true;
-    _hasError = false;
-    notifyListeners();
-
     try {
-      final data = await _cartService.getCart(cartId);
-      if (data != null) {
-        _cartData = data.response as ApiResponse?;
-        notifyListeners();  // Notificar para actualizar la UI
+      _isLoading = true;
+      _hasError = false;
+      notifyListeners();
+
+      final data = await _cartService.getCart(cartId); // data ya es ApiResponse
+      if (data != null && data.success) {
+        _cartData = data; // Asignar el ApiResponse completo
       } else {
         _hasError = true;
+        print("No se pudo obtener el carrito o la respuesta fue incorrecta.");
       }
     } catch (e) {
       _hasError = true;

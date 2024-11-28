@@ -43,11 +43,13 @@ class CartEmpty extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(), // Navega a ProfileScreen
+                      builder: (context) =>
+                          ProfileScreen(), // Navega a ProfileScreen
                     ),
                   );
                 },
-                child: Text('Ir a la Tienda', style: TextStyle(color: Colors.white)),
+                child: Text('Ir a la Tienda',
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
             SizedBox(height: 12.0),
@@ -61,11 +63,14 @@ class CartEmpty extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CartView(), // Navega a CartView (anteriormente CartS)
+                      builder: (context) => CartView(
+                        cartId: 5,
+                      ), // Navega a CartView (anteriormente CartS)
                     ),
                   );
                 },
-                child: Text('LLenar carrito', style: TextStyle(color: Colors.white)),
+                child: Text('LLenar carrito',
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
           ],

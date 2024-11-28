@@ -9,22 +9,19 @@ class CartService {
   // Obtener Carrito por id
   Future<ApiResponse?> getCart(int cartId) async {
     final url = Uri.parse('$baseUrl/$cartId');
-
     try {
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
-        // Imprime el JSON completo recibido
-        print("Respuesta exitosa: ${response.body}");
-        // Convierte el JSON en un objeto ApiResponse
-        return ApiResponse.fromJson(jsonDecode(response.body));
+        final data = json.decode(response.body);
+        return ApiResponse.fromJson(data); // Construir ApiResponse
       } else {
-        // Imprime el error recibido desde el servidor
-        print("Error HTTP ${response.statusCode}: ${response.body}");
+        print("Error al obtener el carrito: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      print("Error al realizar la solicitud: $e");
-      rethrow;
+      print("Error en la solicitud: $e");
+      return null;
     }
   }
 
