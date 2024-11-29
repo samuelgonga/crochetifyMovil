@@ -54,7 +54,7 @@ class AuthViewModel extends ChangeNotifier {
       final userId = tokenData['idUser']; // Extraer el userId del token
 
       final url =
-          Uri.parse('http://192.168.100.5:8080/api/crochetify/users/$userId');
+          Uri.parse('http://35.153.187.92:8087/api/crochetify/users/$userId');
       final response = await http.get(url, headers: {
         'Authorization':
             'Bearer ${_session!.token}', // Usamos el token para autenticación

@@ -13,6 +13,8 @@ class _DirectionFormState extends State<DirectionForm> {
   final TextEditingController directionController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
+  bool isLoading = false; // Para controlar el estado de carga
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthViewModel>(context).user;
@@ -59,43 +61,65 @@ class _DirectionFormState extends State<DirectionForm> {
               ),
             ),
             SizedBox(height: 32),
-            
+
             // Centramos el botón
             Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final direction = directionController.text;
-                  final phone = phoneController.text;
+              child: isLoading
+                  ? CircularProgressIndicator() // Indicador de carga
+                  : ElevatedButton(
+                      onPressed: () async {
+                        final direction = directionController.text;
+                        final phone = phoneController.text;
 
-                  // Verificar si los datos están correctos
-                  if (direction.isNotEmpty && phone.isNotEmpty && user != null) {
-                    // Crear una nueva dirección
-                    final newDirection = Direction(
-                      direction: direction,
-                      phone: phone,
-                      idDirection: 0,  // Asigna 0 o el valor adecuado
-                      userId: user.id, // El ID del usuario
-                    );
+                        // Verificar si los datos están completos
+                        if (direction.isNotEmpty && phone.isNotEmpty && user != null) {
+                          // Mostrar indicador de carga
+                          setState(() {
+                            isLoading = true;
+                          });
 
-                    // Agregar la dirección a la lista del UserViewModel
-                    await Provider.of<UserViewModel>(context, listen: false)
-                        .addDirection(newDirection);
+                          final newDirection = Direction(
+                            direction: direction,
+                            phone: phone,
+                            idDirection: 0, // Asigna 0 o el valor adecuado
+                            userId: user.id, // El ID del usuario
+                          );
 
-                    // Cerrar el diálogo o pantalla
-                    Navigator.of(context).pop();
-                  } else {
-                    // Si algún campo está vacío, mostrar un mensaje pidiendo que se completen los campos
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Por favor, completa todos los campos.')),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Color azul para el botón
-                  foregroundColor: Colors.white, // Texto blanco
-                ),
-                child: Text('Guardar Dirección'),
-              ),
+                          try {
+                            // Intentar agregar la dirección
+                            await Provider.of<UserViewModel>(context, listen: false)
+                                .addDirection(newDirection);
+
+                            // Cerrar la pantalla si el contexto sigue montado
+                            if (mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          } catch (e) {
+                            // Mostrar mensaje de error
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error al guardar la dirección: $e')),
+                            );
+                          } finally {
+                            // Ocultar indicador de carga
+                            if (mounted) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          }
+                        } else {
+                          // Mostrar mensaje si los campos están vacíos
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Por favor, completa todos los campos.')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue, // Color azul para el botón
+                        foregroundColor: Colors.white, // Texto blanco
+                      ),
+                      child: Text('Guardar Dirección'),
+                    ),
             ),
           ],
         ),

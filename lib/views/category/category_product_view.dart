@@ -1,6 +1,8 @@
+import 'dart:convert'; // Para decodificar imágenes Base64
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
+import 'package:crochetify_movil/views/home/detail_view.dart';
 
 class CategoryProductView extends StatefulWidget {
   final String categoryTitle;
@@ -22,7 +24,6 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     super.initState();
     // Ejecuta la carga inicial de los stocks de forma segura
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("Iniciando carga de stocks para la categoría: ${widget.categoryId}");
       Provider.of<StockViewModel>(context, listen: false)
           .fetchStocksByCategory(widget.categoryId);
     });
@@ -31,10 +32,6 @@ class _CategoryProductViewState extends State<CategoryProductView> {
   @override
   Widget build(BuildContext context) {
     final stockViewModel = Provider.of<StockViewModel>(context);
-
-    print("Estado de carga: ${stockViewModel.isLoading}");
-    print("Stocks cargados: ${stockViewModel.stocks}");
-    print("Error en la carga: ${stockViewModel.errorMessage}");
 
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +64,6 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
-                          print("Reintentando carga de stocks...");
                           stockViewModel.fetchStocksByCategory(widget.categoryId);
                         },
                         child: const Text("Reintentar"),
@@ -94,12 +90,10 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                       itemBuilder: (context, index) {
                         final stock = stockViewModel.stocks[index];
 
-                        // Uso de imagen de marcador de posición si no hay imágenes disponibles
-                        final firstImage = stock.images.isNotEmpty
+                        // Decodificación de la primera imagen en Base64
+                        final firstImageBase64 = stock.images.isNotEmpty
                             ? stock.images[0]
-                            : 'https://via.placeholder.com/150';
-
-                        print("Renderizando stock: ${stock.product.name}");
+                            : null;
 
                         return Card(
                           elevation: 4,
@@ -108,8 +102,16 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                           ),
                           child: InkWell(
                             onTap: () {
-                              print("Stock seleccionado: ${stock.product.name}");
-                              // Aquí puedes implementar navegación a una vista de detalles
+                              // Navegación a la vista de detalles del producto
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductDetailScreen(
+                                    product: stock.product,
+                                    stocks: [stock], // Pasar el stock seleccionado
+                                  ),
+                                ),
+                              );
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,17 +121,23 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                     borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(10),
                                     ),
-                                    child: Image.network(
-                                      firstImage,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        print("Error al cargar imagen: $error");
-                                        return const Center(
-                                          child: Icon(Icons.image_not_supported),
-                                        );
-                                      },
-                                    ),
+                                    child: firstImageBase64 != null
+                                        ? Image.memory(
+                                            base64Decode(
+                                              firstImageBase64.replaceFirst(
+                                                  'data:image/jpeg;base64,', ''),
+                                            ),
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            errorBuilder: (context, error, stackTrace) {
+                                              return const Center(
+                                                child: Icon(Icons.image_not_supported),
+                                              );
+                                            },
+                                          )
+                                        : const Center(
+                                            child: Icon(Icons.image_not_supported),
+                                          ),
                                   ),
                                 ),
                                 Padding(

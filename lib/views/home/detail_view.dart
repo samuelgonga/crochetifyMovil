@@ -1,3 +1,4 @@
+import 'dart:convert'; // Para decodificar imágenes Base64
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     });
                   },
                 ),
-                items: _selectedStock.images.map((url) {
+                items: _selectedStock.images.map((base64Image) {
                   return Builder(
                     builder: (BuildContext context) {
                       return Container(
@@ -108,15 +109,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
-                          child: Image.network(
-                            url,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Center(
-                              child: Icon(Icons.image_not_supported),
-                            ),
-                          ),
+                          child: base64Image.isNotEmpty
+                              ? Image.memory(
+                                  base64Decode(base64Image.replaceFirst(
+                                      'data:image/jpeg;base64,', '')),
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Center(
+                                    child: Icon(Icons.image_not_supported),
+                                  ),
+                                )
+                              : const Center(
+                                  child: Icon(Icons.image_not_supported),
+                                ),
                         ),
                       );
                     },
@@ -263,17 +269,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   final cartViewModel =
                       Provider.of<CartViewModel>(context, listen: false);
 
-                  // Verificamos si el carrito ya existe
                   cartViewModel.fetchCart(5).then((_) {
                     if (cartViewModel.cartData != null) {
-                      print("El carrito existe. Actualizando...");
                       cartViewModel.updateCart(
                         int.parse(idUser),
                         _selectedStock.idStock,
                         _quantity,
                       );
                     } else {
-                      print("El carrito no existe. Creando uno nuevo...");
                       cartViewModel
                           .addToCart(
                         int.parse(idUser),

@@ -1,3 +1,4 @@
+import 'dart:convert'; // Import para decodificar Base64
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
@@ -37,7 +38,8 @@ class StockGrid extends StatelessWidget {
           final productStocks = groupedStocks[productId]!;
 
           final stock = productStocks.first;
-          final firstImage = stock.images.isNotEmpty ? stock.images[0] : '';
+          final firstImageBase64 =
+              stock.images.isNotEmpty ? stock.images[0] : null;
 
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
@@ -62,15 +64,22 @@ class StockGrid extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4)),
-                        child: Image.network(
-                          firstImage,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Center(
-                            child: Icon(Icons.image_not_supported),
-                          ),
-                        ),
+                        child: firstImageBase64 != null
+                            ? Image.memory(
+                                base64Decode(
+                                  firstImageBase64.replaceFirst(
+                                      'data:image/jpeg;base64,', ''),
+                                ),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Center(
+                                  child: Icon(Icons.image_not_supported),
+                                ),
+                              )
+                            : const Center(
+                                child: Icon(Icons.image_not_supported),
+                              ),
                       ),
                     ),
                     Padding(

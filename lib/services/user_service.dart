@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class UserService {
-  final String baseUrl = 'http://192.168.100.5:8080/api/crochetify';
+  final String baseUrl = 'http://35.153.187.92:8087/api/crochetify';
   String? token;
 
   // Obtener el usuario
@@ -55,7 +55,7 @@ class UserService {
 
   // Realizar el login y obtener el token
   Future<void> login(String username, String password) async {
-    final url = 'https://192.168.100.5:8080/api/crochetify/login';
+    final url = 'http://35.153.187.92:8087/api/crochetify/login';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -160,7 +160,7 @@ class UserService {
     String? imageBase64,
   }) async {
     final url =
-        Uri.parse('http://192.168.100.5:8080/api/crochetify/users/$userId');
+        Uri.parse('http://35.153.187.92:8087/api/crochetify/users/$userId');
 
     // Obtener el token desde SharedPreferences
     final prefs = await SharedPreferences.getInstance();
