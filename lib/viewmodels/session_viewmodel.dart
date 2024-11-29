@@ -5,11 +5,9 @@ import '../models/session.dart';
 import 'package:crochetify_movil/models/user.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:crochetify_movil/services/user_service.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  final UserService _userService = UserService();
   bool _isLoggedIn = false;
   Session? _session;
   User? _user;

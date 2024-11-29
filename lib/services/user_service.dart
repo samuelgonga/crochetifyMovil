@@ -2,10 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:crochetify_movil/models/user.dart';
 import 'package:crochetify_movil/models/direction.dart';
-import 'dart:io';
 import 'dart:async';
-import 'package:image_picker/image_picker.dart';
-import 'package:crochetify_movil/utils/image_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 

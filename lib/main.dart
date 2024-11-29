@@ -1,3 +1,4 @@
+import 'package:crochetify_movil/viewmodels/shipment_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
@@ -34,8 +35,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => CategoryViewModel()),
         ChangeNotifierProvider(
-          create: (_) => CartViewModel(cartService: CartService()),
-        ) // Registra el CategoryViewModel
+          create: (_) => CartViewModel(cartService: CartService()),),
+        ChangeNotifierProvider(create: (_) => ShipmentViewModel()..loadShipments()) // Registra el CategoryViewModel
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

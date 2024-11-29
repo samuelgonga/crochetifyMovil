@@ -60,7 +60,6 @@ class _DirectionViewState extends State<DirectionView> {
     }
   }
 
-  // Mostrar un dialogo de éxito
   void _showSuccessDialog() {
     showDialog(
       context: context,
@@ -99,7 +98,6 @@ class _DirectionViewState extends State<DirectionView> {
     );
   }
 
-  // Mostrar un dialogo de error
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -147,12 +145,19 @@ class _DirectionViewState extends State<DirectionView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.close, color: Colors.white), // Aquí está el cambio
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Direcciones', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white)),
+        title: const Text(
+          'Direcciones',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -170,7 +175,10 @@ class _DirectionViewState extends State<DirectionView> {
             const SizedBox(height: 20),
             const Text(
               'Mis Direcciones',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -181,7 +189,12 @@ class _DirectionViewState extends State<DirectionView> {
             ),
             const SizedBox(height: 30),
             directions.isEmpty
-                ? const Center(child: Text('No tienes direcciones registradas.', style: TextStyle(fontSize: 16, color: Colors.black87)))
+                ? const Center(
+                    child: Text(
+                      'No tienes direcciones registradas.',
+                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                  )
                 : Expanded(
                     child: ListView.builder(
                       itemCount: directions.length,
@@ -189,7 +202,8 @@ class _DirectionViewState extends State<DirectionView> {
                         final direction = directions[index];
                         return Card(
                           elevation: 5,
-                          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -199,16 +213,21 @@ class _DirectionViewState extends State<DirectionView> {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         direction.direction,
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 8),
                                       Text(
                                         'Teléfono: ${direction.phone}',
-                                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey[600]),
                                       ),
                                     ],
                                   ),
@@ -216,22 +235,23 @@ class _DirectionViewState extends State<DirectionView> {
                                 InkWell(
                                   onTap: () {
                                     if (user != null) {
-                                      _setDefaultDirection(direction.idDirection, user.id);
+                                      _setDefaultDirection(
+                                          direction.idDirection, user.id);
                                     }
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: directionDefaults[direction.idDirection] ?? false
-                                          ? Colors.yellow.shade200
+                                          ? Colors.red.shade200
                                           : Colors.grey.shade300,
                                     ),
                                     padding: EdgeInsets.all(8),
                                     child: Icon(
                                       directionDefaults[direction.idDirection] ?? false
-                                          ? Icons.star
-                                          : Icons.star_border,
-                                      color: Colors.yellow,
+                                          ? Icons.favorite // Corazón lleno
+                                          : Icons.favorite_border, // Corazón vacío
+                                      color: Colors.red,
                                       size: 28,
                                     ),
                                   ),
@@ -247,9 +267,14 @@ class _DirectionViewState extends State<DirectionView> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => DirectionForm()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DirectionForm()));
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent, foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white),
                 child: const Text('Agregar Nueva Dirección'),
               ),
             ),

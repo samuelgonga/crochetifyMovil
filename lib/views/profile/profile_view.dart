@@ -57,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _buildProfileOption(context, 'Mis Pedidos', PedidosScreen()),
+                _buildProfileOption(context, 'Mis Pedidos', ShipmentView()),
                 _buildProfileOption(context, 'Mis direcciones', DirectionView()),
                 _buildProfileOption(context, 'Acerca de Nosotros', AcercaScreen()),
                 _buildProfileOption(context, 'Ayuda', AyudaScreen()),
