@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:crochetify_movil/models/stock.dart';
 import 'package:crochetify_movil/models/producto.dart';
 import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/comment_viewmodel.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -30,6 +31,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     _selectedStock = widget.stocks.first;
+    final reviewViewModel =
+        Provider.of<ReviewViewModel>(context, listen: false);
+    reviewViewModel.fetchReviews(widget.product.idProduct);
   }
 
   void _incrementQuantity() {
@@ -59,6 +63,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final reviewViewModel = Provider.of<ReviewViewModel>(context);
+    reviewViewModel.fetchReviews;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -314,6 +320,85 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Comentarios del producto',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 10),
+            reviewViewModel.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : reviewViewModel.errorMessage != null
+                    ? Center(
+                        child: Text(
+                          reviewViewModel.errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      )
+                    : reviewViewModel.reviews.isNotEmpty
+                        ? ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: reviewViewModel.reviews.length,
+                            itemBuilder: (context, index) {
+                              final reviewKey =
+                                  reviewViewModel.reviews.keys.elementAt(index);
+                              final review = reviewViewModel.reviews[reviewKey];
+
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                child: Material(
+                                  elevation: 4,
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.yellow[700],
+                                            ),
+                                            const SizedBox(width: 8.0),
+                                            Text(
+                                              'Puntuación: ${review["score"]}',
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        Text(
+                                          review["comment"],
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              'No hay comentarios para este producto.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
           ],
         ),
       ),

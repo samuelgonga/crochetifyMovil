@@ -11,6 +11,8 @@ import 'viewmodels/category_viewmodel.dart'; // Importa el CategoryViewModel
 import 'services/product_service.dart';
 import 'package:crochetify_movil/services/cart_service.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
+import 'viewmodels/comment_viewmodel.dart';
+import 'services/comment_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,8 +37,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserViewModel()),
         ChangeNotifierProvider(create: (_) => CategoryViewModel()),
         ChangeNotifierProvider(
-          create: (_) => CartViewModel(cartService: CartService()),),
-        ChangeNotifierProvider(create: (_) => ShipmentViewModel()..loadShipments()) // Registra el CategoryViewModel
+          create: (_) => CartViewModel(cartService: CartService()),
+        ),
+        ChangeNotifierProvider(
+            create: (_) => ShipmentViewModel()..loadShipments()),
+        ChangeNotifierProvider(
+          create: (_) => ReviewViewModel(
+            reviewService: CommentService(),
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
