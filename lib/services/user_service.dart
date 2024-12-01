@@ -82,15 +82,10 @@ class UserService {
         final directions = directionsMap.values.map((value) {
           return Direction(
             userId: userId,
-<<<<<<< Updated upstream
             direction: value['direction'] ??
                 '', // Si 'direction' es null, asigna una cadena vacía
             phone: value['phone'] ??
                 '', // Si 'phone' es null, asigna una cadena vacía
-=======
-            direction: value['direction'] ?? '',
-            phone: value['phone'] ?? '',
->>>>>>> Stashed changes
             idDirection: value['idDirection'] ?? 0,
           );
         }).toList();
