@@ -1,6 +1,9 @@
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/services/register_service.dart';
-import 'login_view.dart'; // Asegúrate de importar tu vista de inicio de sesión
+import 'login_view.dart';
+import 'package:provider/provider.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 
 class RegisterView extends StatefulWidget {
   @override
@@ -86,7 +89,9 @@ class _RegisterScreenState extends State<RegisterView> {
 
     try {
       await _registerService.registerUser(name, email, password);
-      _showSuccessAlert('Usuario registrado exitosamente');
+      await Provider.of<AuthViewModel>(context, listen: false)
+          .login(email, password);
+      _showSuccessAlert('Usuario registrado exitosamente');      
     } catch (error) {
       _showAlert('Error al registrar usuario: $error');
     } finally {
@@ -136,7 +141,7 @@ class _RegisterScreenState extends State<RegisterView> {
               Navigator.of(context).pop(); // Cierra la alerta
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => LoginView()), // Navega a la vista de inicio de sesión
+                MaterialPageRoute(builder: (context) => HomeScreen()), // Navega a la vista de inicio de sesión
               );
             },
             child: Text('Aceptar'),

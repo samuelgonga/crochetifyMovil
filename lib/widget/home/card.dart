@@ -28,9 +28,9 @@ class StockGrid extends StatelessWidget {
       return GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 8.0,
-          mainAxisSpacing: 8.0,
+          childAspectRatio: 0.85, // Ajusta la proporción de cada celda
+          crossAxisSpacing: 4.0, // Espaciado entre columnas
+          mainAxisSpacing: 4.0, // Espaciado entre filas
         ),
         itemCount: groupedStocks.length,
         itemBuilder: (context, index) {
@@ -42,9 +42,9 @@ class StockGrid extends StatelessWidget {
               stock.images.isNotEmpty ? stock.images[0] : null;
 
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+            margin: EdgeInsets.zero, // Sin margen adicional
             child: Card(
-              elevation: 4,
+              elevation: 2, // Reducción de la sombra del `Card`
               child: InkWell(
                 onTap: () {
                   Navigator.push(
@@ -58,6 +58,7 @@ class StockGrid extends StatelessWidget {
                   );
                 },
                 child: Column(
+                  mainAxisSize: MainAxisSize.min, // Ajusta el tamaño de la columna
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
@@ -83,7 +84,7 @@ class StockGrid extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(8.0), // Reducción del padding
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -91,14 +92,14 @@ class StockGrid extends StatelessWidget {
                             child: Text(
                               stock.product.name,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             stock.product.description,
                             style: const TextStyle(
-                                fontSize: 8, color: Colors.black87),
+                                fontSize: 10, color: Colors.black87),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -107,9 +108,9 @@ class StockGrid extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: productStocks.map((stock) {
                               return Container(
-                                margin: const EdgeInsets.only(right: 4.0),
-                                width: 16.0,
-                                height: 16.0,
+                                margin: const EdgeInsets.only(right: 2.0),
+                                width: 12.0,
+                                height: 12.0,
                                 decoration: BoxDecoration(
                                   color: Color(int.parse(
                                       '0xff${stock.color.substring(1)}')),
@@ -125,7 +126,7 @@ class StockGrid extends StatelessWidget {
                               style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14),
+                                  fontSize: 12),
                             ),
                           ),
                         ],

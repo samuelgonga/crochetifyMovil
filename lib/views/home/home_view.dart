@@ -61,10 +61,11 @@ class _ProductListState extends State<ProductList> {
               'https://www.supergurumi.com/wp-content/uploads/2022/10/Patrones-de-Crochet-Amigurumi-Gratis.jpg',
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
             ]),
-          ),
+          ),                    
           Expanded(
             child: StockGrid(), // Mostrar todos los stocks en el StockGrid
-          ),
+            //child: Text("data"),
+          ),          
         ],
       ),
     );

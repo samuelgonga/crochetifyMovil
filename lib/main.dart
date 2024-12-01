@@ -7,7 +7,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'viewmodels/session_viewmodel.dart';
 import 'widget/navigation/bottom_navigation.dart';
 import 'viewmodels/stock_viewmodel.dart';
-import 'viewmodels/category_viewmodel.dart'; // Importa el CategoryViewModel
+import 'viewmodels/category_viewmodel.dart';
 import 'services/product_service.dart';
 import 'package:crochetify_movil/services/cart_service.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
