@@ -3,10 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart'; // Librería para decodificar el token
 import '../models/session.dart';
+import 'package:crochetify_movil/services/user_service.dart';
 
 class AuthService {
   static const _tokenKey = 'user_token';
-
+  final UserService _userService = UserService();
   Future<Session?> login(String email, String password) async {
     final url = Uri.parse('http://35.153.187.92:8087/api/crochetify/login');
     final response = await http.post(
@@ -26,11 +27,15 @@ class AuthService {
           final decodedToken = JwtDecoder.decode(token);
           final userId =
               decodedToken['idUser']; // Suponiendo que el id está en el token
-
-          // Crear la sesión con el userId extraído del token
-          final session = Session(token: token, userId: userId);
-          await _saveToken(token);
-          return session;
+          final response = await _userService.fetchUserById(userId);
+          if (response['user']['status']) {
+            final session = Session(token: token, userId: userId);
+            await _saveToken(token);
+            return session;
+          } else {
+            print('El usuario está deshabilitado.');
+            throw Exception('El usuario está deshabilitado. Contacta soporte.');
+          }
         } else {
           throw Exception('Token vacío o nulo en la respuesta del servidor');
         }

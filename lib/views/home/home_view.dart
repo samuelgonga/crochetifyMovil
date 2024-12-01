@@ -44,16 +44,7 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
             ),
-          ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(text: 'Popular'),
-              CustomButton(text: 'Nuevo'),
-              CustomButton(text: 'Menor precio'),
-              CustomButton(text: 'Mayor precio'),
-            ],
-          ),
+          ),          
           const Center(
             child: ImageCarousel(imageUrls: [
               'https://i.ytimg.com/vi/wj6N6knIHes/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB2qaMdlw5QRW2C-QRT_d7Ca9h7Ew',
