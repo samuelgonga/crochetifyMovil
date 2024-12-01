@@ -13,10 +13,11 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
+  String _searchQuery = ""; // Texto de búsqueda
+
   @override
   void initState() {
     super.initState();
-    // Cargar todos los stocks al inicio
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<StockViewModel>(context, listen: false).fetchStocksByCategory(0);
     });
@@ -28,11 +29,15 @@ class _ProductListState extends State<ProductList> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-                top: 56.0, left: 8.0, right: 8.0, bottom: 6),
+            padding: const EdgeInsets.only(top: 56.0, left: 8.0, right: 8.0, bottom: 6),
             child: SizedBox(
               height: 40,
               child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase(); // Almacenar y actualizar el texto
+                  });
+                },
                 decoration: InputDecoration(
                   labelText: 'Buscar...',
                   filled: true,
@@ -44,7 +49,7 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
             ),
-          ),          
+          ),
           const Center(
             child: ImageCarousel(imageUrls: [
               'https://i.ytimg.com/vi/wj6N6knIHes/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB2qaMdlw5QRW2C-QRT_d7Ca9h7Ew',
@@ -52,13 +57,13 @@ class _ProductListState extends State<ProductList> {
               'https://www.supergurumi.com/wp-content/uploads/2022/10/Patrones-de-Crochet-Amigurumi-Gratis.jpg',
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
             ]),
-          ),                    
+          ),
           Expanded(
-            child: StockGrid(), // Mostrar todos los stocks en el StockGrid
-            //child: Text("data"),
-          ),          
+            child: StockGrid(searchQuery: _searchQuery), // Pasar texto a StockGrid
+          ),
         ],
       ),
     );
   }
 }
+
