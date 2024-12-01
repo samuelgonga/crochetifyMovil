@@ -4,6 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PagarWidget extends StatefulWidget {
+  final double total; // Recibe el total como parámetro
+
+  const PagarWidget({Key? key, required this.total}) : super(key: key);
+
   @override
   _PagarWidgetState createState() => _PagarWidgetState();
 }
@@ -153,7 +157,7 @@ class _PagarWidgetState extends State<PagarWidget> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2.0),
                     child: Text(
-                      '\$390.00',
+                      '\$${widget.total.toStringAsFixed(2)}', // Muestra el total
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,

@@ -84,13 +84,13 @@ class UserService {
       if (data['success']) {
         final directionsMap = data['response'] as Map<String, dynamic>;
         final directions = directionsMap.values.map((value) {
-          return Direction(  
-            userId: userId,          
+          return Direction(
+            userId: userId,
             direction: value['direction'] ??
                 '', // Si 'direction' es null, asigna una cadena vacía
             phone: value['phone'] ??
                 '', // Si 'phone' es null, asigna una cadena vacía
-            idDirection: value['idDirection'] ?? 0,        
+            idDirection: value['idDirection'] ?? 0,
           );
         }).toList();
 

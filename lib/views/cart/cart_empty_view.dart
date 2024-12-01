@@ -1,5 +1,5 @@
+import 'package:crochetify_movil/views/home/home_view.dart';
 import 'package:crochetify_movil/views/profile/profile_view.dart';
-import 'package:crochetify_movil/views/cart/cart_view.dart'; // Importa correctamente la clase CartView
 import 'package:flutter/material.dart';
 
 class CartEmpty extends StatelessWidget {
@@ -33,46 +33,7 @@ class CartEmpty extends StatelessWidget {
                   color: Color(0xFF5C5C5C)),
             ),
             SizedBox(height: 12.0),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Fondo azul
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(), // Navega a ProfileScreen
-                    ),
-                  );
-                },
-                child: Text('Ir a la Tienda',
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
             SizedBox(height: 12.0),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Fondo azul
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartView(
-                        cartId: 5,
-                      ), // Navega a CartView (anteriormente CartS)
-                    ),
-                  );
-                },
-                child: Text('LLenar carrito',
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
           ],
         ),
       ),

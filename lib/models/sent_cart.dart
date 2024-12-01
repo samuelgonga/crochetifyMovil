@@ -17,6 +17,8 @@ class SentCart {
     );
   }
 
+  get success => null;
+
   Map<String, dynamic> toJson() {
     return {
       'idUser': idUser,

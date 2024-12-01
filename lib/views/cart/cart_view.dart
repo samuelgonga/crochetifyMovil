@@ -1,28 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 import 'package:crochetify_movil/views/cart/item_cart.dart';
 import 'package:crochetify_movil/widget/payment/pagar_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CartView extends StatefulWidget {
-  final int cartId;
+  final int userId;
 
-  const CartView({Key? key, required this.cartId}) : super(key: key);
+  const CartView({Key? key, required this.userId}) : super(key: key);
 
   @override
   _CartViewState createState() => _CartViewState();
 }
 
 class _CartViewState extends State<CartView> {
-  @override
-  void initState() {
-    super.initState();
+  bool _hasFetchedCart = false;
 
-    // Llama a fetchCart después de que el árbol de widgets esté construido
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasFetchedCart) {
       final viewModel = Provider.of<CartViewModel>(context, listen: false);
-      viewModel.fetchCart(widget.cartId);
-    });
+      viewModel.fetchCart(widget.userId);
+      _hasFetchedCart = true;
+    }
   }
 
   @override
@@ -53,13 +54,23 @@ class _CartViewState extends State<CartView> {
                   itemCount: viewModel.cartProducts.length,
                   itemBuilder: (context, index) {
                     final product = viewModel.cartProducts[index];
-                    return CartItem(cartId: 5); // CartItem renderizado
+                    return CartItem(
+                      productName: product.product.name,
+                      productColor: product.color,
+                      productQuantity: product.quantity,
+                      stockId: product.stockId,
+                      userId: widget.userId,
+                    );
                   },
                 );
               },
             ),
           ),
-          PagarWidget(), // Puedes actualizar el total según sea necesario
+          Consumer<CartViewModel>(
+            builder: (context, viewModel, child) {
+              return PagarWidget(total: viewModel.cartTotal);
+            },
+          ),
         ],
       ),
     );

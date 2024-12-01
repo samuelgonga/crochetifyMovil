@@ -11,8 +11,11 @@ class RegisterService {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(
-          {'name': name, 'email': email, 'password': password,}),
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'password': password,
+      }),
     );
 
     if (response.statusCode == 201) {
@@ -28,7 +31,7 @@ class RegisterService {
 
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenKey);    
+    return prefs.getString(_tokenKey);
   }
 
   Future<void> logout() async {

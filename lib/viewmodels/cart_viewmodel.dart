@@ -1,13 +1,12 @@
+import 'package:crochetify_movil/services/cart_service.dart';
+import 'package:flutter/material.dart';
 import 'package:crochetify_movil/models/cart.dart';
 import 'package:crochetify_movil/models/sent_cart.dart';
-import 'package:flutter/material.dart';
-import 'package:crochetify_movil/services/cart_service.dart';
 
 class CartViewModel extends ChangeNotifier {
   final CartService _cartService;
 
-  CartViewModel({required CartService cartService})
-      : _cartService = cartService;
+  CartViewModel({required CartService cartService}) : _cartService = cartService;
 
   ApiResponse? _cartData;
   bool _isLoading = false;
@@ -16,23 +15,60 @@ class CartViewModel extends ChangeNotifier {
   ApiResponse? get cartData => _cartData;
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
+  bool get hasCart => _cartData != null;
 
-  // Modificación aquí para evitar el error de "null"
+  // Obtener productos agrupados del carrito
   List<CartProduct> get cartProducts {
-    // Verifica si _cartData es null antes de acceder a cartProducts
-    return _cartData?.response.cart.cartProducts ?? [];
+    final Map<String, CartProduct> groupedProducts = {};
+
+    for (var product in _cartData?.response.cart.cartProducts ?? []) {
+      final String productName = product.product.name;
+
+      if (groupedProducts.containsKey(productName)) {
+        final existingProduct = groupedProducts[productName]!;
+        groupedProducts[productName] = CartProduct(
+          stockId: existingProduct.stockId,
+          color: existingProduct.color,
+          quantity: (existingProduct.quantity + product.quantity).toInt(),
+          product: existingProduct.product,
+        );
+      } else {
+        groupedProducts[productName] = CartProduct(
+          stockId: product.stockId,
+          color: product.color,
+          quantity: product.quantity,
+          product: product.product,
+        );
+      }
+    }
+
+    return groupedProducts.values.toList();
   }
 
-  // Método para obtener el carrito por ID
-  Future<void> fetchCart(int cartId) async {
+  // Método para obtener la cantidad actual de un producto por su stockId
+  int getQuantity(int stockId) {
+    try {
+      return _cartData?.response.cart.cartProducts
+              .firstWhere((product) => product.stockId == stockId)
+              .quantity ??
+          0;
+    } catch (e) {
+      return 0; // Si no encuentra el producto, devuelve 0.
+    }
+  }
+
+  // Obtener el carrito del usuario
+  Future<void> fetchCart(int userId) async {
+    if (_isLoading || _cartData != null) return;
+
     try {
       _isLoading = true;
       _hasError = false;
       notifyListeners();
 
-      final data = await _cartService.getCart(cartId); // data ya es ApiResponse
+      final data = await _cartService.getCart(userId);
       if (data != null && data.success) {
-        _cartData = data; // Asignar el ApiResponse completo
+        _cartData = data;
       } else {
         _hasError = true;
         print("No se pudo obtener el carrito o la respuesta fue incorrecta.");
@@ -46,7 +82,7 @@ class CartViewModel extends ChangeNotifier {
     }
   }
 
-  // Método para agregar productos al carrito
+  // Agregar un producto al carrito
   Future<void> addToCart(int idUser, int idStock, int quantity) async {
     try {
       var newCart = await _cartService.createCart(
@@ -57,34 +93,46 @@ class CartViewModel extends ChangeNotifier {
         ),
       );
 
-      if (newCart != null) {
+      if (newCart.success) {
         print("Carrito creado con éxito.");
+        fetchCart(idUser); // Actualiza el carrito después de agregar el producto
       } else {
         print("No se pudo crear el carrito.");
       }
     } catch (e) {
-      throw Exception("Error al comprobar si el carrito existe: $e");
+      throw Exception("Error al agregar al carrito: $e");
     }
   }
 
-  // Método para actualizar el carrito
-  Future<void> updateCart(int idUser, int idStock, int quantity) async {
+  // Actualizar la cantidad de un producto en el carrito
+  Future<void> updateProductQuantity(int userId, int stockId, int newQuantity) async {
+    if (newQuantity <= 0) return;
+
+    try {
+      await updateCart(userId, stockId, newQuantity);
+      notifyListeners(); // Notifica que el estado ha cambiado
+    } catch (e) {
+      print("Error al actualizar la cantidad del producto: $e");
+    }
+  }
+
+  // Actualizar el carrito con la nueva cantidad
+  Future<void> updateCart(int userId, int stockId, int quantity) async {
     _isLoading = true;
     _hasError = false;
     notifyListeners();
 
     try {
-      var updatedCart = await _cartService.updateCart(
-        SentCart(
-          idUser: idUser,
-          idStock: idStock,
-          quantity: quantity,
-        ),
+      // Realizar el PUT para actualizar el carrito
+      final updatedCart = await _cartService.updateCart(
+        SentCart(idUser: userId, idStock: stockId, quantity: quantity),
       );
 
-      if (updatedCart != null) {
+      // Verificar que la actualización haya sido exitosa
+      if (updatedCart.success) {
         print("Carrito actualizado con éxito.");
-        fetchCart(updatedCart.idUser); // Carga el carrito actualizado
+        // Después de la actualización, realizar un GET para obtener el carrito actualizado
+        await fetchCart(userId);
       } else {
         _hasError = true;
         print("No se pudo actualizar el carrito.");
@@ -96,5 +144,10 @@ class CartViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Obtener el total del carrito
+  double get cartTotal {
+    return _cartData?.response.cart.total ?? 0.0;
   }
 }

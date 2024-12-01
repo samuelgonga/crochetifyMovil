@@ -13,11 +13,9 @@ class ApiResponse {
     return ApiResponse(
       success: json['success'],
       message: json['message'],
-      response: CartResponse.fromJson(json['response']),
+      response: json['response'] != null ? CartResponse.fromJson(json['response']) : CartResponse(cart: Cart.empty()),
     );
   }
-
-  get cart => null;
 
   Map<String, dynamic> toJson() {
     return {
@@ -26,6 +24,9 @@ class ApiResponse {
       'response': response.toJson(),
     };
   }
+
+  // Obtener el carrito, si existe
+  Cart? get cart => response.cart != null ? response.cart : null;
 }
 
 class CartResponse {
@@ -37,7 +38,7 @@ class CartResponse {
 
   factory CartResponse.fromJson(Map<String, dynamic> json) {
     return CartResponse(
-      cart: Cart.fromJson(json['cart']),
+      cart: json['cart'] != null ? Cart.fromJson(json['cart']) : Cart.empty(),
     );
   }
 
@@ -59,15 +60,22 @@ class Cart {
     required this.cartProducts,
   });
 
-  factory Cart.fromJson(Map<String, dynamic> json) {
+  // Constructor vacío para manejar respuestas nulas o vacías
+  factory Cart.empty() {
     return Cart(
-      idCart: json['idCart'] ?? 0,  // Asignar 0 si el valor es nulo
-      total: (json['total'] ?? 0.0).toDouble(),  // Asignar 0.0 si el valor es nulo
-      cartProducts: (json['cartProducts'] as List?)?.map((item) => CartProduct.fromJson(item)).toList() ?? [],  // Asignar lista vacía si es nulo
+      idCart: 0,
+      total: 0.0,
+      cartProducts: [],
     );
   }
 
-  get id => null;
+  factory Cart.fromJson(Map<String, dynamic> json) {
+    return Cart(
+      idCart: json['idCart'] ?? 0, // Asignar 0 si el valor es nulo
+      total: (json['total'] ?? 0.0).toDouble(), // Asignar 0.0 si el valor es nulo
+      cartProducts: (json['cartProducts'] as List?)?.map((item) => CartProduct.fromJson(item)).toList() ?? [], // Asignar lista vacía si es nulo
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -81,7 +89,7 @@ class Cart {
 class CartProduct {
   final int stockId;
   final String color;
-  final int quantity;
+  late final int quantity;
   final Product product;
 
   CartProduct({

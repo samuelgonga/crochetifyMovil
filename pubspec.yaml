@@ -71,6 +71,7 @@ flutter:
       - assets/images/
       - assets/user.json
       - assets/cart.json
+      - assets/images/carro-vacio.png
       
   #   - images/a_dot_ham.jpeg
 

@@ -258,11 +258,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 60.0),
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async {
                   final authViewModel =
                       Provider.of<AuthViewModel>(context, listen: false);
-                  final idUser = authViewModel.user!.id.toString();
+                  final cartViewModel =
+                      Provider.of<CartViewModel>(context, listen: false);
 
+                  // Obtener el ID del usuario
+                  final idUser = authViewModel.user?.id;
                   if (idUser == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -272,41 +275,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     return;
                   }
 
-                  final cartViewModel =
-                      Provider.of<CartViewModel>(context, listen: false);
-
-                  cartViewModel.fetchCart(5).then((_) {
-                    if (cartViewModel.cartData != null) {
-                      cartViewModel.updateCart(
-                        int.parse(idUser),
+                  try {
+                    // Verificar si el carrito existe
+                    await cartViewModel.fetchCart(idUser);
+                    if (cartViewModel.hasCart) {
+                      print("El carrito existe. Actualizando...");
+                      await cartViewModel.updateCart(
+                        idUser,
                         _selectedStock.idStock,
                         _quantity,
                       );
                     } else {
-                      cartViewModel
-                          .addToCart(
-                        int.parse(idUser),
+                      print("El carrito no existe. Creando uno nuevo...");
+                      await cartViewModel.addToCart(
+                        idUser,
                         _selectedStock.idStock,
                         _quantity,
-                      )
-                          .then((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Producto agregado al carrito')),
-                        );
-                      }).catchError((e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('Error al agregar al carrito: $e')),
-                        );
-                      });
+                      );
                     }
-                  }).catchError((e) {
+
+                    // Mostrar confirmación al usuario
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Producto agregado al carrito')),
+                    );
+                  } catch (e) {
+                    // Manejo de errores
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text('Error al verificar el carrito: $e')),
+                          content: Text('Error al procesar el carrito: $e')),
                     );
-                  });
+                    print("Error al procesar el carrito: $e");
+                  }
                 },
                 label: const Text(
                   'Agregar al carrito',

@@ -10,7 +10,8 @@ class CategoryService {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      final List<dynamic> categoryList = responseData['response']['categories'] ?? [];
+      final List<dynamic> categoryList =
+          responseData['response']['categories'] ?? [];
       return categoryList.map((json) => Category.fromJson(json)).toList();
     } else {
       throw Exception('Error al cargar categorías: ${response.statusCode}');
