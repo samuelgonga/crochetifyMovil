@@ -15,14 +15,13 @@ class UserViewModel extends ChangeNotifier {
   // Método para obtener la información del usuario logueado usando el token
   Future<void> fetchUser() async {
     try {
-      // Llama al método getLoggedUser del UserService
       _user = await _userService.getLoggedUser();
       if (_user != null) {
         print("Usuario cargado: ${_user!.name}");
       } else {
         print("No se pudo cargar el usuario.");
       }
-      notifyListeners(); // Notifica a los listeners de cambios en los datos
+      notifyListeners();
     } catch (e) {
       print("Error fetching user data: $e");
     }
@@ -58,7 +57,7 @@ class UserViewModel extends ChangeNotifier {
   // Método para actualizar el perfil del usuario (nombre e imagen)
   Future<void> updateUserProfile({
     required String name,
-    File? imageFile, // Imagen seleccionada como archivo
+    File? imageFile,
   }) async {
     try {
       final success = await _userService.updateUserProfile(
@@ -68,13 +67,36 @@ class UserViewModel extends ChangeNotifier {
 
       if (success) {
         print("Perfil actualizado correctamente");
-        // Refresca la información del usuario para reflejar los cambios
         await fetchUser();
       } else {
         print("No se pudo actualizar el perfil.");
       }
     } catch (e) {
       print("Error updating user profile: $e");
+    }
+  }
+
+  // Método para marcar una dirección como predeterminada
+  Future<void> setDefaultDirection(int userId, int directionId) async {
+    try {
+      final success = await _userService.setDefaultDirection(userId, directionId);
+      if (success) {
+        _directions = _directions.map((direction) {
+          return Direction(
+            idDirection: direction.idDirection,
+            direction: direction.direction,
+            phone: direction.phone,
+            userId: direction.userId,
+            isDefault: direction.idDirection == directionId,
+          );
+        }).toList();
+        notifyListeners();
+        print("Dirección predeterminada actualizada.");
+      } else {
+        print("No se pudo actualizar la dirección predeterminada.");
+      }
+    } catch (e) {
+      print("Error setting default direction: $e");
     }
   }
 }

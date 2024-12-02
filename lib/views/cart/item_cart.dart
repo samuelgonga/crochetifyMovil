@@ -1,21 +1,22 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 
 class CartItem extends StatelessWidget {
-  final String productName;
   final String productColor;
   final int productQuantity;
   final int stockId;
   final int userId;
+  final String image; // Imagen en formato base64
 
   const CartItem({
     Key? key,
-    required this.productName,
     required this.productColor,
     required this.productQuantity,
     required this.stockId,
     required this.userId,
+    required this.image,
   }) : super(key: key);
 
   @override
@@ -30,25 +31,29 @@ class CartItem extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/16fadc71-0d8e-470d-bd38-763317aa20c8/ddicfjl-6d5acae2-b3ac-40e7-a6c9-e6a08b834577.jpg/v1/fill/w_1032,h_774,q_70,strp/hollow_knight_amigurumi_crochet_pattern_by_elizettacrafts_ddicfjl-pre.jpg",
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
+              child: image.isNotEmpty
+                  ? Image.memory(
+                      base64Decode(
+                          image.replaceFirst('data:image/jpeg;base64,', '')),
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.image_not_supported,
+                        size: 80,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.image_not_supported,
+                      size: 80,
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    productName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+  
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -78,7 +83,7 @@ class CartItem extends StatelessWidget {
                         onPressed: () async {
                           if (productQuantity > 1) {
                             await _updateQuantity(
-                              context, cartViewModel, productQuantity - 1);
+                                context, cartViewModel, productQuantity - 1);
                           }
                         },
                       ),
@@ -93,7 +98,7 @@ class CartItem extends StatelessWidget {
                         icon: const Icon(Icons.add),
                         onPressed: () async {
                           await _updateQuantity(
-                            context, cartViewModel, productQuantity + 1);
+                              context, cartViewModel, productQuantity + 1);
                         },
                       ),
                     ],
@@ -115,22 +120,21 @@ class CartItem extends StatelessWidget {
     return Color(int.parse('0x$hexColor'));
   }
 
-  Future<void> _updateQuantity(BuildContext context,
-      CartViewModel cartViewModel, int newQuantity) async {
-    try {
-      if (newQuantity < 1) {
-        return; // No permitir cantidades negativas o cero
-      }
-
-      // Actualizamos el carrito local
-      await cartViewModel.updateProductQuantity(userId, stockId, newQuantity);
-
-      // Después de la actualización, se refresca automáticamente el carrito
-      // No es necesario hacer nada extra debido a la notificación del ChangeNotifier
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+Future<void> _updateQuantity(BuildContext context, CartViewModel cartViewModel, int newQuantity) async {
+  try {
+    if (newQuantity < 1) {
+      return; // No permitir cantidades negativas o cero
     }
+
+    await cartViewModel.updateProductQuantity(userId, stockId, newQuantity);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al actualizar la cantidad: ${e.toString()}')),
+    );
   }
+}
+
+
+
+
 }

@@ -4,15 +4,17 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'viewmodels/session_viewmodel.dart';
-import 'widget/navigation/bottom_navigation.dart';
-import 'viewmodels/stock_viewmodel.dart';
-import 'viewmodels/category_viewmodel.dart';
-import 'services/product_service.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
+import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
+import 'package:crochetify_movil/viewmodels/category_viewmodel.dart';
+import 'package:crochetify_movil/services/product_service.dart';
 import 'package:crochetify_movil/services/cart_service.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
-import 'viewmodels/comment_viewmodel.dart';
-import 'services/comment_service.dart';
+import 'package:crochetify_movil/viewmodels/comment_viewmodel.dart';
+import 'package:crochetify_movil/services/comment_service.dart';
+import 'package:crochetify_movil/views/profile/direction_view.dart';
+import 'package:crochetify_movil/views/profile/direction_create_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +55,10 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: HomeScreen(),
+        routes: {
+          '/direction': (context) => DirectionView(),
+          '/addDirection': (context) => DirectionForm(),
+        },
       ),
     );
   }

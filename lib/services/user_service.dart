@@ -67,6 +67,33 @@ class UserService {
     }
   }
 
+    Future<bool> setDefaultDirection(int userId, int directionId) async {
+    final url = Uri.parse('$baseUrl/set-default');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'userId': userId,
+          'directionId': directionId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return true; // Operación exitosa
+      } else {
+        print('Error al marcar la dirección como predeterminada: ${response.body}');
+        return false; // Operación fallida
+      }
+    } catch (e) {
+      print('Error en la solicitud al servidor: $e');
+      return false; // Error al conectar con el servidor
+    }
+  }
+
   // Obtener direcciones por ID de usuario
   Future<List<Direction>> fetchDirectionsByUserId(int userId) async {
     final url = Uri.parse('$baseUrl/directions/$userId');

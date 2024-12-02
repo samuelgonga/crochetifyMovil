@@ -16,4 +16,13 @@ class Category {
       status: json['status'],
     );
   }
+
+  // Método para convertir el objeto a JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'idCategory': idCategory,
+      'name': name,
+      'status': status,
+    };
+  }
 }

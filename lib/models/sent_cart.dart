@@ -9,16 +9,16 @@ class SentCart {
     required this.quantity,
   });
 
+  // Método para crear un objeto SentCart desde un JSON
   factory SentCart.fromJson(Map<String, dynamic> json) {
     return SentCart(
-      idUser: json['idUser'],
-      idStock: json['idStock'],
-      quantity: json['quantity'],
+      idUser: json['idUser'] ?? 0, // Asignar valor por defecto si es null
+      idStock: json['idStock'] ?? 0, // Asignar valor por defecto si es null
+      quantity: json['quantity'] ?? 0, // Asignar valor por defecto si es null
     );
   }
 
-  get success => null;
-
+  // Método para convertir el objeto a JSON
   Map<String, dynamic> toJson() {
     return {
       'idUser': idUser,

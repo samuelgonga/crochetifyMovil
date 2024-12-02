@@ -28,4 +28,15 @@ class Product {
       categories: categoriesList,
     );
   }
+
+  // Método para convertir el objeto a JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'idProduct': idProduct,
+      'name': name,
+      'description': description,
+      'status': status,
+      'categories': categories.map((category) => category.toJson()).toList(),
+    };
+  }
 }

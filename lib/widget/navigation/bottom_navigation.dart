@@ -52,13 +52,17 @@ class _HomeScreenState extends State<HomeScreen> {
         // Obtén el userId del AuthViewModel
         final int? userId = authViewModel.user?.id;
 
+        // Verifica si hay productos en el carrito
+        final bool cartHasProducts =
+            cartViewModel.cartProducts.isNotEmpty; // Verifica la lista de productos
+
         // Vistas para usuarios autenticados
         final List<Widget> _viewsLogin = [
           const ProductList(), // Página de productos
           CategoryScreen(), // Página de categorías
-          cartViewModel.hasCart && userId != null
+          cartHasProducts && userId != null
               ? CartView(userId: userId) // Se asegura de que userId no sea nulo
-              : CartEmpty(), // Página del carrito
+              : CartEmpty(), // Página del carrito vacío
           ProfileScreen(), // Página del perfil
         ];
 

@@ -1,4 +1,4 @@
-import 'producto.dart';
+import 'package:crochetify_movil/models/producto.dart';
 
 class Stock {
   final int idStock;
@@ -7,7 +7,7 @@ class Stock {
   final double price;
   final bool status;
   final Product product;
-  final List<String> images;
+  final List<String> images; // Cambiado a `List<String>` para simplificar
 
   Stock({
     required this.idStock,
@@ -20,19 +20,31 @@ class Stock {
   });
 
   factory Stock.fromJson(Map<String, dynamic> json) {
-    // Maneja la lista de imágenes, extrayendo solo el campo `image` de cada objeto
-    var imagesList = (json['images'] as List?)
-        ?.map((image) => (image as Map<String, dynamic>)['image'] as String)
-        .toList() ?? [];
-
     return Stock(
-      idStock: json['idStock'],
-      color: json['color'],
-      quantity: json['quantity'],
-      price: json['price'].toDouble(),
-      status: json['status'],
-      product: Product.fromJson(json['product']),
-      images: imagesList, // Lista con las cadenas Base64
+      idStock: json['idStock'] ?? 0, // Maneja `null` asignando un valor predeterminado
+      color: json['color'] ?? '', // Asegura un valor por defecto
+      quantity: json['quantity'] ?? 0,
+      price: (json['price'] != null ? json['price'].toDouble() : 0.0), // Maneja null en `price`
+      status: json['status'] ?? false,
+      product: Product.fromJson(json['product'] ?? {}), // Evita errores si `product` es null
+      // Manejo seguro de imágenes
+      images: (json['images'] as List<dynamic>?)
+              ?.map((img) => img['image'] as String?)
+              .whereType<String>() // Filtra nulos
+              .toList() ??
+          [], // Si `images` es null, usar lista vacía
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'idStock': idStock,
+      'color': color,
+      'quantity': quantity,
+      'price': price,
+      'status': status,
+      'product': product.toJson(),
+      'images': images.map((img) => {'image': img}).toList(),
+    };
   }
 }
