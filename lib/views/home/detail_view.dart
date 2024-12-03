@@ -24,23 +24,24 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  late Stock _selectedStock;
+  int _quantity = 1;
+
   Color _parseColor(String color) {
     try {
       return Color(int.parse(color.replaceFirst('#', '0xff')));
     } catch (e) {
-      return Colors.grey; // Valor predeterminado en caso de error
+      return Colors.grey;
     }
   }
 
-  late Stock _selectedStock;
-  int _quantity = 1;
+  double get totalPrice => _selectedStock.price * _quantity;
 
   @override
   void initState() {
     super.initState();
     _selectedStock = widget.stocks.first;
 
-    // Fetch reviews
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reviewViewModel =
           Provider.of<ReviewViewModel>(context, listen: false);
@@ -73,20 +74,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
     final reviewViewModel = Provider.of<ReviewViewModel>(context);
     final userId = Provider.of<AuthViewModel>(context, listen: false).user?.id;
-
-    if (userId == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Detalle del Producto'),
-        ),
-        body: const Center(
-          child: Text(
-            'Por favor, inicia sesión para añadir productos al carrito.',
-            style: TextStyle(fontSize: 18),
-          ),
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -169,67 +156,78 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       // Botón de disminuir cantidad
                       IconButton(
                         onPressed: _decrementQuantity,
-                        icon: const Icon(Icons.remove_circle_outline),
+                        icon: const Icon(
+                          Icons.remove_circle,
+                          size: 30,
+                          color: Colors.red,
+                        ),
                       ),
-                      Text(
-                        'Cantidad: $_quantity',
-                        style: const TextStyle(fontSize: 18),
+                      Column(
+                        children: [
+                          Text(
+                            'Cantidad: $_quantity',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          Text(
+                            'Total: \$${totalPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
                       ),
                       // Botón de aumentar cantidad
                       IconButton(
                         onPressed: _incrementQuantity,
-                        icon: const Icon(Icons.add_circle_outline),
+                        icon: const Icon(
+                          Icons.add_circle,
+                          size: 30,
+                          color: Colors.blue,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Botón de añadir al carrito
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        try {
-                          await cartViewModel.addToCart(
-                            userId,
-                            _selectedStock.idStock,
-                            _quantity,
-                          );
+                        await cartViewModel.addToCart(
+                          userId!,
+                          _selectedStock.idStock,
+                          _quantity,
+                        );
 
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Producto añadido'),
-                              content: const Text(
-                                  'El producto se ha añadido al carrito.'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Seguir comprando'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CartView(userId: userId),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Ir al carrito'),
-                                ),
-                              ],
-                            ),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error al añadir al carrito: $e'),
-                            ),
-                          );
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Producto añadido'),
+                            content: const Text(
+                                'El producto se ha añadido al carrito.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Seguir comprando'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CartView(userId: userId),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Ir al carrito'),
+                              ),
+                            ],
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
@@ -244,7 +242,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Sección de reseñas
                   const Text(
                     'Reseñas',
                     style: TextStyle(
@@ -275,9 +272,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     final review =
                                         reviewViewModel.reviews[reviewKey];
                                     return Card(
-                                      elevation: 5,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: BorderSide(
+                                          color: review['score'] >= 4
+                                              ? Colors.green
+                                              : Colors.red,
+                                          width: 2,
+                                        ),
+                                      ),
                                       margin: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 16),
+                                          vertical: 8),
                                       child: ListTile(
                                         leading: Icon(
                                           Icons.star,
@@ -289,7 +294,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        subtitle: Text(review['comment']),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(review['comment']),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.person,
+                                                  size: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                const Text(
+                                                  'Usuario Anónimo',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },
