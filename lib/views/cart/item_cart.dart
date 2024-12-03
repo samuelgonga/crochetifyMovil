@@ -10,7 +10,7 @@ class CartItem extends StatelessWidget {
   final int userId;
   final String productName;
   final String productDescription;
-  final String image; // Imagen base64
+  final String image;
 
   const CartItem({
     Key? key,
@@ -26,89 +26,124 @@ class CartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: _buildImage(),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    productName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    productDescription,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Text('Color:'),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color: _getColorFromHex(productColor),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          final cartViewModel = Provider.of<CartViewModel>(
-                              context,
-                              listen: false);
-
-                          if (productQuantity > 1) {
-                            // Disminuye la cantidad si es mayor a 1
-                            cartViewModel.updateProductQuantity(
-                                userId, stockId, productQuantity - 1);
-                          } else {
-                            // Si llega a 0 o menos, elimina el producto del carrito
-                            cartViewModel.removeProductFromCart(stockId);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Producto eliminado del carrito.')),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.remove),
-                      ),
-                      Text('$productQuantity'),
-                      IconButton(
-                        onPressed: () {
-                          final cartViewModel = Provider.of<CartViewModel>(
-                              context,
-                              listen: false);
-                          cartViewModel.updateProductQuantity(
-                              userId, stockId, productQuantity + 1);
-                        },
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
-                  ),
-                ],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      elevation: 3,
+      shadowColor: Colors.grey.withOpacity(0.2),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color(0xFF1565C0), // Azul inspirado
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _buildImage(),
               ),
-            ),
-          ],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      productName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      productDescription,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Text(
+                          'Color:',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: _getColorFromHex(productColor),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black26,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            final cartViewModel = Provider.of<CartViewModel>(
+                                context,
+                                listen: false);
+
+                            if (productQuantity > 1) {
+                              cartViewModel.updateProductQuantity(
+                                  userId, stockId, productQuantity - 1);
+                            } else {
+                              cartViewModel.removeProductFromCart(stockId);
+                              _showAlert(
+                                context,
+                                title: 'Producto eliminado',
+                                message:
+                                    'El producto ha sido eliminado del carrito.',
+                                icon: Icons.delete,
+                                iconColor: Colors.red,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.remove_circle,
+                              color: Colors.red),
+                        ),
+                        Text(
+                          '$productQuantity',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            final cartViewModel = Provider.of<CartViewModel>(
+                                context,
+                                listen: false);
+                            cartViewModel.updateProductQuantity(
+                                userId, stockId, productQuantity + 1);
+                          },
+                          icon: const Icon(Icons.add_circle,
+                              color: Colors.green),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -138,5 +173,43 @@ class CartItem extends StatelessWidget {
       hexColor = 'FF$hexColor';
     }
     return Color(int.parse('0x$hexColor'));
+  }
+
+  void _showAlert(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color iconColor,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          title: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 30),
+              const SizedBox(width: 10),
+              Text(title),
+            ],
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Aceptar',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -28,23 +28,62 @@ class _CategoryProductViewState extends State<CategoryProductView> {
           .fetchStocksByCategory(widget.categoryId);
     });
   }
+  Future<void> _refreshStocks(BuildContext context) async {
+  try {
+    await Provider.of<StockViewModel>(context, listen: false)
+        .fetchStocksByCategory(widget.categoryId); // Refresca los productos
+  } catch (e) {
+    // Mostrar un AlertDialog en caso de error
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0)),
+          title: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.red, size: 30),
+              const SizedBox(width: 10),
+              const Text('Error'),
+            ],
+          ),
+          content: Text(
+            'Error al refrescar los productos: $e',
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Aceptar',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final stockViewModel = Provider.of<StockViewModel>(context);
+@override
+Widget build(BuildContext context) {
+  final stockViewModel = Provider.of<StockViewModel>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.categoryTitle,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(
+        widget.categoryTitle,
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
-      body: stockViewModel.isLoading
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+    ),
+    body: RefreshIndicator(
+      onRefresh: () => _refreshStocks(context), // Conecta al método de refresco
+      child: stockViewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
           : stockViewModel.errorMessage != null
               ? Center(
@@ -64,7 +103,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
-                          stockViewModel.fetchStocksByCategory(widget.categoryId);
+                          stockViewModel
+                              .fetchStocksByCategory(widget.categoryId);
                         },
                         child: const Text("Reintentar"),
                       ),
@@ -75,12 +115,14 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                   ? const Center(
                       child: Text(
                         "No hay productos disponibles en esta categoría.",
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
                     )
                   : GridView.builder(
                       padding: const EdgeInsets.all(8.0),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
@@ -108,7 +150,9 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                 MaterialPageRoute(
                                   builder: (context) => ProductDetailScreen(
                                     product: stock.product,
-                                    stocks: [stock], // Pasar el stock seleccionado
+                                    stocks: [
+                                      stock
+                                    ], // Pasar el stock seleccionado
                                   ),
                                 ),
                               );
@@ -125,25 +169,30 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                         ? Image.memory(
                                             base64Decode(
                                               firstImageBase64.replaceFirst(
-                                                  'data:image/jpeg;base64,', ''),
+                                                  'data:image/jpeg;base64,',
+                                                  ''),
                                             ),
                                             fit: BoxFit.cover,
                                             width: double.infinity,
-                                            errorBuilder: (context, error, stackTrace) {
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
                                               return const Center(
-                                                child: Icon(Icons.image_not_supported),
+                                                child: Icon(Icons
+                                                    .image_not_supported),
                                               );
                                             },
                                           )
                                         : const Center(
-                                            child: Icon(Icons.image_not_supported),
+                                            child: Icon(
+                                                Icons.image_not_supported),
                                           ),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         stock.product.name,
@@ -189,6 +238,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                         );
                       },
                     ),
-    );
-  }
+    ),
+  );
+}
 }

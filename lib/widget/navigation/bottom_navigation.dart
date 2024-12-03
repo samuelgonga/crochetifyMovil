@@ -13,12 +13,22 @@ import 'package:crochetify_movil/views/category/category_product_view.dart';
 import 'package:crochetify_movil/views/category/category_view.dart';
 
 class HomeScreen extends StatefulWidget {
+  final int initialIndex; // Índice inicial para la pestaña activa
+
+  const HomeScreen({Key? key, this.initialIndex = 0}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex; // Usa el índice inicial al cargar la pantalla
+  }
 
   /// Maneja el cambio de pestañas en la barra de navegación
   void _onItemTapped(int index) {
@@ -92,8 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedItemColor: Colors.blue,
             unselectedItemColor: Colors.grey,
             currentIndex: _selectedIndex,
-            onTap:
-                _onItemTapped, // Al seleccionar una pestaña, se ejecuta el onTap
+            onTap: _onItemTapped, // Al seleccionar una pestaña, se ejecuta el onTap
           ),
         );
       },

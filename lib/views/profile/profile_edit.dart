@@ -63,44 +63,114 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
     }
   }
 
-  Future<void> _saveChanges() async {
-    try {
-      final success = await _userService.updateUserProfile(
-        name: _nameController.text,
-        imageFile: _selectedImage,
+  void _showAlert({
+    required String title,
+    required String message,
+    required IconData icon,
+    required Color iconColor,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+          title: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 30),
+              const SizedBox(width: 10),
+              Text(title),
+            ],
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Aceptar',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+Future<void> _saveChanges() async {
+  try {
+    final success = await _userService.updateUserProfile(
+      name: _nameController.text,
+      imageFile: _selectedImage,
+    );
+
+    if (success) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)),
+            title: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.green, size: 30),
+                const SizedBox(width: 10),
+                const Text('¡Éxito!'),
+              ],
+            ),
+            content: const Text(
+              'Perfil actualizado con éxito.',
+              style: TextStyle(fontSize: 16),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'Aceptar',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ],
+          );
+        },
       );
 
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Perfil actualizado con éxito')),
-        );
-
-        // Regresa a la vista anterior con un indicador de éxito
-        Navigator.pop(context, true);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al actualizar el perfil')),
-        );
-      }
-    } catch (e) {
-      print('Error al guardar los cambios: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al guardar los cambios')),
+      // Regresa a la vista anterior con un indicador de éxito
+      Navigator.pop(context, true);
+    } else {
+      _showAlert(
+        title: 'Error',
+        message: 'Error al actualizar el perfil.',
+        icon: Icons.error,
+        iconColor: Colors.red,
       );
     }
+  } catch (e) {
+    print('Error al guardar los cambios: $e');
+    _showAlert(
+      title: 'Error',
+      message: 'Error al guardar los cambios.',
+      icon: Icons.error,
+      iconColor: Colors.red,
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Perfil'),
+        title: const Text('Editar Perfil'),
         centerTitle: true,
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _user == null
-              ? Center(
+              ? const Center(
                   child: Text(
                     'No se pudo cargar la información del usuario.',
                     style: TextStyle(fontSize: 18, color: Colors.red),
@@ -117,7 +187,7 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                           CircleAvatar(
                             radius: 60,
                             backgroundImage: _decodedImage ??
-                                AssetImage('assets/images/default_avatar.png')
+                                const AssetImage('assets/images/default_avatar.png')
                                     as ImageProvider,
                             backgroundColor: Colors.grey[200],
                           ),
@@ -126,7 +196,7 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                             right: 0,
                             child: GestureDetector(
                               onTap: _pickImage,
-                              child: CircleAvatar(
+                              child: const CircleAvatar(
                                 backgroundColor: Colors.blue,
                                 radius: 20,
                                 child: Icon(
@@ -138,31 +208,29 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       // Campo de texto para el nombre
                       TextField(
                         controller: _nameController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Nombre',
                           border: OutlineInputBorder(),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       // Correo Electrónico (solo lectura)
                       Text(
-                        'Correo Electronico: ${_user!.email}',
+                        'Correo Electrónico: ${_user!.email}',
                         style: TextStyle(fontSize: 18, color: Colors.grey[700]),
                       ),
-                      SizedBox(height: 20),
-
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
                       // Botón para guardar cambios
                       ElevatedButton(
                         onPressed: _saveChanges,
-                        child: Text('Guardar Cambios'),
+                        child: const Text('Guardar Cambios'),
                       ),
                     ],
                   ),

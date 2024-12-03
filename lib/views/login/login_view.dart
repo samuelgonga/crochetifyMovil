@@ -18,47 +18,103 @@ class _LoginScreenState extends State<LoginView> {
 
   final AuthService _authService = AuthService();
 
-  void _login() async {
+void _login() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  final email = _emailController.text.trim();
+  final password = _passwordController.text.trim();
+
+  if (email.isEmpty || password.isEmpty) {
+    _showAlert(
+      title: 'Campos Vacíos',
+      message: 'Por favor, completa todos los campos.',
+      icon: Icons.warning,
+      iconColor: Colors.orange,
+    );
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
     });
-
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, completa todos los campos')),
-      );
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      // Llama al método login del AuthViewModel
-      await Provider.of<AuthViewModel>(context, listen: false)
-          .login(email, password);
-
-      // Redirige al HomeScreen
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-        (route) => false, // Elimina todas las rutas anteriores
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                'Error al iniciar sesión: Usuario y Contraseña Incorrectos, ${error}')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    return;
   }
+
+  try {
+    // Llama al método login del AuthViewModel
+    await Provider.of<AuthViewModel>(context, listen: false)
+        .login(email, password);
+
+    // Redirige al HomeScreen
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+      (route) => false, // Elimina todas las rutas anteriores
+    );
+  } catch (error) {
+    _showAlert(
+      title: 'Error de Inicio de Sesión',
+      message: 'Usuario o contraseña incorrectos. Por favor, verifica tus datos.',
+      icon: Icons.error,
+      iconColor: Colors.red,
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+void _showAlert({
+  required String title,
+  required String message,
+  required IconData icon,
+  required Color iconColor,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        title: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 30),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 16,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Cierra el diálogo
+            },
+            child: const Text(
+              'Aceptar',
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {

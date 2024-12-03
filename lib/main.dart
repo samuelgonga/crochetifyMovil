@@ -1,5 +1,6 @@
 import 'package:crochetify_movil/viewmodels/order_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/shipment_viewmodel.dart';
+import 'package:crochetify_movil/views/cart/cart_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/product_viewmodel.dart';
@@ -16,6 +17,7 @@ import 'package:crochetify_movil/viewmodels/comment_viewmodel.dart';
 import 'package:crochetify_movil/services/comment_service.dart';
 import 'package:crochetify_movil/views/profile/direction_view.dart';
 import 'package:crochetify_movil/views/profile/direction_create_view.dart';
+import 'package:crochetify_movil/views/cart/choose_direction.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,9 +60,31 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: HomeScreen(),
-        routes: {
-          '/direction': (context) => DirectionView(),
-          '/addDirection': (context) => DirectionForm(),
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case '/direction':
+              return MaterialPageRoute(
+                builder: (context) => DirectionView(),
+              );
+            case '/addDirection':
+              return MaterialPageRoute(
+                builder: (context) => DirectionForm(),
+              );
+            case '/cart':
+              final userId = settings.arguments as int;
+              return MaterialPageRoute(
+                builder: (context) => CartView(userId: userId),
+              );
+            case '/selectDirection':
+              final userId = settings.arguments as int;
+              return MaterialPageRoute(
+                builder: (context) => SelectDirectionView(userId: userId),
+              );
+            default:
+              return MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              );
+          }
         },
       ),
     );
