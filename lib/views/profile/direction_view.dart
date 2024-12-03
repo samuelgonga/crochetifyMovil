@@ -75,7 +75,9 @@ class _DirectionViewState extends State<DirectionView> {
             const Text(
               '¡Éxito!',
               style: TextStyle(
-                  color: Colors.green, fontWeight: FontWeight.bold, fontSize: 20),
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),
             ),
           ],
         ),
@@ -145,7 +147,8 @@ class _DirectionViewState extends State<DirectionView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white), // Aquí está el cambio
+          icon: const Icon(Icons.close,
+              color: Colors.white), // Aquí está el cambio
           onPressed: () {
             Navigator.pop(context);
           },
@@ -242,15 +245,20 @@ class _DirectionViewState extends State<DirectionView> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: directionDefaults[direction.idDirection] ?? false
+                                      color: directionDefaults[
+                                                  direction.idDirection] ??
+                                              false
                                           ? Colors.red.shade200
                                           : Colors.grey.shade300,
                                     ),
                                     padding: EdgeInsets.all(8),
                                     child: Icon(
-                                      directionDefaults[direction.idDirection] ?? false
+                                      directionDefaults[
+                                                  direction.idDirection] ??
+                                              false
                                           ? Icons.favorite // Corazón lleno
-                                          : Icons.favorite_border, // Corazón vacío
+                                          : Icons
+                                              .favorite_border, // Corazón vacío
                                       color: Colors.red,
                                       size: 28,
                                     ),
@@ -267,10 +275,8 @@ class _DirectionViewState extends State<DirectionView> {
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DirectionForm()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DirectionForm()));
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,

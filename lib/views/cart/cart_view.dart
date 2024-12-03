@@ -1,3 +1,4 @@
+import 'package:crochetify_movil/models/direction.dart';
 import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
 import 'package:crochetify_movil/views/cart/choose_direction.dart';
 import 'package:crochetify_movil/views/profile/direction_create_view.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 import 'package:crochetify_movil/views/cart/item_cart.dart';
+import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
 
 class CartView extends StatefulWidget {
   final int userId;
@@ -52,24 +54,23 @@ class _CartViewState extends State<CartView> {
                       child: Text('No hay productos en el carrito'));
                 }
                 return ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
                   itemCount: viewModel.cartProducts.length,
                   itemBuilder: (context, index) {
                     final product = viewModel.cartProducts[index];
-
-                    // Validación adicional para manejar imágenes
-                    final String? firstImage =
-                        (product.stock?.images.isNotEmpty ?? false)
-                            ? product.stock!.images.first
-                            : null;
+                    final firstImage = product.images.isNotEmpty
+                        ? product.images.first.image
+                        : '';
 
                     return CartItem(
                       productColor: product.color,
                       productQuantity: product.quantity,
                       stockId: product.stockId,
                       userId: widget.userId,
-                      image: firstImage ??
-                          '', // Pasa la imagen o una cadena vacía si no hay imágenes válidas
+                      productName:
+                          product.product?.name ?? 'Producto sin nombre',
+                      productDescription:
+                          product.product?.description ?? 'Sin descripción',
+                      image: firstImage,
                     );
                   },
                 );
@@ -77,50 +78,58 @@ class _CartViewState extends State<CartView> {
             ),
           ),
           Consumer<CartViewModel>(
-            builder: (context, viewModel, child) {
+            builder: (context, cartViewModel, child) {
+              if (cartViewModel.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (cartViewModel.cart == null ||
+                  cartViewModel.cartProducts.isEmpty) {
+                return const Center(
+                    child: Text('No hay productos en el carrito.'));
+              }
+
               return Column(
                 children: [
-                  const SizedBox(height: 8),
                   Text(
-                    'Total: \$${viewModel.cartTotal.toStringAsFixed(2)}',
+                    'Total: \$${cartViewModel.cartTotal.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
+                  Text(
+                    'Cantidad total de productos: ${cartViewModel.totalItems}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       final userViewModel =
                           Provider.of<UserViewModel>(context, listen: false);
                       final directions = userViewModel.directions;
-
-                      // Verifica si hay direcciones
-                      if (directions.isEmpty) {
-                        // Si no hay direcciones, lleva a la pantalla para agregar una nueva dirección
+                      if (directions.isNotEmpty) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SelectDirectionView(userId: widget.userId),
+                          ),
+                        );
+                      } else {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DirectionForm(),
                           ),
                         );
-                      } else {
-                        // Si hay direcciones, navega a la pantalla de selección de dirección
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SelectDirectionView(
-                              userId:
-                                  widget.userId, // Asegúrate de pasar el userId
-                            ),
-                          ),
-                        );
                       }
                     },
                     child: const Text('Pagar'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
                   ),
                 ],
               );

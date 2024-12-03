@@ -4,10 +4,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PagarWidget extends StatefulWidget {
-  final double total; // Recibe el total como parámetro
-
-  const PagarWidget({Key? key, required this.total}) : super(key: key);
-
+  final double total;
+  final int userId; // Agregar userId
+  final int directionId; // Agregar directionId
+  const PagarWidget({
+    Key? key,
+    required this.total,
+    required this.userId,
+    required this.directionId,
+  }) : super(key: key);
   @override
   _PagarWidgetState createState() => _PagarWidgetState();
 }
@@ -24,7 +29,7 @@ class _PagarWidgetState extends State<PagarWidget> {
 
   Future<void> _makePayment() async {
     try {
-      paymentIntentData = await _createPaymentIntent('390', 'usd');
+      paymentIntentData = await _createPaymentIntent(widget.total, 'usd');
       if (paymentIntentData != null) {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -35,45 +40,65 @@ class _PagarWidgetState extends State<PagarWidget> {
 
         await Stripe.instance.presentPaymentSheet();
 
+        // Aquí llamamos al servicio para crear la orden
+        await _createOrder(
+          widget.userId,
+          widget.directionId,
+        );
+
         _showAlert(
           title: '¡Éxito!',
-          message: 'Pago realizado con éxito.',
+          message: 'Pago realizado y orden creada con éxito.',
           icon: Icons.check_circle,
           iconColor: Colors.green,
         );
 
         paymentIntentData = null;
       }
-    } on StripeException catch (e) {
-      if (e.error.code == FailureCode.Canceled) {
-        _showAlert(
-          title: 'Pago cancelado',
-          message: 'El pago ha sido interrumpido por el usuario.',
-          icon: Icons.info,
-          iconColor: Colors.orange,
-        );
-      } else {
-        _showAlert(
-          title: 'Error',
-          message: 'Error al realizar el pago: ${e.error.localizedMessage}',
-          icon: Icons.error,
-          iconColor: Colors.red,
-        );
-      }
     } catch (e) {
       _showAlert(
-        title: 'Error inesperado',
-        message: 'Ha ocurrido un error inesperado: $e',
-        icon: Icons.error_outline,
+        title: 'Error',
+        message: 'Error al procesar el pago: $e',
+        icon: Icons.error,
         iconColor: Colors.red,
       );
     }
   }
 
+  Future<void> _createOrder(int userId, int directionId) async {
+    print(userId);
+    print(directionId);
+    try {
+      final url = Uri.parse('http://35.153.187.92:8087/api/crochetify/orden');
+      final http.Response response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'idUser': userId,
+          'idDirection': directionId,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Orden creada con éxito.');
+      } else {
+        throw Exception('Error al crear la orden: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error al enviar los datos de la orden: $e');
+    }
+  }
+
   Future<Map<String, dynamic>> _createPaymentIntent(
-      String amount, String currency) async {
+      double amount, String currency) async {
     try {
       final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
+
+      // Convierte el monto a centavos antes de enviarlo a Stripe
+      final amountInCents = (amount * 100).toInt();
+
       final response = await http.post(
         url,
         headers: {
@@ -82,7 +107,7 @@ class _PagarWidgetState extends State<PagarWidget> {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'amount': (int.parse(amount) * 100).toString(),
+          'amount': amountInCents.toString(), // Envía el monto en centavos
           'currency': currency,
           'payment_method_types[]': 'card',
         },

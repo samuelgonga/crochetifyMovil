@@ -1,3 +1,4 @@
+import 'package:crochetify_movil/viewmodels/order_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/shipment_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,9 @@ class MyApp extends StatelessWidget {
           create: (_) => CartViewModel(cartService: CartService()),
         ),
         ChangeNotifierProvider(
-            create: (_) => ShipmentViewModel()..loadShipments()),
+          create: (_) => OrderViewmodel(),
+        ),
+        ChangeNotifierProvider(create: (_) => ShipmentViewModel()),
         ChangeNotifierProvider(
           create: (_) => ReviewViewModel(
             reviewService: CommentService(),

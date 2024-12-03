@@ -21,12 +21,16 @@ class AuthViewModel extends ChangeNotifier {
     _isLoggedIn = token != null;
 
     if (_isLoggedIn) {
-      // Verificar si el token ha expirado
       if (token != null && JwtDecoder.isExpired(token)) {
-        await logout(); // Si el token ha expirado, cerrar la sesión
+        await logout(); // Si el token ha expirado, cerrar sesión
       } else if (token != null) {
-        _session = Session(token: token, userId: _extractUserId(token));
-        await fetchUserDetails(); // Obtiene los detalles del usuario
+        try {
+          _session = Session(token: token, userId: _extractUserId(token));
+          await fetchUserDetails(); // Obtiene los detalles del usuario
+        } catch (e) {
+          print("Error al procesar la sesión: $e");
+          _isLoggedIn = false; // Marca al usuario como no autenticado
+        }
       }
     }
     notifyListeners();

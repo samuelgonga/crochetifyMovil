@@ -17,12 +17,21 @@ class CartViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
 
+  /// Lista de productos en el carrito
   List<CartProduct> get cartProducts {
     return _cart?.cartProducts ?? [];
   }
 
+  /// Total del carrito
   double get cartTotal {
     return _cart?.total ?? 0.0;
+  }
+
+  /// Cantidad total de productos en el carrito
+  int get totalItems {
+    return _cart?.cartProducts
+            .fold<int>(0, (sum, product) => sum + (product.quantity ?? 0)) ??
+        0;
   }
 
   Future<void> fetchCart(int userId) async {
@@ -32,129 +41,141 @@ class CartViewModel extends ChangeNotifier {
       _isLoading = true;
       _hasError = false;
 
-      // Solo cambia los estados después de que la fase de construcción haya terminado
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
-
       final fetchedCart = await _cartService.getCartByUserId(userId);
-      if (fetchedCart != null) {
-        _cart = fetchedCart;
+
+      if (fetchedCart != null && fetchedCart.cartProducts.isNotEmpty) {
+        _cart = fetchedCart; // Actualiza el carrito con los datos del servidor
       } else {
-        _hasError = true;
-        print("No se pudo obtener el carrito o la respuesta fue incorrecta.");
+        _cart = null; // Si el carrito está vacío, asigna null
+        print("El carrito está vacío.");
       }
     } catch (e) {
       _hasError = true;
       print("Error al obtener el carrito: $e");
     } finally {
       _isLoading = false;
-
-      // Llama a notifyListeners después de que se complete la construcción
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      notifyListeners(); // Actualiza la vista
     }
   }
 
+  /// Añade un producto al carrito
+  /// Añade un producto al carrito
   Future<void> addToCart(int userId, int stockId, int quantity) async {
     try {
-      final sentCart = SentCart(
-        idUser: userId,
-        idStock: stockId,
-        quantity: quantity,
-      );
+      // Verifica si el producto ya existe en el carrito
+      final existingProductIndex = _cart?.cartProducts
+          .indexWhere((product) => product.stockId == stockId);
 
-      final updatedCart = await _cartService.addToCart(sentCart, userId);
+      if (existingProductIndex != null && existingProductIndex != -1) {
+        // Si el producto ya existe, suma la cantidad al existente
+        final existingProduct = _cart!.cartProducts[existingProductIndex];
+        final newQuantity = (existingProduct.quantity ?? 0) + quantity;
 
-      if (updatedCart != null) {
-        _cart = updatedCart;
+        // Actualiza localmente el carrito
+        final updatedProducts = [..._cart!.cartProducts];
+        updatedProducts[existingProductIndex] =
+            existingProduct.copyWith(quantity: newQuantity);
+        _cart = _cart?.copyWith(cartProducts: updatedProducts);
+        notifyListeners();
+
+        // Sincroniza el cambio con el servidor
+        final sentCart = SentCart(
+          idUser: userId,
+          idStock: stockId,
+          quantity: newQuantity,
+        );
+
+        final updatedCart = await _cartService.updateCart(sentCart);
+
+        if (updatedCart != null) {
+          _cart = updatedCart;
+          notifyListeners();
+        } else {
+          print("No se pudo sincronizar el carrito con el servidor.");
+        }
       } else {
-        print("No se pudo agregar el producto al carrito.");
+        // Si el producto no existe, añádelo al carrito
+        final sentCart = SentCart(
+          idUser: userId,
+          idStock: stockId,
+          quantity: quantity,
+        );
+
+        final updatedCart = await _cartService.addToCart(sentCart, userId);
+
+        if (updatedCart != null) {
+          _cart = updatedCart;
+          notifyListeners();
+        } else {
+          print("No se pudo agregar el producto al carrito.");
+        }
       }
     } catch (e) {
       print("Error al agregar al carrito: $e");
-    } finally {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
     }
   }
 
-
-Future<void> updateProductQuantity(int userId, int stockId, int newQuantity) async {
-  try {
-    if (newQuantity < 1) {
-      print("No se permiten cantidades negativas o cero.");
-      return;
-    }
-
-    // Actualizar la cantidad localmente antes de la llamada a la API
-    final productIndex = _cart?.cartProducts.indexWhere((product) => product.stockId == stockId);
-    if (productIndex != null && productIndex != -1) {
-      _cart?.cartProducts[productIndex].quantity = newQuantity;
-
-      // Recalcular el total localmente
-      _cart = Cart(
-        idCart: _cart!.idCart,
-        total: _calculateLocalTotal(),
-        cartProducts: _cart!.cartProducts,
-      );
-      notifyListeners(); // Refrescar la vista inmediatamente
-    }
-
-    // Llamar a la API para actualizar la cantidad en el servidor
-    final sentCart = SentCart(
-      idUser: userId,
-      idStock: stockId,
-      quantity: newQuantity,
-    );
-
-    final updatedCart = await _cartService.updateCart(sentCart);
-
-    if (updatedCart != null) {
-      _cart = updatedCart; // Actualizar el carrito con los datos del servidor
-      notifyListeners(); // Refrescar la vista con los datos más recientes
-    } else {
-      print("No se pudo actualizar la cantidad del producto en el servidor.");
-    }
-  } catch (e) {
-    print("Error al actualizar la cantidad del producto: $e");
-  }
-}
-
-/// Método privado para calcular el total localmente
-double _calculateLocalTotal() {
-  if (_cart == null || _cart!.cartProducts.isEmpty) return 0.0;
-
-  return _cart!.cartProducts.fold(0.0, (total, product) {
-    final price = product.stock?.price ?? 0.0;
-    return total + (product.quantity * price);
-  });
-}
-
-
-  Future<void> removeFromCart(int userId, int stockId) async {
+  Future<void> updateProductQuantity(
+      int userId, int stockId, int newQuantity) async {
     try {
-      final sentCart = SentCart(
-        idUser: userId,
-        idStock: stockId,
-        quantity: 0, // Enviar 0 para eliminar el producto
-      );
+      if (newQuantity < 1) {
+        print("No se permiten cantidades negativas o cero.");
+        return;
+      }
 
-      final updatedCart = await _cartService.addToCart(sentCart, userId);
+      // Encuentra el índice del producto a actualizar
+      final productIndex = _cart?.cartProducts
+          .indexWhere((product) => product.stockId == stockId);
 
-      if (updatedCart != null) {
-        _cart = updatedCart;
-      } else {
-        print("No se pudo eliminar el producto del carrito.");
+      if (productIndex != null && productIndex != -1) {
+        // Clona la lista de productos para actualizar localmente
+        final updatedProducts = [..._cart!.cartProducts];
+        updatedProducts[productIndex] = updatedProducts[productIndex].copyWith(
+          quantity: newQuantity,
+        );
+
+        // Si todos los productos tienen cantidad 0, marca el carrito como vacío
+        if (updatedProducts.every((product) => product.quantity == 0)) {
+          _cart = null;
+          notifyListeners();
+          print(
+              "Todos los productos han sido eliminados. El carrito está vacío.");
+          return;
+        }
+
+        // Actualiza localmente el carrito
+        _cart = _cart?.copyWith(cartProducts: updatedProducts);
+
+        // Notifica inmediatamente para reflejar los cambios locales
+        notifyListeners();
+
+        // Sincroniza el cambio con el servidor
+        final sentCart = SentCart(
+          idUser: userId,
+          idStock: stockId,
+          quantity: newQuantity,
+        );
+
+        final updatedCart = await _cartService.updateCart(sentCart);
+
+        if (updatedCart == null) {
+          print(
+              "El servidor no devolvió un carrito actualizado. Solicitando carrito completo...");
+          await fetchCart(
+              userId); // Solicita el carrito completo si falla la sincronización
+        } else {
+          // Actualiza con los datos del servidor
+          _cart = updatedCart;
+          notifyListeners(); // Actualiza la vista con el carrito sincronizado
+        }
       }
     } catch (e) {
-      print("Error al eliminar el producto del carrito: $e");
-    } finally {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      print("Error al actualizar la cantidad del producto: $e");
     }
+  }
+
+  void removeProductFromCart(int stockId) {
+    cartProducts.removeWhere((product) => product.stockId == stockId);
+    notifyListeners(); // Notifica a la vista que el estado ha cambiado
   }
 }

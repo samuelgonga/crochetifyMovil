@@ -1,4 +1,5 @@
 import 'dart:convert'; // Para decodificar imágenes Base64
+import 'package:crochetify_movil/views/cart/cart_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -57,9 +58,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   double get totalPrice => _selectedStock.price * _quantity;
 
   String cleanBase64Image(String base64Image) {
-    return base64Image.contains(',')
-        ? base64Image.split(',')[1]
-        : base64Image;
+    return base64Image.contains(',') ? base64Image.split(',')[1] : base64Image;
   }
 
   @override
@@ -173,7 +172,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           width: 30.0,
                           height: 30.0,
                           decoration: BoxDecoration(
-                            color: Color(int.parse('0xff${stock.color.substring(1)}')),
+                            color: Color(
+                                int.parse('0xff${stock.color.substring(1)}')),
                             shape: BoxShape.circle,
                             border: isSelected
                                 ? Border.all(color: Colors.blue, width: 3.0)
@@ -222,7 +222,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       if (userId == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Inicia sesión para agregar al carrito')),
+                            content:
+                                Text('Inicia sesión para agregar al carrito'),
+                          ),
                         );
                         return;
                       }

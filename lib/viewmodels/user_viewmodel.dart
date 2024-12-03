@@ -79,7 +79,8 @@ class UserViewModel extends ChangeNotifier {
   // Método para marcar una dirección como predeterminada
   Future<void> setDefaultDirection(int userId, int directionId) async {
     try {
-      final success = await _userService.setDefaultDirection(userId, directionId);
+      final success =
+          await _userService.setDefaultDirection(userId, directionId);
       if (success) {
         _directions = _directions.map((direction) {
           return Direction(

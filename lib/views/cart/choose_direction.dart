@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/cart_viewmodel.dart';
 
-
 class SelectDirectionView extends StatelessWidget {
   final int userId;
 
@@ -35,14 +34,16 @@ class SelectDirectionView extends StatelessWidget {
                         title: Text(direction.direction),
                         subtitle: Text('Teléfono: ${direction.phone}'),
                         trailing: direction.isDefault
-                            ? const Icon(Icons.check_circle, color: Colors.green)
+                            ? const Icon(Icons.check_circle,
+                                color: Colors.green)
                             : null,
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => PaymentView(
-                                selectedDirection: direction.direction,
+                                selectedDirection:
+                                    direction, // Pasa todo el objeto Direction
                                 total: cartViewModel.cartTotal,
                               ),
                             ),
@@ -56,8 +57,10 @@ class SelectDirectionView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                // Lógica para agregar nueva dirección
-                Navigator.pushNamed(context, '/addDirection');
+                Navigator.pushNamed(context, '/addDirection').then((_) {
+                  // Refresca las direcciones cuando regresas de la pantalla
+                  userViewModel.fetchDirectionsByUserId(userId);
+                });
               },
               child: const Text('Agregar Nueva Dirección'),
             ),

@@ -3,6 +3,9 @@ import 'package:crochetify_movil/models/producto.dart';
 class Stock {
   final int idStock;
   final String color;
+  final String name; // Nombre del producto
+  final String description; // Descripción del producto
+
   final int quantity;
   final double price;
   final bool status;
@@ -17,16 +20,25 @@ class Stock {
     required this.status,
     required this.product,
     required this.images,
+    required this.name,
+    required this.description,
   });
 
   factory Stock.fromJson(Map<String, dynamic> json) {
     return Stock(
-      idStock: json['idStock'] ?? 0, // Maneja `null` asignando un valor predeterminado
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+
+      idStock: json['idStock'] ??
+          0, // Maneja `null` asignando un valor predeterminado
       color: json['color'] ?? '', // Asegura un valor por defecto
       quantity: json['quantity'] ?? 0,
-      price: (json['price'] != null ? json['price'].toDouble() : 0.0), // Maneja null en `price`
+      price: (json['price'] != null
+          ? json['price'].toDouble()
+          : 0.0), // Maneja null en `price`
       status: json['status'] ?? false,
-      product: Product.fromJson(json['product'] ?? {}), // Evita errores si `product` es null
+      product: Product.fromJson(
+          json['product'] ?? {}), // Evita errores si `product` es null
       // Manejo seguro de imágenes
       images: (json['images'] as List<dynamic>?)
               ?.map((img) => img['image'] as String?)
@@ -39,6 +51,8 @@ class Stock {
   Map<String, dynamic> toJson() {
     return {
       'idStock': idStock,
+      'name': name,
+      'description': description,
       'color': color,
       'quantity': quantity,
       'price': price,

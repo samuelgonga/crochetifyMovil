@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:crochetify_movil/models/shipment.dart';
 
 class ShipmentService {
-  static const String _baseUrl = 'http://35.153.187.92:8087/api/crochetify/shipment';
+  static const String _baseUrl =
+      'http://35.153.187.92:8087/api/crochetify/shipment';
 
   // Obtener la lista de Shipments
   Future<List<Shipment>> fetchShipments() async {
@@ -20,6 +21,25 @@ class ShipmentService {
       }
     } else {
       throw Exception('Failed to load shipments');
+    }
+  }
+
+  Future<List<Shipment>> fetchShipmentsByOrderId(int idOrder) async {
+    final url = '$_baseUrl/orden/$idOrder'; // Endpoint específico para la orden
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['success']) {
+        return (data['response']['shipments'] as List)
+            .map((shipment) => Shipment.fromJson(shipment))
+            .toList();
+      } else {
+        throw Exception(
+            'Error fetching shipments for order $idOrder: ${data["message"]}');
+      }
+    } else {
+      throw Exception('Failed to load shipments for order $idOrder');
     }
   }
 

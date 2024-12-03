@@ -1,8 +1,11 @@
+import 'package:crochetify_movil/models/direction.dart';
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/widget/payment/pagar_widget.dart';
+import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class PaymentView extends StatelessWidget {
-  final String selectedDirection;
+  final Direction selectedDirection; // Cambiar de String a Direction
   final double total;
 
   const PaymentView({
@@ -13,6 +16,8 @@ class PaymentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,7 +34,7 @@ class PaymentView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              selectedDirection,
+              selectedDirection.direction, // Muestra la dirección seleccionada
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
@@ -43,7 +48,12 @@ class PaymentView extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             const Spacer(),
-            PagarWidget(total: total), // Botón de Stripe
+            PagarWidget(
+              total: total,
+              userId: authViewModel.session!.userId!, // Obtenemos el userId
+              directionId:
+                  selectedDirection.idDirection, // Obtenemos el directionId
+            ), // Botón de Stripe
           ],
         ),
       ),

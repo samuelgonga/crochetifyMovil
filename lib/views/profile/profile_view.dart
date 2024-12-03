@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crochetify_movil/viewmodels/order_viewmodel.dart';
 import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: 16),
               children: [
-                _buildProfileOption(context, 'Mis Pedidos', ShipmentView()),
+                _buildProfileOption(
+                  context,
+                  'Mis Pedidos',
+                  OrdersScreen(), // Aquí pasas el userId dinámicamente
+                ),
                 _buildProfileOption(
                     context, 'Mis direcciones', DirectionView()),
                 _buildProfileOption(
