@@ -50,7 +50,8 @@ class PaymentView extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Icon(Icons.home, color: Colors.blueAccent, size: 40),
+                          const Icon(Icons.home,
+                              color: Colors.blueAccent, size: 40),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
@@ -91,7 +92,8 @@ class PaymentView extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Icon(Icons.attach_money, color: Colors.green, size: 40),
+                          const Icon(Icons.attach_money,
+                              color: Colors.green, size: 40),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
@@ -137,25 +139,10 @@ class PaymentView extends StatelessWidget {
             ),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Lógica del botón de Pagar
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Pagar',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white
-                  ),
-                ),
+              child: PagarWidget(
+                total: total,
+                userId: authViewModel.session!.userId!,
+                directionId: selectedDirection.idDirection,
               ),
             ),
           ),

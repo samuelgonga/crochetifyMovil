@@ -11,10 +11,19 @@ class OrderViewmodel extends ChangeNotifier {
   List<Order> get orders => _orders;
   bool get isLoading => _isLoading;
 
-  // Cargar órdenes por userId
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
   Future<void> loadOrdersByUserId(int userId) async {
     _isLoading = true;
-    notifyListeners();
+    if (hasListeners) {
+      notifyListeners();
+    }
 
     try {
       _orders = await _orderService.fetchOrdersByUserId(userId);
@@ -22,7 +31,9 @@ class OrderViewmodel extends ChangeNotifier {
       print('Error: $e');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      if (hasListeners) {
+        notifyListeners();
+      }
     }
   }
 }
