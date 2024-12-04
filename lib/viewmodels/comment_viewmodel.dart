@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../services/comment_service.dart';
+import 'package:crochetify_movil/models/comment.dart';
 
 class ReviewViewModel extends ChangeNotifier {
   final CommentService reviewService;
@@ -29,6 +30,26 @@ class ReviewViewModel extends ChangeNotifier {
 
       // Convertimos el mapa a una lista de reseñas
       _reviews = response ?? {};
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> createReview(Comment comment) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {      
+      final success = await reviewService.createComment(comment);
+      if (success) {        
+        await fetchReviews(comment.productId);
+      } else {
+        _errorMessage = 'No se pudo crear el comentario.';
+      }
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

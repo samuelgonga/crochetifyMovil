@@ -33,7 +33,7 @@ class _DirectionViewState extends State<DirectionView> {
 
   Future<void> _setDefaultDirection(int idDirection, int userId) async {
     final url = Uri.parse(
-        'http://35.153.187.92:8087/api/crochetify/directions/set-default');
+        'http://100.27.71.83:8087/api/crochetify/directions/set-default');
 
     try {
       final response = await http.post(

@@ -114,7 +114,7 @@ class _DirectionFormState extends State<DirectionForm> {
   Future<void> _updateDirection(
       int idDirection, String phone, String direction) async {
     final url = Uri.parse(
-        'http://35.153.187.92:8087/api/crochetify/directions/$idDirection');
+        'http://100.27.71.83:8087/api/crochetify/directions/$idDirection');
 
     try {
       final response = await http.put(

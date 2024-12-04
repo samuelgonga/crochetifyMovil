@@ -4,7 +4,7 @@ import '../models/order.dart';
 
 class OrderService {
   Future<List<Order>> fetchOrdersByUserId(int userId) async {
-    final url = 'http://35.153.187.92:8087/api/crochetify/orden/user/$userId';
+    final url = 'http://100.27.71.83:8087/api/crochetify/orden/user/$userId';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

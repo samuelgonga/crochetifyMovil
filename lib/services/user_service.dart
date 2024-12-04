@@ -9,7 +9,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 class UserService {
   static const _tokenKey = 'user_token';
 
-  final String baseUrl = 'http://35.153.187.92:8087/api/crochetify';
+  final String baseUrl = 'http://100.27.71.83:8087/api/crochetify';
 
   Future<User?> getLoggedUser() async {
     final token = await getToken();
