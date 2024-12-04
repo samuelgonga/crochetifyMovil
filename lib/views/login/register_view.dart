@@ -218,7 +218,7 @@ class _RegisterScreenState extends State<RegisterView> {
               ),
               const SizedBox(height: 16.0),
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? CircularProgressIndicator(color: Colors.blue)
                   : ElevatedButton(
                       onPressed: _register,
                       child: const Text(

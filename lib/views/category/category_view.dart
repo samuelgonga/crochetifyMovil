@@ -80,7 +80,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 child: RefreshIndicator(
                   onRefresh: () => _refreshCategories(context),
                   child: categoryViewModel.isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator(color: Colors.blue))
                       : categoryViewModel.errorMessage != null
                           ? Center(
                               child: Column(

@@ -15,7 +15,7 @@ class StockGrid extends StatelessWidget {
     return Consumer<StockViewModel>(
       builder: (context, stockViewModel, child) {
         if (stockViewModel.isLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Colors.blue));
         }
         if (stockViewModel.stocks.isEmpty) {
           return const Center(child: Text('No hay stocks disponibles'));

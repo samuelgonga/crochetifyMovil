@@ -47,7 +47,7 @@ class _CartViewState extends State<CartView> {
       ),
       body: _isLoadingInitialData
           ? const Center(
-              child: CircularProgressIndicator(), // Indicador de carga inicial.
+              child: CircularProgressIndicator(color: Colors.blue), // Indicador de carga inicial.
             )
           : RefreshIndicator(
               onRefresh: _loadInitialData,
@@ -58,7 +58,7 @@ class _CartViewState extends State<CartView> {
                       builder: (context, viewModel, child) {
                         if (viewModel.isLoading) {
                           return const Center(
-                              child: CircularProgressIndicator());
+                              child: CircularProgressIndicator(color: Colors.blue));
                         }
 
                         if (viewModel.hasError) {

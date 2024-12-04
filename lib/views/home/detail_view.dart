@@ -251,7 +251,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   const SizedBox(height: 10),
                   reviewViewModel.isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator(color: Colors.blue))
                       : reviewViewModel.errorMessage != null
                           ? Text(
                               'Error al cargar reseñas: ${reviewViewModel.errorMessage}',

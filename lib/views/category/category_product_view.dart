@@ -84,7 +84,7 @@ Widget build(BuildContext context) {
     body: RefreshIndicator(
       onRefresh: () => _refreshStocks(context), // Conecta al método de refresco
       child: stockViewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.blue))
           : stockViewModel.errorMessage != null
               ? Center(
                   child: Column(

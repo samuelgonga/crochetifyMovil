@@ -5,6 +5,7 @@ import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:crochetify_movil/views/profile/direction_create_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'direction_edit_view.dart' as edit;
 
 class DirectionView extends StatefulWidget {
   @override
@@ -235,34 +236,61 @@ class _DirectionViewState extends State<DirectionView> {
                                     ],
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    if (user != null) {
-                                      _setDefaultDirection(
-                                          direction.idDirection, user.id);
-                                    }
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: directionDefaults[
-                                                  direction.idDirection] ??
-                                              false
-                                          ? Colors.red.shade200
-                                          : Colors.grey.shade300,
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        if (user != null) {
+                                          _setDefaultDirection(
+                                              direction.idDirection, user.id);
+                                        }
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: directionDefaults[
+                                                      direction.idDirection] ??
+                                                  false
+                                              ? Colors.red.shade200
+                                              : Colors.grey.shade300,
+                                        ),
+                                        padding: EdgeInsets.all(8),
+                                        child: Icon(
+                                          directionDefaults[
+                                                      direction.idDirection] ??
+                                                  false
+                                              ? Icons.favorite // Corazón lleno
+                                              : Icons
+                                                  .favorite_border, // Corazón vacío
+                                          color: Colors.red,
+                                          size: 28,
+                                        ),
+                                      ),
                                     ),
-                                    padding: EdgeInsets.all(8),
-                                    child: Icon(
-                                      directionDefaults[
-                                                  direction.idDirection] ??
-                                              false
-                                          ? Icons.favorite // Corazón lleno
-                                          : Icons
-                                              .favorite_border, // Corazón vacío
-                                      color: Colors.red,
-                                      size: 28,
+                                    const SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () {
+                                        // Navega a una vista de edición con los datos actuales.
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => edit.DirectionForm(
+                                              idDirection:
+                                                  direction.idDirection,
+                                              currentPhone: direction.phone,
+                                              currentDirection:
+                                                  direction.direction,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.blueAccent,
+                                        size: 28,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -276,7 +304,7 @@ class _DirectionViewState extends State<DirectionView> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DirectionForm()));
+                      MaterialPageRoute(builder: (context) => edit.DirectionForm()));
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,

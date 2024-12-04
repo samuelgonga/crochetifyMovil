@@ -124,7 +124,7 @@ class _DirectionFormState extends State<DirectionForm> {
             SizedBox(height: 32),
             Center(
               child: isLoading
-                  ? CircularProgressIndicator()
+                  ? CircularProgressIndicator(color: Colors.blue)
                   : ElevatedButton(
                       onPressed: () async {
                         final direction = directionController.text;

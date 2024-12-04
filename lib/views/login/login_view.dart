@@ -176,7 +176,7 @@ void _showAlert({
                     ),
                     const SizedBox(height: 16),
                     _isLoading
-                        ? CircularProgressIndicator()
+                        ? CircularProgressIndicator(color: Colors.blue)
                         : ElevatedButton(
                             onPressed: _login,
                             style: ElevatedButton.styleFrom(

@@ -65,7 +65,7 @@ class OrdersScreen extends StatelessWidget {
             Consumer<OrderViewmodel>(
               builder: (context, viewModel, _) {
                 if (viewModel.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: Colors.blue));
                 }
 
                 if (viewModel.orders.isEmpty) {

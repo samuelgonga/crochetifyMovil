@@ -168,7 +168,7 @@ Future<void> _saveChanges() async {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.blue))
           : _user == null
               ? const Center(
                   child: Text(
