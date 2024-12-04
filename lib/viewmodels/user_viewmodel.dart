@@ -28,31 +28,47 @@ class UserViewModel extends ChangeNotifier {
   }
 
   // Método para obtener las direcciones del usuario por su ID
-  Future<void> fetchDirectionsByUserId(int userId) async {
-    try {
-      _directions = await _userService.fetchDirectionsByUserId(userId);
-      print("Direcciones cargadas para el usuario $userId: $_directions");
-      notifyListeners();
-    } catch (e) {
-      print("Error fetching directions: $e");
+Future<void> fetchDirectionsByUserId(int userId) async {
+  try {
+    print("Cargando direcciones para el usuario $userId...");
+
+    // Llama al servicio para obtener las direcciones
+    final fetchedDirections = await _userService.fetchDirectionsByUserId(userId);
+
+    if (fetchedDirections != null) {
+      _directions = fetchedDirections; // Actualiza las direcciones
+      print("Direcciones cargadas exitosamente: $_directions");
+    } else {
+      _directions = []; // Si no hay direcciones, inicializa como lista vacía
+      print("No se encontraron direcciones para el usuario $userId.");
     }
+  } catch (e) {
+    _directions = []; // En caso de error, deja la lista vacía
+    print("Error al cargar direcciones para el usuario $userId: $e");
+  } finally {
+    notifyListeners(); // Asegura que la UI se actualice
   }
+}
+
+
 
   // Método para agregar una nueva dirección
   Future<void> addDirection(Direction direction) async {
-    try {
-      final newDirection = await _userService.addDirection(direction);
-      if (newDirection != null) {
-        _directions.add(newDirection);
-        print("Dirección agregada: ${newDirection.direction}");
-        notifyListeners();
-      } else {
-        print("No se pudo agregar la dirección.");
-      }
-    } catch (e) {
-      print("Error adding direction: $e");
+  try {
+    final newDirection = await _userService.addDirection(direction);
+
+    if (newDirection != null) {
+      _directions.add(newDirection); // Agregar la dirección a la lista local
+      print("Dirección agregada: ${newDirection.direction}");
+      notifyListeners(); // Notificar cambios para actualizar la UI
+    } else {
+      print("No se pudo agregar la dirección. Respuesta nula.");
     }
+  } catch (e) {
+    print("Error al agregar dirección: $e");
   }
+}
+
 
   // Método para actualizar el perfil del usuario (nombre e imagen)
   Future<void> updateUserProfile({

@@ -29,63 +29,60 @@ class _PagarWidgetState extends State<PagarWidget> {
         'pk_test_51P0B7yIweajk9UR5c7fsrfhPDgEuiztt2ayVoPhHQ8WSNFz3dzLr6ismE4QPQxFAFvPlvg33NPvbMjlQD3tFzepB007z42Ukd9';
   }
 
-Future<void> _makePayment() async {
-  try {
-    paymentIntentData = await _createPaymentIntent(widget.total, 'usd');
-    if (paymentIntentData != null) {
-      await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntentData!['client_secret'],
-          merchantDisplayName: 'Mi Tienda',
-        ),
-      );
+  Future<void> _makePayment() async {
+    try {
+      paymentIntentData = await _createPaymentIntent(widget.total, 'usd');
+      if (paymentIntentData != null) {
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: paymentIntentData!['client_secret'],
+            merchantDisplayName: 'Mi Tienda',
+          ),
+        );
 
-      await Stripe.instance.presentPaymentSheet();
+        await Stripe.instance.presentPaymentSheet();
 
-      // Aquí llamamos al servicio para crear la orden
-      await _createOrder(
-        widget.userId,
-        widget.directionId,
-      );
+        // Crear la orden después del pago
+        await _createOrder(widget.userId, widget.directionId);
 
-      _showAlert(
-        title: '¡Éxito!',
-        message: 'Pago realizado y orden creada con éxito.',
-        icon: Icons.check_circle,
-        iconColor: Colors.green,
-      );
+        // Mostrar alerta de éxito y enviar al Inicio
+        _showAlert(
+          title: '¡Éxito!',
+          message: 'El pago se realizó con éxito. ¡Gracias por tu compra!',
+          icon: Icons.check_circle,
+          iconColor: Colors.green,
+          onClose: () {
+            Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+          },
+        );
 
-      paymentIntentData = null;
-    }
-  } on StripeException catch (e) {
-    if (e.error.code == FailureCode.Canceled) {
-      // El usuario canceló el flujo de pago
-      _showAlert(
-        title: '¡Error!',
-        message: 'El pago fue detenido por el usuario.',
-        icon: Icons.error_outline,
-        iconColor: Colors.orange,
-      );
-    } else {
-      // Otros errores de Stripe
+        paymentIntentData = null;
+      }
+    } on StripeException catch (e) {
+      if (e.error.code == FailureCode.Canceled) {
+        _showAlert(
+          title: '¡Error!',
+          message: 'El pago fue cancelado por el usuario.',
+          icon: Icons.error_outline,
+          iconColor: Colors.orange,
+        );
+      } else {
+        _showAlert(
+          title: 'Error',
+          message: 'Error al procesar el pago: ${e.error.localizedMessage}',
+          icon: Icons.error,
+          iconColor: Colors.red,
+        );
+      }
+    } catch (e) {
       _showAlert(
         title: 'Error',
-        message: 'Error al procesar el pago: ${e.error.localizedMessage}',
+        message: 'Ocurrió un error inesperado. Intenta de nuevo más tarde.',
         icon: Icons.error,
         iconColor: Colors.red,
       );
     }
-  } catch (e) {
-    // Manejo genérico de errores
-    _showAlert(
-      title: 'Error',
-      message: 'Ocurrió un error inesperado. Intenta de nuevo más tarde.',
-      icon: Icons.error,
-      iconColor: Colors.red,
-    );
   }
-}
-
 
   Future<void> _createOrder(int userId, int directionId) async {
     try {
@@ -142,6 +139,7 @@ Future<void> _makePayment() async {
     required String message,
     required IconData icon,
     required Color iconColor,
+    VoidCallback? onClose,
   }) {
     showDialog(
       context: context,
@@ -182,7 +180,10 @@ Future<void> _makePayment() async {
           actions: [
             Center(
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  if (onClose != null) onClose();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: iconColor,
                   padding: const EdgeInsets.symmetric(

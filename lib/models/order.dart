@@ -36,6 +36,10 @@ class Order {
           .toList(),
     );
   }
+
+  get userId => null;
+
+  get directionId => null;
 }
 
 class OrderProduct {

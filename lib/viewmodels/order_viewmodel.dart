@@ -7,14 +7,28 @@ class OrderViewmodel extends ChangeNotifier {
   final OrderService _orderService = OrderService();
   List<Order> _orders = [];
   bool _isLoading = false;
+  bool _isDisposed = false; // Bandera para verificar si el objeto está eliminado
 
   List<Order> get orders => _orders;
   bool get isLoading => _isLoading;
 
+  @override
+  void dispose() {
+    _isDisposed = true; // Marcamos que el objeto está eliminado
+    super.dispose();
+  }
+
+  // Método seguro para notificar cambios
+  void _safeNotifyListeners() {
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
   // Cargar órdenes por userId
   Future<void> loadOrdersByUserId(int userId) async {
     _isLoading = true;
-    notifyListeners();
+    _safeNotifyListeners(); // Usamos el método seguro
 
     try {
       _orders = await _orderService.fetchOrdersByUserId(userId);
@@ -22,7 +36,7 @@ class OrderViewmodel extends ChangeNotifier {
       print('Error: $e');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      _safeNotifyListeners(); // Usamos el método seguro
     }
   }
 }

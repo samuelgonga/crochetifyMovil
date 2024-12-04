@@ -137,25 +137,10 @@ class PaymentView extends StatelessWidget {
             ),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Lógica del botón de Pagar
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Pagar',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white
-                  ),
-                ),
+              child: PagarWidget(
+                total: total,
+                userId: authViewModel.session!.userId!,
+                directionId: selectedDirection.idDirection,
               ),
             ),
           ),

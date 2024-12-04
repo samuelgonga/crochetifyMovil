@@ -205,41 +205,47 @@ class UserService {
 
   // Agregar una nueva dirección
   Future<Direction?> addDirection(Direction direction) async {
-    final url = Uri.parse('$baseUrl/directions');
-    final token = await getToken(); // Obtener el token desde SharedPreferences
+  final url = Uri.parse('$baseUrl/directions');
+  final token = await getToken(); // Obtener el token desde SharedPreferences
 
-    if (token == null) {
-      print('Token no disponible. Inicia sesión primero.');
-      return null;
-    }
+  if (token == null) {
+    print('Token no disponible. Inicia sesión primero.');
+    return null;
+  }
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Incluir el token en los headers
-        },
-        body: jsonEncode({
-          'direction': direction.direction,
-          'phone': direction.phone,
-          'userId': direction.userId,
-        }),
-      );
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Incluir el token en los headers
+      },
+      body: jsonEncode({
+        'direction': direction.direction,
+        'phone': direction.phone,
+        'userId': direction.userId,
+      }),
+    );
 
-      if (response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        print('Dirección añadida con éxito: $data');
-        return Direction.fromJson(data);
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      if (data['success'] == true && data['response'] != null) {
+        // Crear la dirección desde la respuesta
+        return Direction.fromJson(data['response']);
       } else {
-        print('Error al agregar la dirección: ${response.body}');
+        print('Error en la respuesta del servidor: ${data['message']}');
         return null;
       }
-    } catch (e) {
-      print('Error durante la solicitud HTTP: $e');
+    } else {
+      print('Error al agregar la dirección: ${response.body}');
       return null;
     }
+  } catch (e) {
+    print('Error durante la solicitud HTTP: $e');
+    return null;
   }
+}
 
   // Actualizar el perfil del usuario (nombre e imagen en base64)
   Future<bool> updateUserProfile({

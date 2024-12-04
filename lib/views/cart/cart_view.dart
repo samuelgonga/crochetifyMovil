@@ -24,19 +24,22 @@ class _CartViewState extends State<CartView> {
   }
 
   /// Carga inicial de carrito y direcciones.
-  Future<void> _loadInitialData() async {
-    final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
-    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+Future<void> _loadInitialData() async {
+  final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
+  final userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
-    await Future.wait([
-      cartViewModel.fetchCart(widget.userId),
-      userViewModel.fetchDirectionsByUserId(widget.userId),
-    ]);
+  await Future.wait([
+    cartViewModel.fetchCart(widget.userId),
+    userViewModel.fetchDirectionsByUserId(widget.userId),
+  ]);
 
+  if (mounted) {
     setState(() {
       _isLoadingInitialData = false; // Finalizamos la carga inicial.
     });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

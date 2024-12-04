@@ -125,8 +125,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                     itemCount:
                                         categoryViewModel.categories.length,
                                     itemBuilder: (context, index) {
-                                      final category = categoryViewModel
-                                          .categories[index];
+                                      final category =
+                                          categoryViewModel.categories[index];
                                       return Card(
                                         elevation: 3,
                                         shape: RoundedRectangleBorder(
