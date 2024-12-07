@@ -9,7 +9,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 class UserService {
   static const _tokenKey = 'user_token';
 
-  final String baseUrl = 'http://35.153.187.92:8087/api/crochetify';
+  final String baseUrl = 'http://100.27.71.83:8087/api/crochetify';
 
   Future<User?> getLoggedUser() async {
     final token = await getToken();
@@ -67,7 +67,7 @@ class UserService {
     }
   }
 
-    Future<bool> setDefaultDirection(int userId, int directionId) async {
+  Future<bool> setDefaultDirection(int userId, int directionId) async {
     final url = Uri.parse('$baseUrl/set-default');
 
     try {
@@ -85,7 +85,8 @@ class UserService {
       if (response.statusCode == 200) {
         return true; // Operación exitosa
       } else {
-        print('Error al marcar la dirección como predeterminada: ${response.body}');
+        print(
+            'Error al marcar la dirección como predeterminada: ${response.body}');
         return false; // Operación fallida
       }
     } catch (e) {
@@ -205,47 +206,47 @@ class UserService {
 
   // Agregar una nueva dirección
   Future<Direction?> addDirection(Direction direction) async {
-  final url = Uri.parse('$baseUrl/directions');
-  final token = await getToken(); // Obtener el token desde SharedPreferences
+    final url = Uri.parse('$baseUrl/directions');
+    final token = await getToken(); // Obtener el token desde SharedPreferences
 
-  if (token == null) {
-    print('Token no disponible. Inicia sesión primero.');
-    return null;
-  }
-
-  try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Incluir el token en los headers
-      },
-      body: jsonEncode({
-        'direction': direction.direction,
-        'phone': direction.phone,
-        'userId': direction.userId,
-      }),
-    );
-
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      if (data['success'] == true && data['response'] != null) {
-        // Crear la dirección desde la respuesta
-        return Direction.fromJson(data['response']);
-      } else {
-        print('Error en la respuesta del servidor: ${data['message']}');
-        return null;
-      }
-    } else {
-      print('Error al agregar la dirección: ${response.body}');
+    if (token == null) {
+      print('Token no disponible. Inicia sesión primero.');
       return null;
     }
-  } catch (e) {
-    print('Error durante la solicitud HTTP: $e');
-    return null;
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Incluir el token en los headers
+        },
+        body: jsonEncode({
+          'direction': direction.direction,
+          'phone': direction.phone,
+          'userId': direction.userId,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['success'] == true && data['response'] != null) {
+          // Crear la dirección desde la respuesta
+          return Direction.fromJson(data['response']);
+        } else {
+          print('Error en la respuesta del servidor: ${data['message']}');
+          return null;
+        }
+      } else {
+        print('Error al agregar la dirección: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error durante la solicitud HTTP: $e');
+      return null;
+    }
   }
-}
 
   // Actualizar el perfil del usuario (nombre e imagen en base64)
   Future<bool> updateUserProfile({

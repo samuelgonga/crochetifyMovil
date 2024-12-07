@@ -24,22 +24,21 @@ class _CartViewState extends State<CartView> {
   }
 
   /// Carga inicial de carrito y direcciones.
-Future<void> _loadInitialData() async {
-  final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
-  final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+  Future<void> _loadInitialData() async {
+    final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
 
-  await Future.wait([
-    cartViewModel.fetchCart(widget.userId),
-    userViewModel.fetchDirectionsByUserId(widget.userId),
-  ]);
+    await Future.wait([
+      cartViewModel.fetchCart(widget.userId),
+      userViewModel.fetchDirectionsByUserId(widget.userId),
+    ]);
 
-  if (mounted) {
-    setState(() {
-      _isLoadingInitialData = false; // Finalizamos la carga inicial.
-    });
+    if (mounted) {
+      setState(() {
+        _isLoadingInitialData = false; // Finalizamos la carga inicial.
+      });
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +46,7 @@ Future<void> _loadInitialData() async {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Mi Carrito'),
+        automaticallyImplyLeading: false, // Elimina la flecha de retroceso.
       ),
       body: _isLoadingInitialData
           ? const Center(
@@ -123,8 +123,9 @@ Future<void> _loadInitialData() async {
                               userId: widget.userId,
                               productName: product.product?.name ??
                                   'Producto sin nombre',
-                              productDescription: product.product?.description ??
-                                  'Sin descripción',
+                              productDescription:
+                                  product.product?.description ??
+                                      'Sin descripción',
                               image: firstImage,
                             );
                           },
@@ -133,99 +134,104 @@ Future<void> _loadInitialData() async {
                     ),
                   ),
                   Consumer<CartViewModel>(
-  builder: (context, cartViewModel, child) {
-    if (cartViewModel.isLoading || cartViewModel.cartProducts.isEmpty) {
-      return const SizedBox.shrink();
-    }
+                    builder: (context, cartViewModel, child) {
+                      if (cartViewModel.isLoading ||
+                          cartViewModel.cartProducts.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 113, 191, 254),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Total: \$${cartViewModel.cartTotal.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 255, 255, 255), // Azul vibrante
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Cantidad total de productos: ${cartViewModel.totalItems}',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Color.fromARGB(221, 255, 255, 255),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Center(
-            child: ElevatedButton(
-              onPressed: () async {
-                final userViewModel =
-                    Provider.of<UserViewModel>(context, listen: false);
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 113, 191, 254),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: const Offset(0, -2),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Total: \$${cartViewModel.cartTotal.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255), // Azul vibrante
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Cantidad total de productos: ${cartViewModel.totalItems}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(221, 255, 255, 255),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  final userViewModel =
+                                      Provider.of<UserViewModel>(context,
+                                          listen: false);
 
-                if (userViewModel.directions.isNotEmpty) {
-                  Navigator.pushNamed(
-                    context,
-                    '/selectDirection',
-                    arguments: widget.userId,
-                  );
-                } else {
-                  final result = await Navigator.pushNamed(
-                    context,
-                    '/addDirection',
-                  );
+                                  if (userViewModel.directions.isNotEmpty) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/selectDirection',
+                                      arguments: widget.userId,
+                                    );
+                                  } else {
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      '/addDirection',
+                                    );
 
-                  if (result == true) {
-                    Navigator.pushNamed(
-                      context,
-                      '/selectDirection',
-                      arguments: widget.userId,
-                    );
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor:  Colors.blueAccent, // Azul vibrante
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text(
-                'Pagar',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  },
-)
-
+                                    if (result == true) {
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/selectDirection',
+                                        arguments: widget.userId,
+                                      );
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Colors.blueAccent, // Azul vibrante
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                child: const Text(
+                                  'Pagar',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

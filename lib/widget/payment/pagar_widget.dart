@@ -52,7 +52,8 @@ class _PagarWidgetState extends State<PagarWidget> {
           icon: Icons.check_circle,
           iconColor: Colors.green,
           onClose: () {
-            Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/home', (route) => false);
           },
         );
 
@@ -86,7 +87,7 @@ class _PagarWidgetState extends State<PagarWidget> {
 
   Future<void> _createOrder(int userId, int directionId) async {
     try {
-      final url = Uri.parse('http://35.153.187.92:8087/api/crochetify/orden');
+      final url = Uri.parse('http://100.27.71.83:8087/api/crochetify/orden');
       final http.Response response = await http.post(
         url,
         headers: {

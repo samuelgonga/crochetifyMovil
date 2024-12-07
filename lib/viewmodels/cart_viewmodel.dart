@@ -35,58 +35,80 @@ class CartViewModel extends ChangeNotifier {
   }
 
   /// Recupera el carrito desde el servidor
-Future<void> fetchCart(int userId) async {
-  try {
-    // Marca como cargando sin notificar inmediatamente
-    _isLoading = true;
-
-    // Espera un ciclo para evitar conflictos de construcción
-    await Future.delayed(Duration.zero);
-
-    final fetchedCart = await _cartService.getCartByUserId(userId);
-
-    if (fetchedCart != null) {
-      print("Carrito recuperado: ${fetchedCart.toJson()}");
-      _cart = fetchedCart;
-    } else {
-      print("No se pudo recuperar el carrito.");
-      _cart = null;
-    }
-  } catch (e) {
-    print("Error al obtener el carrito: $e");
-    _hasError = true;
-  } finally {
-    // Finaliza el estado de carga y notifica a los listeners
-    _isLoading = false;
-    notifyListeners();
-  }
-}
-
-
-  /// Agrega un producto al carrito
-  Future<void> addToCart(int userId, int stockId, int quantity) async {
+  Future<void> fetchCart(int userId) async {
     try {
-      print("Intentando agregar al carrito: userId=$userId, stockId=$stockId, quantity=$quantity");
+      // Marca como cargando sin notificar inmediatamente
+      _isLoading = true;
 
-      // Crea el objeto SentCart
+      // Espera un ciclo para evitar conflictos de construcción
+      await Future.delayed(Duration.zero);
+
+      final fetchedCart = await _cartService.getCartByUserId(userId);
+
+      if (fetchedCart != null) {
+        print("Carrito recuperado: ${fetchedCart.toJson()}");
+        _cart = fetchedCart;
+      } else {
+        print("No se pudo recuperar el carrito.");
+        _cart = null;
+      }
+    } catch (e) {
+      print("Error al obtener el carrito: $e");
+      _hasError = true;
+    } finally {
+      // Finaliza el estado de carga y notifica a los listeners
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  bool _isAddingToCart = false;
+  bool get isAddingToCart => _isAddingToCart;
+
+  Future<void> addToCart(int userId, int stockId, int quantity) async {
+    if (_isAddingToCart)
+      return; // Evita iniciar otra operación si ya hay una en curso.
+    _isAddingToCart = true;
+    notifyListeners();
+
+    try {
+      print(
+          "Intentando agregar al carrito: userId=$userId, stockId=$stockId, quantity=$quantity");
+
+      int newQuantity = quantity;
+
+      // Verifica si el carrito ya tiene productos
+      if (_cart?.cartProducts != null && _cart!.cartProducts.isNotEmpty) {
+        final existingProductIndex = _cart!.cartProducts.indexWhere(
+          (product) => product.stockId == stockId,
+        );
+
+        if (existingProductIndex != -1) {
+          // Si el producto ya existe, suma las cantidades
+          final existingProduct = _cart!.cartProducts[existingProductIndex];
+          newQuantity += existingProduct.quantity ?? 0;
+        }
+      }
+
+      // Llama al servicio para agregar o actualizar el producto
       final sentCart = SentCart(
         idUser: userId,
         idStock: stockId,
-        quantity: quantity,
+        quantity: newQuantity,
       );
 
-      // Llama al servicio para agregar el producto
       final updatedCart = await _cartService.addToCart(sentCart, userId);
 
       if (updatedCart != null) {
-        print("Carrito actualizado: ${updatedCart.toJson()}");
         _cart = updatedCart; // Sincroniza con el backend
+        print("Carrito actualizado: ${updatedCart.toJson()}");
       } else {
         print("No se pudo agregar el producto al carrito.");
       }
     } catch (e) {
       print("Error al agregar al carrito: $e");
     } finally {
+      _isAddingToCart = false; // Reinicia el estado siempre
       notifyListeners();
     }
   }
@@ -95,7 +117,8 @@ Future<void> fetchCart(int userId) async {
   Future<void> updateProductQuantity(
       int userId, int stockId, int newQuantity) async {
     try {
-      print("Actualizando cantidad: userId=$userId, stockId=$stockId, newQuantity=$newQuantity");
+      print(
+          "Actualizando cantidad: userId=$userId, stockId=$stockId, newQuantity=$newQuantity");
 
       final sentCart = SentCart(
         idUser: userId,
@@ -110,7 +133,8 @@ Future<void> fetchCart(int userId) async {
         _cart = updatedCart;
       } else {
         print("El servidor no devolvió un carrito actualizado.");
-        await fetchCart(userId); // Recupera el carrito completo si no se devolvió correctamente
+        await fetchCart(
+            userId); // Recupera el carrito completo si no se devolvió correctamente
       }
     } catch (e) {
       print("Error al actualizar la cantidad del producto: $e");

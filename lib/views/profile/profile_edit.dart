@@ -29,21 +29,27 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
   Future<void> _loadUserData() async {
     try {
       final userData = await _userService.getLoggedUser();
-      setState(() {
-        _user = userData;
-        _nameController.text = _user?.name ?? ''; // Inicializa el nombre
-        _isLoading = false;
+      if (mounted) {
+        // Verifica si el widget está montado
+        setState(() {
+          _user = userData;
+          _nameController.text = _user?.name ?? ''; // Inicializa el nombre
+          _isLoading = false;
 
-        // Decodifica la imagen de base64 si existe
-        if (_user?.image != null && _user!.image!.isNotEmpty) {
-          _decodedImage = MemoryImage(base64Decode(_user!.image!));
-        }
-      });
+          // Decodifica la imagen de base64 si existe
+          if (_user?.image != null && _user!.image!.isNotEmpty) {
+            _decodedImage = MemoryImage(base64Decode(_user!.image!));
+          }
+        });
+      }
     } catch (e) {
       print('Error al cargar datos del usuario: $e');
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        // Verifica si el widget está montado
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -51,7 +57,8 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
     try {
       final pickedFile =
           await _imagePicker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
+      if (pickedFile != null && mounted) {
+        // Verifica si el widget está montado
         setState(() {
           _selectedImage = File(pickedFile.path);
           _decodedImage =
@@ -100,65 +107,64 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
     );
   }
 
-
-Future<void> _saveChanges() async {
-  try {
-    final success = await _userService.updateUserProfile(
-      name: _nameController.text,
-      imageFile: _selectedImage,
-    );
-
-    if (success) {
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
-            title: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.green, size: 30),
-                const SizedBox(width: 10),
-                const Text('¡Éxito!'),
-              ],
-            ),
-            content: const Text(
-              'Perfil actualizado con éxito.',
-              style: TextStyle(fontSize: 16),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'Aceptar',
-                  style: TextStyle(color: Theme.of(context).primaryColor),
-                ),
-              ),
-            ],
-          );
-        },
+  Future<void> _saveChanges() async {
+    try {
+      final success = await _userService.updateUserProfile(
+        name: _nameController.text,
+        imageFile: _selectedImage,
       );
 
-      // Regresa a la vista anterior con un indicador de éxito
-      Navigator.pop(context, true);
-    } else {
+      if (success) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
+              title: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 30),
+                  const SizedBox(width: 10),
+                  const Text('¡Éxito!'),
+                ],
+              ),
+              content: const Text(
+                'Perfil actualizado con éxito.',
+                style: TextStyle(fontSize: 16),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'Aceptar',
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+
+        // Regresa a la vista anterior con un indicador de éxito
+        Navigator.pop(context, true);
+      } else {
+        _showAlert(
+          title: 'Error',
+          message: 'Error al actualizar el perfil.',
+          icon: Icons.error,
+          iconColor: Colors.red,
+        );
+      }
+    } catch (e) {
+      print('Error al guardar los cambios: $e');
       _showAlert(
         title: 'Error',
-        message: 'Error al actualizar el perfil.',
+        message: 'Error al guardar los cambios.',
         icon: Icons.error,
         iconColor: Colors.red,
       );
     }
-  } catch (e) {
-    print('Error al guardar los cambios: $e');
-    _showAlert(
-      title: 'Error',
-      message: 'Error al guardar los cambios.',
-      icon: Icons.error,
-      iconColor: Colors.red,
-    );
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +193,8 @@ Future<void> _saveChanges() async {
                           CircleAvatar(
                             radius: 60,
                             backgroundImage: _decodedImage ??
-                                const AssetImage('assets/images/default_avatar.png')
+                                const AssetImage(
+                                        'assets/images/default_avatar.png')
                                     as ImageProvider,
                             backgroundColor: Colors.grey[200],
                           ),

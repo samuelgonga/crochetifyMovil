@@ -133,6 +133,8 @@ class Cart {
     );
   }
 
+  get items => null;
+
   Map<String, dynamic> toJson() {
     return {
       'idCart': idCart,

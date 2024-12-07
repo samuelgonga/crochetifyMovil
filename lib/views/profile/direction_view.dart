@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
 import 'package:crochetify_movil/viewmodels/session_viewmodel.dart';
 import 'package:crochetify_movil/views/profile/direction_create_view.dart';
+import 'package:crochetify_movil/views/profile/direction_edit_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -13,11 +14,6 @@ class DirectionView extends StatefulWidget {
 
 class _DirectionViewState extends State<DirectionView> {
   Map<int, bool> directionDefaults = {};
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
@@ -32,7 +28,7 @@ class _DirectionViewState extends State<DirectionView> {
 
   Future<void> _setDefaultDirection(int idDirection, int userId) async {
     final url = Uri.parse(
-        'http://35.153.187.92:8087/api/crochetify/directions/set-default');
+        'http://100.27.71.83:8087/api/crochetify/directions/set-default');
 
     try {
       final response = await http.post(
@@ -48,12 +44,14 @@ class _DirectionViewState extends State<DirectionView> {
 
       if (response.statusCode == 200) {
         _showSuccessDialog();
-        setState(() {
-          directionDefaults.updateAll((key, value) => false);
-          directionDefaults[idDirection] = true;
-        });
+
+        // Actualiza el estado en el modelo global
+        final userViewModel =
+            Provider.of<UserViewModel>(context, listen: false);
+        userViewModel.setDefaultDirection(userId, idDirection);
       } else {
-        _showErrorDialog(response.body);
+        _showErrorDialog(
+            'Error al marcar como predeterminada: ${response.body}');
       }
     } catch (e) {
       _showErrorDialog('Error al conectar con el servidor: $e');
@@ -70,7 +68,7 @@ class _DirectionViewState extends State<DirectionView> {
         ),
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 30),
+            const Icon(Icons.check_circle, color: Colors.green, size: 30),
             const SizedBox(width: 10),
             const Text(
               '¡Éxito!',
@@ -101,6 +99,7 @@ class _DirectionViewState extends State<DirectionView> {
   }
 
   void _showErrorDialog(String message) {
+    if (!mounted) return; // Verifica si el widget aún está montado
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -115,13 +114,16 @@ class _DirectionViewState extends State<DirectionView> {
             const Text(
               'Error',
               style: TextStyle(
-                  color: Colors.red, fontWeight: FontWeight.bold, fontSize: 20),
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
           ],
         ),
         content: Text(
           message,
-          style: TextStyle(fontSize: 16, color: Colors.black87),
+          style: const TextStyle(fontSize: 16, color: Colors.black87),
         ),
         actions: [
           TextButton(
@@ -147,8 +149,7 @@ class _DirectionViewState extends State<DirectionView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close,
-              color: Colors.white), // Aquí está el cambio
+          icon: const Icon(Icons.close, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -221,11 +222,11 @@ class _DirectionViewState extends State<DirectionView> {
                                     children: [
                                       Text(
                                         direction.direction,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      SizedBox(height: 8),
+                                      const SizedBox(height: 8),
                                       Text(
                                         'Teléfono: ${direction.phone}',
                                         style: TextStyle(
@@ -245,24 +246,43 @@ class _DirectionViewState extends State<DirectionView> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: directionDefaults[
-                                                  direction.idDirection] ??
-                                              false
+                                      color: Provider.of<UserViewModel>(context)
+                                                  .setDefaultDirection ==
+                                              direction.idDirection
                                           ? Colors.red.shade200
                                           : Colors.grey.shade300,
                                     ),
-                                    padding: EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(8),
                                     child: Icon(
-                                      directionDefaults[
-                                                  direction.idDirection] ??
-                                              false
-                                          ? Icons.favorite // Corazón lleno
-                                          : Icons
-                                              .favorite_border, // Corazón vacío
+                                      Provider.of<UserViewModel>(context)
+                                                  .setDefaultDirection ==
+                                              direction.idDirection
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
                                       color: Colors.red,
                                       size: 28,
                                     ),
                                   ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: Colors.blueAccent),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DirectionEditView(
+                                          idDirection: direction.idDirection,
+                                          currentPhone: direction.phone,
+                                          currentDirection: direction.direction,
+                                        ),
+                                      ),
+                                    );
+                                    if (user != null) {
+                                      userViewModel
+                                          .fetchDirectionsByUserId(user.id);
+                                    }
+                                  },
                                 ),
                               ],
                             ),

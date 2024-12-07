@@ -7,7 +7,7 @@
 
     <!-- Declaración de la aplicación -->
     <application
-        android:label="crochetify_movil"
+        android:label="Crochetify"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/LaunchTheme"
