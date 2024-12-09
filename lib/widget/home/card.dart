@@ -43,8 +43,7 @@ class StockGrid extends StatelessWidget {
             mainAxisSpacing: 8.0,
           ),
           itemCount: groupedStocks.length,
-          padding: const EdgeInsets.symmetric(
-              horizontal: 8.0, vertical: 0.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
           itemBuilder: (context, index) {
             final productId = groupedStocks.keys.toList()[index];
             final productStocks = groupedStocks[productId]!;
@@ -72,6 +71,23 @@ class StockGrid extends StatelessWidget {
       groupedStocks.putIfAbsent(productId, () => []).add(stock);
     }
     return groupedStocks;
+  }
+
+  // Método para limpiar la base64 eliminando los prefijos conocidos
+  String? cleanBase64(String? base64String) {
+    if (base64String == null) return null;
+    // Detectar y remover diferentes prefijos de datos base64
+    final prefixes = [
+      'data:image/jpeg;base64,',
+      'data:image/jpg;base64,',
+      'data:image/png;base64,',
+    ];
+    for (var prefix in prefixes) {
+      if (base64String.startsWith(prefix)) {
+        return base64String.replaceFirst(prefix, '');
+      }
+    }
+    return base64String; // Si no tiene prefijo conocido, devolver como está
   }
 
   // Método para construir un Card de Stock
@@ -107,10 +123,7 @@ class StockGrid extends StatelessWidget {
                       const BorderRadius.vertical(top: Radius.circular(4)),
                   child: firstImageBase64 != null
                       ? Image.memory(
-                          base64Decode(
-                            firstImageBase64.replaceFirst(
-                                'data:image/jpeg;base64,', ''),
-                          ),
+                          base64Decode(cleanBase64(firstImageBase64)!),
                           fit: BoxFit.cover,
                           width: double.infinity,
                           errorBuilder: (context, error, stackTrace) =>
@@ -138,8 +151,8 @@ class StockGrid extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       stock.product.description,
-                      style: const TextStyle(
-                          fontSize: 10, color: Colors.black87),
+                      style:
+                          const TextStyle(fontSize: 10, color: Colors.black87),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -152,8 +165,8 @@ class StockGrid extends StatelessWidget {
                           width: 12.0,
                           height: 12.0,
                           decoration: BoxDecoration(
-                            color: Color(int.parse(
-                                '0xff${stock.color.substring(1)}')),
+                            color: Color(
+                                int.parse('0xff${stock.color.substring(1)}')),
                             shape: BoxShape.circle,
                           ),
                         );

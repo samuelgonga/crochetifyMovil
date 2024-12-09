@@ -21,6 +21,9 @@ class RegisterService {
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
       print('Usuario registrado exitosamente: $data');
+    } else if (response.statusCode == 409) {
+      // Manejo de correo existente
+      throw Exception('El correo ya está registrado. Usa uno diferente.');
     } else if (response.statusCode == 400) {
       throw Exception('Datos inválidos. Verifica tu información.');
     } else {
