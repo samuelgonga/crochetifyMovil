@@ -2,7 +2,7 @@ class Order {
   final int idOrder;
   final double total;
   final int idShipment;
-  final int statusShipment;
+  int statusShipment;
   final String shippingDay;
   final String deliveryDay;
   final String orderDirection;
@@ -26,7 +26,7 @@ class Order {
       idOrder: json['idOrden'],
       total: json['total'],
       idShipment: json['idShipment'],
-      statusShipment: json['statusShipment'],
+      statusShipment: json['statusShipment'] ?? 0,
       shippingDay: json['shipping_day'] ?? '',
       deliveryDay: json['delivery_day'] ?? '',
       orderDirection: json['ordenDirection'] ?? '',
@@ -37,10 +37,35 @@ class Order {
     );
   }
 
+  Order copyWith({
+    int? idOrder,
+    double? total,
+    int? idShipment,
+    int? statusShipment,
+    String? shippingDay,
+    String? deliveryDay,
+    String? orderDirection,
+    String? phoneDirection,
+    List<OrderProduct>? orderProducts,
+  }) {
+    return Order(
+      idOrder: idOrder ?? this.idOrder,
+      total: total ?? this.total,
+      idShipment: idShipment ?? this.idShipment,
+      statusShipment: statusShipment ?? this.statusShipment,
+      shippingDay: shippingDay ?? this.shippingDay,
+      deliveryDay: deliveryDay ?? this.deliveryDay,
+      orderDirection: orderDirection ?? this.orderDirection,
+      phoneDirection: phoneDirection ?? this.phoneDirection,
+      orderProducts: orderProducts ?? this.orderProducts,
+    );
+  }
+
   get userId => null;
 
   get directionId => null;
 }
+
 
 class OrderProduct {
   final int stockId;

@@ -23,4 +23,20 @@ class OrderService {
       throw Exception('Failed to load orders');
     }
   }
+
+    Future<Order> fetchOrderDetails(int idOrder) async {
+  final url = 'http://100.27.71.83:8087/api/crochetify/orden/$idOrder'; // Asegúrate de que el endpoint sea correcto
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    if (data['success']) {
+      return Order.fromJson(data['response']); // Ajusta según la estructura de tu respuesta
+    } else {
+      throw Exception('Error fetching order details: ${data["message"]}');
+    }
+  } else {
+    throw Exception('Failed to load order details for order $idOrder');
+  }
+}
 }

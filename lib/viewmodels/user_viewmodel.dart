@@ -91,27 +91,30 @@ class UserViewModel extends ChangeNotifier {
   }
 
   // Método para marcar una dirección como predeterminada
-  Future<void> setDefaultDirection(int userId, int directionId) async {
-    try {
-      final success =
-          await _userService.setDefaultDirection(userId, directionId);
-      if (success) {
-        _directions = _directions.map((direction) {
-          return Direction(
-            idDirection: direction.idDirection,
-            direction: direction.direction,
-            phone: direction.phone,
-            userId: direction.userId,
-            isDefault: direction.idDirection == directionId,
-          );
-        }).toList();
-        notifyListeners();
-        print("Dirección predeterminada actualizada.");
-      } else {
-        print("No se pudo actualizar la dirección predeterminada.");
-      }
-    } catch (e) {
-      print("Error setting default direction: $e");
+Future<void> setDefaultDirection(int userId, int directionId) async {
+  try {
+    final success = await _userService.setDefaultDirection(userId, directionId);
+    if (success) {
+      _directions = _directions.map((direction) {
+        return direction.copyWith(
+          isDefault: direction.idDirection == directionId, // Actualiza isDefault
+        );
+      }).toList();
+
+      // Agrega el print para verificar el estado actualizado de las direcciones
+      print("Estado actualizado de direcciones:");
+      _directions.forEach((direction) {
+        print("idDirection: ${direction.idDirection}, isDefault: ${direction.isDefault}");
+      });
+
+      notifyListeners(); // Notifica a la vista que se actualizó el modelo
+      print("Dirección predeterminada actualizada.");
+    } else {
+      print("No se pudo actualizar la dirección predeterminada.");
     }
+  } catch (e) {
+    print("Error setting default direction: $e");
   }
+}
+
 }

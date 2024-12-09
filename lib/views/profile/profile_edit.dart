@@ -237,7 +237,19 @@ class _ProfileEditScreenState extends State<ProfileEdit> {
                       // Botón para guardar cambios
                       ElevatedButton(
                         onPressed: _saveChanges,
-                        child: const Text('Guardar Cambios'),
+                           style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text('Guardar Cambios',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white
+                        ),
+                        ),
                       ),
                     ],
                   ),

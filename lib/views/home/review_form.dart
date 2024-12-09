@@ -48,7 +48,16 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Reseña enviada'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Row(
+          children: const [
+            Icon(Icons.check_circle, color: Colors.green, size: 30),
+            SizedBox(width: 10),
+            Text('Reseña enviada', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
         content: const Text('Tu reseña ha sido enviada con éxito.'),
         actions: [
           TextButton(
@@ -61,7 +70,10 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 (route) => false,
               );
             },
-            child: const Text('Aceptar'),
+            child: const Text(
+              'Aceptar',
+              style: TextStyle(color: Colors.blue),
+            ),
           ),
         ],
       ),
@@ -72,12 +84,24 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: Row(
+          children: const [
+            Icon(Icons.error, color: Colors.red, size: 30),
+            SizedBox(width: 10),
+            Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
+            child: const Text(
+              'Cerrar',
+              style: TextStyle(color: Colors.blue),
+            ),
           ),
         ],
       ),
@@ -89,6 +113,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agregar Reseña'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -142,11 +167,39 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitReview,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Enviar Reseña'),
+                      : const Text('Enviar Reseña', style: TextStyle(fontSize: 16)),
                 ),
               ),
+              const SizedBox(height: 16),
+              if (_rating > 0)
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(
+                      color: _rating <= 2
+                          ? Colors.red
+                          : (_rating <= 4 ? Colors.orange : Colors.green),
+                      width: 2,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Tu calificación: $_rating estrellas',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

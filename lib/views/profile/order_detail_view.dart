@@ -4,17 +4,28 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/models/order.dart';
 import 'package:crochetify_movil/viewmodels/shipment_viewmodel.dart';
 
-class OrderDetailView extends StatelessWidget {
+class OrderDetailView extends StatefulWidget {
   final Order order;
 
   const OrderDetailView({Key? key, required this.order}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final shipmentViewModel = Provider.of<ShipmentViewModel>(context);
-    final int idShipment = order.idShipment;
+  _OrderDetailViewState createState() => _OrderDetailViewState();
+}
 
-    // Estado del botón
+class _OrderDetailViewState extends State<OrderDetailView> {
+  late ShipmentViewModel shipmentViewModel;
+  late Order order;
+
+  @override
+  void initState() {
+    super.initState();
+    shipmentViewModel = Provider.of<ShipmentViewModel>(context, listen: false);
+    order = widget.order;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final bool hasShippingDate = order.shippingDay.isNotEmpty;
     final bool isDelivered = order.statusShipment == 2;
 
@@ -37,7 +48,7 @@ class OrderDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Botón de salir (X)
+                // Botón de salir
                 Align(
                   alignment: Alignment.topLeft,
                   child: IconButton(
@@ -160,13 +171,11 @@ class OrderDetailView extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: idShipment <= 0
-                          ? Colors.red
-                          : isDelivered
-                              ? Colors.green
-                              : hasShippingDate
-                                  ? Colors.blue
-                                  : Colors.orange,
+                      backgroundColor: isDelivered
+                          ? Colors.green // Pedido entregado
+                          : hasShippingDate
+                              ? Colors.blue // Pedido enviado
+                              : Colors.red, // Pedido pendiente
                       padding: const EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 30,
@@ -175,38 +184,42 @@ class OrderDetailView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    onPressed: idShipment <= 0 ||
-                            isDelivered ||
-                            !hasShippingDate
-                        ? null
-                        : () async {
-                            try {
-                              await shipmentViewModel.markAsReceived(idShipment);
-                              _showDialog(
-                                context,
-                                '¡Éxito!',
-                                'Orden #${order.idOrder} marcada como recibida.',
-                                Icons.check_circle,
-                                Colors.green,
-                              );
-                            } catch (e) {
-                              _showDialog(
-                                context,
-                                'Error',
-                                'Hubo un error al marcar la orden como recibida: $e',
-                                Icons.error,
-                                Colors.red,
-                              );
-                            }
-                          },
+                    onPressed: isDelivered
+                        ? null // Botón deshabilitado si ya está entregado
+                        : hasShippingDate
+                            ? () async {
+                                try {
+                                  await shipmentViewModel.markAsReceived(order.idShipment);
+                                  _showDialog(
+                                    context,
+                                    '¡Éxito!',
+                                    'Orden #${order.idOrder} marcada como recibida.',
+                                    Icons.check_circle,
+                                    Colors.green,
+                                  );
+                                  setState(() {
+                                    order = order.copyWith(
+                                      statusShipment: 2,
+                                      deliveryDay: DateTime.now().toString().substring(0, 10),
+                                    );
+                                  });
+                                } catch (e) {
+                                  _showDialog(
+                                    context,
+                                    'Error',
+                                    'Hubo un error al marcar la orden como recibida: $e',
+                                    Icons.error,
+                                    Colors.red,
+                                  );
+                                }
+                              }
+                            : null,
                     child: Text(
-                      idShipment <= 0
-                          ? 'Pendiente'
-                          : isDelivered
-                              ? 'Entregado'
-                              : hasShippingDate
-                                  ? 'Marcar como Recibido'
-                                  : 'Pendiente',
+                      isDelivered
+                          ? 'Entregado'
+                          : hasShippingDate
+                              ? 'Marcar como Recibido'
+                              : 'Pendiente',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
@@ -222,8 +235,7 @@ class OrderDetailView extends StatelessWidget {
   Widget _buildProductImage(String base64Image) {
     if (base64Image.isNotEmpty) {
       try {
-        final cleanImage =
-            base64Image.replaceFirst('data:image/jpeg;base64,', '');
+        final cleanImage = base64Image.replaceFirst('data:image/jpeg;base64,', '');
         final decodedBytes = base64Decode(cleanImage);
         return ClipRRect(
           borderRadius: BorderRadius.circular(10),

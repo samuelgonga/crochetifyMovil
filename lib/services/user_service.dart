@@ -68,7 +68,7 @@ class UserService {
   }
 
   Future<bool> setDefaultDirection(int userId, int directionId) async {
-    final url = Uri.parse('$baseUrl/set-default');
+    final url = Uri.parse('$baseUrl/directions/set-default');
 
     try {
       final response = await http.post(

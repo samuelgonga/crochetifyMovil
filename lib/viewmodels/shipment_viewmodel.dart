@@ -1,9 +1,12 @@
+import 'package:crochetify_movil/models/order.dart';
+import 'package:crochetify_movil/services/order_service.dart';
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/models/shipment.dart';
 import '../services/shipment_service.dart';
 
 class ShipmentViewModel extends ChangeNotifier {
   final ShipmentService _shipmentService = ShipmentService();
+  final OrderService _orderService = OrderService();
   List<Shipment> _shipments = [];
   bool _isLoading = false;
 
@@ -37,4 +40,20 @@ class ShipmentViewModel extends ChangeNotifier {
       print('Error marcando el envío como recibido: $e');
     }
   }
+
+  Future<Order> reloadOrderDetails(int idOrder) async {
+  try {
+    // Llama al servicio para obtener los detalles del pedido actualizados
+    final updatedOrder = await _orderService.fetchOrderDetails(idOrder);
+    notifyListeners(); // Notifica a la vista para que reaccione a los cambios
+    return updatedOrder;
+  } catch (e) {
+    print('Error recargando detalles de la orden: $e');
+    rethrow; // Permite manejar el error en la vista si es necesario
+  }
+}
+
+
+
+
 }

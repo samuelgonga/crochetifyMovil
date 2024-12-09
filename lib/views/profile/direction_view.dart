@@ -237,26 +237,22 @@ class _DirectionViewState extends State<DirectionView> {
                                   ),
                                 ),
                                 InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     if (user != null) {
-                                      _setDefaultDirection(
+                                      await _setDefaultDirection(
                                           direction.idDirection, user.id);
+                                      setState(() {});
                                     }
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Provider.of<UserViewModel>(context)
-                                                  .setDefaultDirection ==
-                                              direction.idDirection
-                                          ? Colors.red.shade200
-                                          : Colors.grey.shade300,
-                                    ),
+                                        shape: BoxShape.circle,
+                                        color: direction.isDefault
+                                            ? Colors.red.shade200
+                                            : Colors.grey.shade300),
                                     padding: const EdgeInsets.all(8),
                                     child: Icon(
-                                      Provider.of<UserViewModel>(context)
-                                                  .setDefaultDirection ==
-                                              direction.idDirection
+                                      direction.isDefault
                                           ? Icons.favorite
                                           : Icons.favorite_border,
                                       color: Colors.red,

@@ -3,7 +3,7 @@ class Direction {
   final int userId;
   final String direction;
   final String phone;
-  final bool isDefault;
+  late final bool isDefault;
 
   Direction({
     required this.idDirection,

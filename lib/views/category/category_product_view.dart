@@ -1,4 +1,5 @@
-import 'dart:convert'; // Para decodificar imágenes Base64
+import 'dart:convert';
+import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/stock_viewmodel.dart';
@@ -19,151 +20,130 @@ class CategoryProductView extends StatefulWidget {
 }
 
 class _CategoryProductViewState extends State<CategoryProductView> {
+  late TextEditingController _searchController;
+  String _searchQuery = "";
+
   @override
   void initState() {
     super.initState();
-    // Ejecuta la carga inicial de los stocks de forma segura
+    _searchController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<StockViewModel>(context, listen: false)
           .fetchStocksByCategory(widget.categoryId);
     });
   }
-  Future<void> _refreshStocks(BuildContext context) async {
-  try {
-    await Provider.of<StockViewModel>(context, listen: false)
-        .fetchStocksByCategory(widget.categoryId); // Refresca los productos
-  } catch (e) {
-    // Mostrar un AlertDialog en caso de error
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0)),
-          title: Row(
-            children: [
-              const Icon(Icons.error, color: Colors.red, size: 30),
-              const SizedBox(width: 10),
-              const Text('Error'),
-            ],
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterProducts(String query) {
+    setState(() {
+      _searchQuery = query.toLowerCase();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stockViewModel = Provider.of<StockViewModel>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
+        title: Text(
+          widget.categoryTitle,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
           ),
-          content: Text(
-            'Error al refrescar los productos: $e',
-            style: const TextStyle(fontSize: 16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'Aceptar',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: Column(
+        children: [
+          // Barra de búsqueda
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: _filterProducts,
+              decoration: InputDecoration(
+                hintText: "Buscar productos...",
+                prefixIcon: const Icon(Icons.search, color: Colors.blueAccent),
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-@override
-Widget build(BuildContext context) {
-  final stockViewModel = Provider.of<StockViewModel>(context);
-
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(
-        widget.categoryTitle,
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-    ),
-    body: RefreshIndicator(
-      onRefresh: () => _refreshStocks(context), // Conecta al método de refresco
-      child: stockViewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : stockViewModel.errorMessage != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error, color: Colors.red, size: 60),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Error: ${stockViewModel.errorMessage}",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+          ),
+          Expanded(
+            child: stockViewModel.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : stockViewModel.errorMessage != null
+                    ? Center(
+                        child: Text(
+                          "Error: ${stockViewModel.errorMessage}",
+                          style: const TextStyle(color: Colors.red),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () {
-                          stockViewModel
-                              .fetchStocksByCategory(widget.categoryId);
-                        },
-                        child: const Text("Reintentar"),
-                      ),
-                    ],
-                  ),
-                )
-              : stockViewModel.stocks.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No hay productos disponibles en esta categoría.",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount: stockViewModel.stocks.length,
-                      itemBuilder: (context, index) {
-                        final stock = stockViewModel.stocks[index];
+                      )
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // Dos columnas
+                          crossAxisSpacing: 8.0, // Espaciado horizontal
+                          mainAxisSpacing: 8.0, // Espaciado vertical
+                          childAspectRatio: 0.8, // Relación de aspecto
+                        ),
+                        itemCount: stockViewModel.stocks.length,
+                        itemBuilder: (context, index) {
+                          final stock = stockViewModel.stocks[index];
 
-                        // Decodificación de la primera imagen en Base64
-                        final firstImageBase64 = stock.images.isNotEmpty
-                            ? stock.images[0]
-                            : null;
+                          // Filtrar productos por búsqueda
+                          if (_searchQuery.isNotEmpty &&
+                              !stock.product.name
+                                  .toLowerCase()
+                                  .contains(_searchQuery)) {
+                            return const SizedBox.shrink();
+                          }
 
-                        return Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              // Navegación a la vista de detalles del producto
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetailScreen(
-                                    product: stock.product,
-                                    stocks: [
-                                      stock
-                                    ], // Pasar el stock seleccionado
+                          // Decodificar la imagen
+                          final firstImageBase64 = stock.images.isNotEmpty
+                              ? stock.images[0]
+                              : null;
+
+                          return Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductDetailScreen(
+                                      product: stock.product,
+                                      stocks: [stock],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
+                                );
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(10),
+                                      top: Radius.circular(12),
                                     ),
                                     child: firstImageBase64 != null
                                         ? Image.memory(
@@ -172,73 +152,86 @@ Widget build(BuildContext context) {
                                                   'data:image/jpeg;base64,',
                                                   ''),
                                             ),
-                                            fit: BoxFit.cover,
+                                            height: 120,
                                             width: double.infinity,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return const Center(
-                                                child: Icon(Icons
-                                                    .image_not_supported),
-                                              );
-                                            },
+                                            fit: BoxFit.cover,
                                           )
-                                        : const Center(
-                                            child: Icon(
-                                                Icons.image_not_supported),
+                                        : const SizedBox(
+                                            height: 120,
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.image_not_supported,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
                                           ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        stock.product.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          stock.product.name,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        stock.product.description,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '\$${stock.price.toStringAsFixed(2)}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            color: Colors.blueAccent,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Precio: \$${stock.price.toStringAsFixed(2)}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black87,
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Stock: ${stock.quantity}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Cantidad: ${stock.quantity}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-    ),
-  );
-}
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.category), label: 'Categorías'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: 'Carrito'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ],
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        currentIndex: 1, // Índice para la categoría
+        onTap: (index) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(initialIndex: index),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
