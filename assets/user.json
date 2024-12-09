@@ -1,0 +1,32 @@
+{
+    "name": "Sergio Manuel Gomez Cisneros",
+    "email":"20233igs004@utez.edu.mx",
+    "password":"pumas123",
+    "image":"https://www.dafont.com/forum/attach/orig/7/4/746410.png?1",
+    "address": [
+        {
+            "name":"Casa CDMX",
+            "address":"Daniela #5",
+            "colonia":"acapatzingo",
+            "country":"Mexico",
+            "phone":7771532123,
+            "main":true
+        },
+        {
+            "name": "Oficina GDL",
+            "address": "Av. Chapultepec #123",
+            "colonia": "Americana",
+            "country": "Mexico",
+            "phone": 3332123456,
+            "main": false
+        },
+        {
+            "name": "Casa MTY",
+            "address": "Calle del Sol #45",
+            "colonia": "San Pedro",
+            "country": "Mexico",
+            "phone": 8187654321,
+            "main": false
+        }
+    ]
+}

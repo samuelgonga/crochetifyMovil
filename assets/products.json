@@ -1,0 +1,8 @@
+[
+  {"id": 1, "name": "Donkey", "description": "Un pokemon de rosa de tipo normal con una pokebola", "price": 235.0},
+  {"id": 2, "name": "Link", "description": "Un pokemon de agua con una concha en el pecho", "price": 235.0},
+  {"id": 3, "name": "Mario", "description": "Figura de Messi con la camiseta del Barca", "price": 235.0},
+  {"id": 4, "name": "Megaman", "description": "Un unicornio adorable de peluche", "price": 235.0},
+  {"id": 5, "name": "Ness", "description": "Figura de una niña con disfraz verde", "price": 235.0},
+  {"id": 6, "name": "Pikachu", "description": "Figura de una niña con disfraz verde", "price": 235.0}
+]
