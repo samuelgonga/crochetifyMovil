@@ -69,7 +69,7 @@ class _CategoryProductViewState extends State<CategoryProductView> {
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         title: Text(
-          widget.categoryTitle,
+          utf8.decode(widget.categoryTitle.runes.toList()), // Decodificación
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -127,7 +127,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
 
                           // Filtrar productos por búsqueda
                           if (_searchQuery.isNotEmpty &&
-                              !stock.product.name
+                              !utf8
+                                  .decode(stock.product.name.runes.toList())
                                   .toLowerCase()
                                   .contains(_searchQuery)) {
                             return const SizedBox.shrink();
@@ -201,7 +202,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          stock.product.name,
+                                          utf8.decode(
+                                              stock.product.name.runes.toList()), // Decodificación
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,

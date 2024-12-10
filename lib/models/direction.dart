@@ -3,7 +3,7 @@ class Direction {
   final int userId;
   final String direction;
   final String phone;
-  late final bool isDefault;
+  bool isDefault;
 
   Direction({
     required this.idDirection,
@@ -19,7 +19,7 @@ class Direction {
       userId: json['userId'] ?? 0,
       direction: json['direction'] ?? '',
       phone: json['phone'] ?? '',
-      isDefault: json['isDefault'] ?? false,  // Asegúrate de manejar null
+      isDefault: json['isDefault'] ==1,  // Asegúrate de manejar null
     );
   }
 

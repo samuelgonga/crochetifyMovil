@@ -39,7 +39,7 @@ class _DirectionEditViewState extends State<DirectionEditView> {
   }
 
   Future<void> _createDirection(String phone, String direction) async {
-    final url = Uri.parse('http://100.27.71.83:8087/api/crochetify/directions');
+    final url = Uri.parse('http://54.146.53.211:8087/api/crochetify/directions');
     try {
       final response = await http.post(
         url,
@@ -76,7 +76,7 @@ class _DirectionEditViewState extends State<DirectionEditView> {
   Future<void> _updateDirection(
       int idDirection, String phone, String direction) async {
     final url = Uri.parse(
-        'http://100.27.71.83:8087/api/crochetify/directions/$idDirection');
+        'http://54.146.53.211:8087/api/crochetify/directions/$idDirection');
     try {
       final response = await http.put(
         url,

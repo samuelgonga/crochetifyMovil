@@ -46,7 +46,7 @@ class CartItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    productName,
+                    utf8.decode(productName.runes.toList()),
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -54,7 +54,7 @@ class CartItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    productDescription,
+                    utf8.decode(productDescription.runes.toList()),
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
@@ -89,11 +89,9 @@ class CartItem extends StatelessWidget {
                               context,
                               listen: false);
                           if (productQuantity > 1) {
-                            // Reducir la cantidad
                             await cartViewModel.updateProductQuantity(
                                 userId, stockId, productQuantity - 1);
                           } else {
-                            // Eliminar el producto si la cantidad es 1
                             _showConfirmationDialog(context, cartViewModel);
                           }
                         },
@@ -131,7 +129,7 @@ class CartItem extends StatelessWidget {
   Widget _buildImage() {
     if (image.isNotEmpty) {
       try {
-        final cleanImage = cleanBase64(image); // Usar la función de limpieza
+        final cleanImage = cleanBase64(image);
         return Image.memory(
           base64Decode(cleanImage!),
           width: 80,
@@ -146,7 +144,6 @@ class CartItem extends StatelessWidget {
     }
   }
 
-  // Función para limpiar el prefijo base64
   String? cleanBase64(String? base64String) {
     if (base64String == null) return null;
     final prefixes = [
@@ -194,7 +191,7 @@ class CartItem extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // Cerrar el diálogo
+              Navigator.pop(context);
             },
             child: const Text(
               'Cancelar',
@@ -203,7 +200,7 @@ class CartItem extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context); // Cerrar el diálogo
+              Navigator.pop(context);
               try {
                 await cartViewModel.removeProductFromCart(userId, stockId);
                 _showAlert(
@@ -257,8 +254,7 @@ class CartItem extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () async {
-                Navigator.pop(context); // Cerrar el diálogo
-                // Actualizar la vista del carrito
+                Navigator.pop(context);
                 await cartViewModel.fetchCart(userId);
               },
               child: const Text(

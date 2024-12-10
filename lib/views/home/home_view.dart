@@ -57,26 +57,35 @@ class _ProductListState extends State<ProductList> {
           ),
           Column(
             children: [
-              const SizedBox(height: 40), // Espaciado para la barra de estado
+              const SizedBox(height: 60), // Espaciado para la barra de estado
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-                child: SizedBox(
-                  height: 40,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0, horizontal: 20.0), // Ajuste horizontal
+                child: Container(
+                  height: 50, // Altura mejorada para la barra de búsqueda
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
                   child: TextField(
                     onChanged: (value) {
                       setState(() {
                         _searchQuery = value.toLowerCase();
                       });
                     },
-                    decoration: InputDecoration(
-                      labelText: 'Buscar...',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      prefixIcon: const Icon(Icons.search),
+                    decoration: const InputDecoration(
+                      hintText: 'Buscar...',
+                      border: InputBorder.none,
+                      prefixIcon: Icon(Icons.search, color: Colors.grey),
+                      contentPadding: EdgeInsets.symmetric(vertical: 14.0),
                     ),
                   ),
                 ),

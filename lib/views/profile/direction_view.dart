@@ -1,3 +1,5 @@
+// Importaciones necesarias
+import 'package:crochetify_movil/models/direction.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/user_viewmodel.dart';
@@ -13,8 +15,6 @@ class DirectionView extends StatefulWidget {
 }
 
 class _DirectionViewState extends State<DirectionView> {
-  Map<int, bool> directionDefaults = {};
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -26,11 +26,15 @@ class _DirectionViewState extends State<DirectionView> {
     }
   }
 
-  Future<void> _setDefaultDirection(int idDirection, int userId) async {
+  Future<bool> _setDefaultDirection(int idDirection, int userId) async {
     final url = Uri.parse(
-        'http://100.27.71.83:8087/api/crochetify/directions/set-default');
+        'http://54.146.53.211:8087/api/crochetify/directions/set-default');
 
     try {
+      print("Enviando solicitud para establecer dirección predeterminada...");
+      print("URL: $url");
+      print("Body: userId: $userId, directionId: $idDirection");
+
       final response = await http.post(
         url,
         headers: {
@@ -42,19 +46,55 @@ class _DirectionViewState extends State<DirectionView> {
         }),
       );
 
-      if (response.statusCode == 200) {
-        _showSuccessDialog();
+      print("Estado de respuesta: ${response.statusCode}");
+      print("Cuerpo de respuesta: ${response.body}");
 
-        // Actualiza el estado en el modelo global
-        final userViewModel =
-            Provider.of<UserViewModel>(context, listen: false);
-        userViewModel.setDefaultDirection(userId, idDirection);
+      if (response.statusCode == 200) {
+        print(
+            "Dirección predeterminada establecida. Obteniendo direcciones actualizadas...");
+
+        final directionsResponse = await http.get(
+          Uri.parse(
+              'http://54.146.53.211:8087/api/crochetify/directions/$userId'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (directionsResponse.statusCode == 200) {
+          final data = jsonDecode(directionsResponse.body);
+          print("Direcciones actualizadas: ${directionsResponse.body}");
+
+          if (data['success'] == true) {
+            final userViewModel =
+                Provider.of<UserViewModel>(context, listen: false);
+
+            userViewModel.directions =
+                (data['response'] as Map<String, dynamic>)
+                    .values
+                    .map((direction) => Direction.fromJson(direction))
+                    .toList();
+
+            setState(() {});
+          }
+          _showSuccessDialog();
+          return true;
+        } else {
+          print(
+              "Error al obtener direcciones actualizadas: ${directionsResponse.body}");
+          _showErrorDialog(
+              'Error al obtener direcciones actualizadas: ${directionsResponse.body}');
+          return false;
+        }
       } else {
         _showErrorDialog(
             'Error al marcar como predeterminada: ${response.body}');
+        return false;
       }
     } catch (e) {
+      print("Error al realizar la solicitud: $e");
       _showErrorDialog('Error al conectar con el servidor: $e');
+      return false;
     }
   }
 
@@ -204,6 +244,8 @@ class _DirectionViewState extends State<DirectionView> {
                       itemCount: directions.length,
                       itemBuilder: (context, index) {
                         final direction = directions[index];
+                        print(
+                            "Renderizando dirección: id=${direction.idDirection}, isDefault=${direction.isDefault}");
                         return Card(
                           elevation: 5,
                           margin: const EdgeInsets.symmetric(
@@ -213,7 +255,8 @@ class _DirectionViewState extends State<DirectionView> {
                           ),
                           color: direction.isDefault
                               ? Colors.red.shade50
-                              : Colors.white, // Fondo dinámico
+                              : Colors
+                                  .white, // Fondo dinámico basado en isDefault
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Row(
@@ -224,52 +267,56 @@ class _DirectionViewState extends State<DirectionView> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        direction.direction,
+                                        utf8.decode(direction.direction.runes
+                                            .toList()), // Decodificación aquí
                                         style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           color: direction.isDefault
                                               ? Colors.red
-                                              : Colors.black, // Texto dinámico
+                                              : Colors.black,
                                         ),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Teléfono: ${direction.phone}',
+                                        'Teléfono: ${utf8.decode(direction.phone.runes.toList())}', // Decodificación aquí
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: direction.isDefault
                                               ? Colors.red
-                                              : Colors
-                                                  .grey[600], // Texto dinámico
+                                              : Colors.grey[600],
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () async {
+                                TextButton(
+                                  onPressed: () async {
                                     if (user != null) {
-                                      await _setDefaultDirection(
-                                          direction.idDirection, user.id);
-                                      setState(() {});
+                                      final success =
+                                          await _setDefaultDirection(
+                                        direction.idDirection,
+                                        user.id,
+                                      );
+                                      if (success) {
+                                        await userViewModel
+                                            .fetchDirectionsByUserId(user.id);
+                                      }
                                     }
                                   },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: direction.isDefault
-                                          ? Colors.red.shade200
-                                          : Colors.grey.shade300,
-                                    ),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: direction.isDefault
+                                        ? Colors.red.shade200
+                                        : Colors.grey.shade300,
+                                    shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(8),
-                                    child: Icon(
-                                      direction.isDefault
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: Colors.red,
-                                      size: 28,
-                                    ),
+                                  ),
+                                  child: Icon(
+                                    direction.isDefault
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: Colors.red,
+                                    size: 28,
                                   ),
                                 ),
                                 IconButton(

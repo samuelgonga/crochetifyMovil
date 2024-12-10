@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/stock.dart';
 
 class StockService {
-  final String baseUrl = 'http://100.27.71.83:8087/api/crochetify/stock';
+  final String baseUrl = 'http://54.146.53.211:8087/api/crochetify/stock';
 
   Future<List<Stock>> fetchStocksByCategory(int categoryId) async {
     final response =

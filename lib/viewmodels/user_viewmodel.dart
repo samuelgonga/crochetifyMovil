@@ -12,7 +12,12 @@ class UserViewModel extends ChangeNotifier {
   User? get user => _user;
   List<Direction> get directions => _directions;
 
-  // Método para obtener la información del usuario logueado usando el token
+  // Agrega un setter para directions
+  set directions(List<Direction> directions) {
+    _directions = directions;
+    notifyListeners(); // Notifica cambios
+  }
+
   Future<void> fetchUser() async {
     try {
       _user = await _userService.getLoggedUser();
@@ -27,39 +32,36 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  // Método para obtener las direcciones del usuario por su ID
   Future<void> fetchDirectionsByUserId(int userId) async {
     try {
       print("Cargando direcciones para el usuario $userId...");
 
-      // Llama al servicio para obtener las direcciones
       final fetchedDirections =
           await _userService.fetchDirectionsByUserId(userId);
 
       if (fetchedDirections != null) {
-        _directions = fetchedDirections; // Actualiza las direcciones
+        _directions = fetchedDirections;
         print("Direcciones cargadas exitosamente: $_directions");
       } else {
-        _directions = []; // Si no hay direcciones, inicializa como lista vacía
+        _directions = [];
         print("No se encontraron direcciones para el usuario $userId.");
       }
     } catch (e) {
-      _directions = []; // En caso de error, deja la lista vacía
+      _directions = [];
       print("Error al cargar direcciones para el usuario $userId: $e");
     } finally {
-      notifyListeners(); // Asegura que la UI se actualice
+      notifyListeners();
     }
   }
 
-  // Método para agregar una nueva dirección
   Future<void> addDirection(Direction direction) async {
     try {
       final newDirection = await _userService.addDirection(direction);
 
       if (newDirection != null) {
-        _directions.add(newDirection); // Agregar la dirección a la lista local
+        _directions.add(newDirection);
         print("Dirección agregada: ${newDirection.direction}");
-        notifyListeners(); // Notificar cambios para actualizar la UI
+        notifyListeners();
       } else {
         print("No se pudo agregar la dirección. Respuesta nula.");
       }
@@ -68,7 +70,6 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  // Método para actualizar el perfil del usuario (nombre e imagen)
   Future<void> updateUserProfile({
     required String name,
     File? imageFile,
@@ -90,31 +91,28 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  // Método para marcar una dirección como predeterminada
-Future<void> setDefaultDirection(int userId, int directionId) async {
-  try {
-    final success = await _userService.setDefaultDirection(userId, directionId);
-    if (success) {
-      _directions = _directions.map((direction) {
-        return direction.copyWith(
-          isDefault: direction.idDirection == directionId, // Actualiza isDefault
-        );
-      }).toList();
+  Future<void> setDefaultDirection(int userId, int directionId) async {
+    try {
+      final success = await _userService.setDefaultDirection(userId, directionId);
+      if (success) {
+        _directions = _directions.map((direction) {
+          return direction.copyWith(
+            isDefault: direction.idDirection == directionId,
+          );
+        }).toList();
 
-      // Agrega el print para verificar el estado actualizado de las direcciones
-      print("Estado actualizado de direcciones:");
-      _directions.forEach((direction) {
-        print("idDirection: ${direction.idDirection}, isDefault: ${direction.isDefault}");
-      });
+        print("Estado actualizado de direcciones:");
+        _directions.forEach((direction) {
+          print("idDirection: ${direction.idDirection}, isDefault: ${direction.isDefault}");
+        });
 
-      notifyListeners(); // Notifica a la vista que se actualizó el modelo
-      print("Dirección predeterminada actualizada.");
-    } else {
-      print("No se pudo actualizar la dirección predeterminada.");
+        notifyListeners();
+        print("Dirección predeterminada actualizada.");
+      } else {
+        print("No se pudo actualizar la dirección predeterminada.");
+      }
+    } catch (e) {
+      print("Error setting default direction: $e");
     }
-  } catch (e) {
-    print("Error setting default direction: $e");
   }
-}
-
 }

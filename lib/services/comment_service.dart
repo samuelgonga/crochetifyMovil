@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/comment.dart'; // Asegúrate de ajustar la ruta a tu modelo
 
 class CommentService {
-  final String baseUrl = 'http://100.27.71.83:8087/api/crochetify/review';
+  final String baseUrl = 'http://54.146.53.211:8087/api/crochetify/review';
 
   Future<Map<String, dynamic>> fetchReviewsByProductId(int productId) async {
     try {

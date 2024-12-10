@@ -97,7 +97,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                           child: ListTile(
                             leading: _buildProductImage(firstImage),
                             title: Text(
-                              product.product.name,
+                              utf8.decode(product.product.name.runes.toList()),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -112,7 +112,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  product.product.description,
+                                  utf8.decode(
+                                      product.product.description.runes.toList()),
                                   style: const TextStyle(
                                     fontSize: 13,
                                     color: Colors.black54,

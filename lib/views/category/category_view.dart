@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:crochetify_movil/viewmodels/category_viewmodel.dart';
 import 'package:crochetify_movil/views/category/category_product_view.dart';
 import 'dart:math';
+import 'dart:convert';
 
 class CategoryScreen extends StatefulWidget {
   @override
@@ -139,9 +140,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           leading: CircleAvatar(
                                             backgroundColor: getRandomColor(),
                                             child: Text(
-                                              category.name
-                                                  .substring(0, 1)
-                                                  .toUpperCase(),
+                                              utf8
+                                                  .decode(category.name
+                                                      .substring(0, 1)
+                                                      .toUpperCase()
+                                                      .runes
+                                                      .toList()),
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
@@ -149,7 +153,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                             ),
                                           ),
                                           title: Text(
-                                            category.name,
+                                            utf8.decode(category.name.runes
+                                                .toList()), // Decodificación del nombre
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -164,7 +169,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                               MaterialPageRoute(
                                                 builder: (context) =>
                                                     CategoryProductView(
-                                                  categoryTitle: category.name,
+                                                  categoryTitle: utf8.decode(
+                                                      category.name.runes
+                                                          .toList()), // Decodificación en la navegación
                                                   categoryId:
                                                       category.idCategory,
                                                 ),

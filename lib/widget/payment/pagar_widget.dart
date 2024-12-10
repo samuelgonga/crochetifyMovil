@@ -87,7 +87,7 @@ class _PagarWidgetState extends State<PagarWidget> {
 
   Future<void> _createOrder(int userId, int directionId) async {
     try {
-      final url = Uri.parse('http://100.27.71.83:8087/api/crochetify/orden');
+      final url = Uri.parse('http://54.146.53.211:8087/api/crochetify/orden');
       final http.Response response = await http.post(
         url,
         headers: {

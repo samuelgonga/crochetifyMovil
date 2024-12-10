@@ -24,7 +24,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchUpdatedUser() async {
     try {
-      await Provider.of<AuthViewModel>(context, listen: false).fetchUserDetails();
+      await Provider.of<AuthViewModel>(context, listen: false)
+          .fetchUserDetails();
     } catch (e) {
       _showAlert(
         context,
@@ -89,10 +90,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CircleAvatar(
                         radius: 60,
-                        backgroundImage: user?.image != null && user!.image!.isNotEmpty
-                            ? MemoryImage(base64Decode(user.image!))
-                            : AssetImage('assets/images/default_avatar.png')
-                                as ImageProvider,
+                        backgroundImage:
+                            user?.image != null && user!.image!.isNotEmpty
+                                ? MemoryImage(base64Decode(user.image!))
+                                : AssetImage('assets/images/default_avatar.png')
+                                    as ImageProvider,
                         backgroundColor: Colors.grey[200],
                       ),
                       Positioned(
@@ -102,7 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () async {
                             await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ProfileEdit()),
+                              MaterialPageRoute(
+                                  builder: (context) => ProfileEdit()),
                             );
                             _fetchUpdatedUser();
                           },
@@ -121,7 +124,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  user?.email ?? 'Correo no disponible',
+                  utf8.decode(user?.email?.runes.toList() ??
+                      'Correo no disponible'
+                          .runes
+                          .toList()), // Decodificar email
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -130,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  "¡Hola ${user?.name ?? 'Usuario'}!",
+                  "¡Hola ${utf8.decode(user?.name?.runes.toList() ?? 'Usuario'.runes.toList())}!",
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -179,23 +185,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
-                          await Provider.of<AuthViewModel>(context, listen: false)
+                          await Provider.of<AuthViewModel>(context,
+                                  listen: false)
                               .logout();
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                          (route) => false,
-                        );
-                      } catch (e) {
-                        _showAlert(
-                          context,
-                          title: 'Error',
-                          message: 'No se pudo cerrar sesión.',
-                          icon: Icons.error,
-                          iconColor: Colors.red,
-                        );
-                      }
-                    },
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
+                            (route) => false,
+                          );
+                        } catch (e) {
+                          _showAlert(
+                            context,
+                            title: 'Error',
+                            message: 'No se pudo cerrar sesión.',
+                            icon: Icons.error,
+                            iconColor: Colors.red,
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(150, 40),
                         backgroundColor: const Color.fromARGB(255, 224, 20, 20),
@@ -221,7 +229,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileOption(BuildContext context, String title, Widget screen, IconData icon, Color iconColor) {
+  Widget _buildProfileOption(BuildContext context, String title, Widget screen,
+      IconData icon, Color iconColor) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(
@@ -237,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         title: Text(
-          title,
+          utf8.decode(title.runes.toList()), // Decodificar título
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         trailing: const Icon(
@@ -271,11 +280,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Icon(icon, color: iconColor, size: 30),
               const SizedBox(width: 10),
-              Text(title),
+              Text(utf8.decode(title.runes.toList())), // Decodificar título
             ],
           ),
           content: Text(
-            message,
+            utf8.decode(message.runes.toList()), // Decodificar mensaje
             style: const TextStyle(fontSize: 16),
           ),
           actions: [

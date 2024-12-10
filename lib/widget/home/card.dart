@@ -23,7 +23,7 @@ class StockGrid extends StatelessWidget {
 
         // Filtrar stocks según el `searchQuery`
         final filteredStocks = stockViewModel.stocks.where((stock) {
-          final productName = stock.product.name.toLowerCase();
+          final productName = utf8.decode(stock.product.name.runes.toList()).toLowerCase();
           final query = searchQuery.toLowerCase();
           return productName.contains(query);
         }).toList();
@@ -76,7 +76,6 @@ class StockGrid extends StatelessWidget {
   // Método para limpiar la base64 eliminando los prefijos conocidos
   String? cleanBase64(String? base64String) {
     if (base64String == null) return null;
-    // Detectar y remover diferentes prefijos de datos base64
     final prefixes = [
       'data:image/jpeg;base64,',
       'data:image/jpg;base64,',
@@ -87,7 +86,7 @@ class StockGrid extends StatelessWidget {
         return base64String.replaceFirst(prefix, '');
       }
     }
-    return base64String; // Si no tiene prefijo conocido, devolver como está
+    return base64String;
   }
 
   // Método para construir un Card de Stock
@@ -143,14 +142,14 @@ class StockGrid extends StatelessWidget {
                   children: [
                     Center(
                       child: Text(
-                        stock.product.name,
+                        utf8.decode(stock.product.name.runes.toList()),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      stock.product.description,
+                      utf8.decode(stock.product.description.runes.toList()),
                       style:
                           const TextStyle(fontSize: 10, color: Colors.black87),
                       maxLines: 3,

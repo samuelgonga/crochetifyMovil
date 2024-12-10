@@ -4,7 +4,7 @@ import '../models/order.dart';
 
 class OrderService {
   Future<List<Order>> fetchOrdersByUserId(int userId) async {
-    final url = 'http://100.27.71.83:8087/api/crochetify/orden/user/$userId';
+    final url = 'http://54.146.53.211:8087/api/crochetify/orden/user/$userId';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -25,7 +25,7 @@ class OrderService {
   }
 
     Future<Order> fetchOrderDetails(int idOrder) async {
-  final url = 'http://100.27.71.83:8087/api/crochetify/orden/$idOrder'; // Asegúrate de que el endpoint sea correcto
+  final url = 'http://54.146.53.211:8087/api/crochetify/orden/$idOrder'; // Asegúrate de que el endpoint sea correcto
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode == 200) {

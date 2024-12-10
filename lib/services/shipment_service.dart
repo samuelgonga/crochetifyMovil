@@ -5,7 +5,7 @@ import 'package:crochetify_movil/models/shipment.dart';
 
 class ShipmentService {
   static const String _baseUrl =
-      'http://100.27.71.83:8087/api/crochetify/shipment';
+      'http://54.146.53.211:8087/api/crochetify/shipment';
 
   // Obtener la lista de Shipments
   Future<List<Shipment>> fetchShipments() async {

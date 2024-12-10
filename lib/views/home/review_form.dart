@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:crochetify_movil/services/comment_service.dart';
 import 'package:crochetify_movil/widget/navigation/bottom_navigation.dart'; // Asegúrate de tener la importación correcta para HomeScreen
@@ -55,7 +57,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           children: const [
             Icon(Icons.check_circle, color: Colors.green, size: 30),
             SizedBox(width: 10),
-            Text('Reseña enviada', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Reseña enviada',
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
         content: const Text('Tu reseña ha sido enviada con éxito.'),
@@ -161,6 +164,14 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                   }
                   return null;
                 },
+                onChanged: (value) {
+                  // No es necesario modificar directamente el texto aquí
+                  // Los caracteres especiales se gestionarán correctamente al enviarlos al backend
+                  _commentController.text = value;
+                  _commentController.selection = TextSelection.collapsed(
+                    offset: _commentController.text.length,
+                  );
+                },
               ),
               const SizedBox(height: 16),
               SizedBox(
@@ -177,7 +188,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                   ),
                   child: _isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('Enviar Reseña', style: TextStyle(fontSize: 16)),
+                      : const Text('Enviar Reseña',
+                          style: TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 16),

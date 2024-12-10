@@ -62,6 +62,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       setState(() {
         _quantity++;
       });
+    } else {
+      _showAlertDialog(
+        context,
+        'Cantidad no válida',
+        'No puedes agregar más productos de los que hay en stock.',
+        showCartActions: false,
+      );
     }
   }
 
@@ -70,6 +77,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       setState(() {
         _quantity--;
       });
+    } else {
+      _showAlertDialog(
+        context,
+        'Cantidad no válida',
+        'No puedes agregar 0 productos a tu carrito, selecciona una cantidad mayor a 1',
+        showCartActions: false,
+      );
     }
   }
 
@@ -94,7 +108,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             backgroundColor: const Color.fromARGB(255, 113, 191, 254),
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                widget.product.name,
+                utf8.decode(widget.product.name.runes.toList()),
                 style: const TextStyle(color: Colors.white),
               ),
               background: Container(
@@ -160,14 +174,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.product.name,
+                          utf8.decode(widget.product.name.runes.toList()),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text(widget.product.description),
+                        Text(
+                          utf8.decode(
+                              widget.product.description.runes.toList()),
+                        ),
                         const SizedBox(height: 16),
                         Center(
                           child: Text(
@@ -187,12 +204,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
-                              onPressed: _decrementQuantity,
+                              onPressed: _selectedStock.quantity > 0 &&
+                                      _quantity > 1
+                                  ? _decrementQuantity
+                                  : null, // Desactiva si no hay stock o cantidad es 1
                               icon: const Icon(
                                 Icons.remove_circle,
                                 size: 30,
-                                color: Colors.red,
                               ),
+                              color: _selectedStock.quantity > 0 &&
+                                      _quantity > 1
+                                  ? Colors.red
+                                  : Colors
+                                      .grey, // Cambia a gris si está desactivado
                             ),
                             Column(
                               children: [
@@ -211,62 +235,67 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ],
                             ),
                             IconButton(
-                              onPressed: _incrementQuantity,
+                              onPressed: _selectedStock.quantity > 0 &&
+                                      _quantity < _selectedStock.quantity
+                                  ? _incrementQuantity
+                                  : null, // Desactiva si no hay stock o cantidad alcanza el stock disponible
                               icon: const Icon(
                                 Icons.add_circle,
                                 size: 30,
-                                color: Colors.blue,
                               ),
+                              color: _selectedStock.quantity > 0 &&
+                                      _quantity < _selectedStock.quantity
+                                  ? Colors.blue
+                                  : Colors
+                                      .grey, // Cambia a gris si está desactivado
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              if (_selectedStock.quantity == 0) {
-                                _showAlertDialog(
-                                  context,
-                                  'Sin Stock',
-                                  'No hay stock disponible para agregar este producto al carrito.',
-                                  showCartActions: false,
-                                );
-                              } else if (userId == null) {
-                                _showAlertDialog(
-                                  context,
-                                  'Inicia sesión',
-                                  'Debes iniciar sesión para agregar productos al carrito.',
-                                  showCartActions: false,
-                                );
-                              } else {
-                                await cartViewModel.addToCart(
-                                  userId,
-                                  _selectedStock.idStock,
-                                  _quantity,
-                                );
-                                await cartViewModel.fetchCart(userId);
-                                _showAlertDialog(
-                                  context,
-                                  'Producto añadido',
-                                  'El producto se ha añadido al carrito.',
-                                  showCartActions: true,
-                                  userId: userId,
-                                );
-                              }
-                            },
+                            onPressed: _selectedStock.quantity > 0
+                                ? () async {
+                                    if (userId == null) {
+                                      _showAlertDialog(
+                                        context,
+                                        'Inicia sesión',
+                                        'Debes iniciar sesión para agregar productos al carrito.',
+                                        showCartActions: false,
+                                      );
+                                    } else {
+                                      await cartViewModel.addToCart(
+                                        userId,
+                                        _selectedStock.idStock,
+                                        _quantity,
+                                      );
+                                      await cartViewModel.fetchCart(userId);
+                                      _showAlertDialog(
+                                        context,
+                                        'Producto añadido',
+                                        'El producto se ha añadido al carrito.',
+                                        showCartActions: true,
+                                        userId: userId,
+                                      );
+                                    }
+                                  }
+                                : null, // Desactiva el botón si no hay stock
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              backgroundColor: _selectedStock.quantity > 0
+                                  ? Colors.blue
+                                  : Colors
+                                      .grey, // Cambia el color dependiendo del stock
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            child: const Text(
-                              'Añadir al carrito',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
+                            child: Text(
+                              _selectedStock.quantity > 0
+                                  ? 'Añadir al carrito'
+                                  : 'Sin Stock', // Cambia el texto dependiendo del stock
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),
@@ -295,18 +324,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            AddReviewScreen(
-                                          productId:
-                                              widget.product.idProduct,
+                                        builder: (context) => AddReviewScreen(
+                                          productId: widget.product.idProduct,
                                         ),
                                       ),
                                     );
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.blue,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
@@ -337,9 +363,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         itemCount:
                                             reviewViewModel.reviews.length,
                                         itemBuilder: (context, index) {
-                                          final reviewKey =
-                                              reviewViewModel.reviews.keys
-                                                  .elementAt(index);
+                                          final reviewKey = reviewViewModel
+                                              .reviews.keys
+                                              .elementAt(index);
                                           final review = reviewViewModel
                                               .reviews[reviewKey];
                                           return Card(
@@ -353,9 +379,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
-                                            margin:
-                                                const EdgeInsets.symmetric(
-                                                    vertical: 8),
+                                            margin: const EdgeInsets.symmetric(
+                                                vertical: 8),
                                             child: ListTile(
                                               leading: const Icon(
                                                 Icons.star,
@@ -367,8 +392,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              subtitle:
-                                                  Text(review['comment']),
+                                              subtitle: Text(
+                                                utf8.decode(review['comment']
+                                                    .runes
+                                                    .toList()),
+                                              ),
                                             ),
                                           );
                                         },
@@ -434,8 +462,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const HomeScreen(initialIndex: 2),
+                      builder: (context) => const HomeScreen(initialIndex: 2),
                     ),
                   );
                 }

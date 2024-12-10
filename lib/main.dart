@@ -53,6 +53,10 @@ class MyApp extends StatelessWidget {
             reviewService: CommentService(),
           ),
         ),
+        ChangeNotifierProvider(
+  create: (context) => UserViewModel(),
+  child: DirectionView(),
+)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

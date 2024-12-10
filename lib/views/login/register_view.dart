@@ -14,7 +14,8 @@ class _RegisterScreenState extends State<RegisterView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final RegisterService _registerService = RegisterService();
 
   bool _isLoading = false;
@@ -53,11 +54,15 @@ class _RegisterScreenState extends State<RegisterView> {
       _confirmPasswordError = null;
     });
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       if (name.isEmpty) _nameError = 'Por favor, ingresa tu nombre';
       if (email.isEmpty) _emailError = 'Por favor, ingresa tu correo';
       if (password.isEmpty) _passwordError = 'Por favor, ingresa tu contraseña';
-      if (confirmPassword.isEmpty) _confirmPasswordError = 'Por favor, confirma tu contraseña';
+      if (confirmPassword.isEmpty)
+        _confirmPasswordError = 'Por favor, confirma tu contraseña';
       setState(() {});
       return;
     }
@@ -78,7 +83,10 @@ class _RegisterScreenState extends State<RegisterView> {
       _confirmPasswordError = 'Las contraseñas no coinciden';
     }
 
-    if (_nameError != null || _emailError != null || _passwordError != null || _confirmPasswordError != null) {
+    if (_nameError != null ||
+        _emailError != null ||
+        _passwordError != null ||
+        _confirmPasswordError != null) {
       setState(() {});
       return;
     }
@@ -91,9 +99,17 @@ class _RegisterScreenState extends State<RegisterView> {
       await _registerService.registerUser(name, email, password);
       await Provider.of<AuthViewModel>(context, listen: false)
           .login(email, password);
-      _showSuccessAlert('Usuario registrado exitosamente');      
+      _showSuccessAlert('Usuario registrado exitosamente');
     } catch (error) {
-      _showAlert('Error al registrar usuario: $error');
+      final errorMessage = error.toString();
+      if (errorMessage.contains('El correo ya está registrado')) {
+        _showAlert(
+            'El correo ya está registrado. Por favor, intenta con otro correo.');
+      } else if (errorMessage.contains('Datos inválidos')) {
+        _showAlert('Datos inválidos. Verifica tu información.');
+      } else {
+        _showAlert('Error al registrar usuario: $errorMessage');
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -105,12 +121,39 @@ class _RegisterScreenState extends State<RegisterView> {
     return !RegExp(r'\d').hasMatch(name);
   }
 
-  bool _isValidEmail(String email) {
-    return (email.endsWith('@gmail.com') || email.endsWith('@hotmail.com'));
+bool _isValidEmail(String email) {
+  // Reglas:
+  // 1. Verificar que no empiece o termine con un punto
+  if (email.startsWith('.') || email.endsWith('.')) return false;
+
+  // 2. Verificar que no tenga puntos consecutivos
+  if (email.contains('..')) return false;
+
+  // 3. Regex para caracteres permitidos
+  final emailRegex = RegExp(
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  );
+
+  // Validar estructura básica
+  if (!emailRegex.hasMatch(email)) return false;
+
+  // Validar caracteres permitidos específicamente
+  final localPart = email.split('@')[0];
+  final domain = email.split('@')[1];
+
+  // Solo caracteres alfabéticos, numéricos, guiones (-), y guiones bajos (_) en el dominio
+  if (!RegExp(r'^[a-zA-Z0-9-._]+$').hasMatch(localPart) ||
+      !RegExp(r'^[a-zA-Z0-9.-]+$').hasMatch(domain)) {
+    return false;
   }
 
+  return true;
+}
+
+
   bool _isValidPassword(String password) {
-    return _passwordRequirements.every((requirement) => requirement.isValid(password));
+    return _passwordRequirements
+        .every((requirement) => requirement.isValid(password));
   }
 
   void _showAlert(String message) {
@@ -194,7 +237,9 @@ class _RegisterScreenState extends State<RegisterView> {
               Navigator.of(context).pop(); // Cierra la alerta
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomeScreen()), // Navega a la vista de inicio
+                MaterialPageRoute(
+                    builder: (context) =>
+                        HomeScreen()), // Navega a la vista de inicio
               );
             },
             style: TextButton.styleFrom(
@@ -228,7 +273,7 @@ class _RegisterScreenState extends State<RegisterView> {
               const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Regístrate!',
+                  '¡Regístrate!',
                   style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
@@ -250,7 +295,8 @@ class _RegisterScreenState extends State<RegisterView> {
               const SizedBox(height: 32.0),
               _buildTextField('Nombre', 'Juan', _nameController, _nameError),
               const SizedBox(height: 16.0),
-              _buildTextField('Correo Electrónico', 'micorreo@gmail.com', _emailController, _emailError),
+              _buildTextField('Correo Electrónico', 'micorreo@gmail.com',
+                  _emailController, _emailError),
               const SizedBox(height: 16.0),
               _buildPasswordField(
                 'Ingresa tu contraseña',
@@ -295,7 +341,7 @@ class _RegisterScreenState extends State<RegisterView> {
                         backgroundColor: Colors.blue,
                       ),
                     ),
-              const SizedBox(height: 20),              
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -303,11 +349,13 @@ class _RegisterScreenState extends State<RegisterView> {
     );
   }
 
-  Widget _buildTextField(String label, String placeholder, TextEditingController controller, String? error) {
+  Widget _buildTextField(String label, String placeholder,
+      TextEditingController controller, String? error) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
+        Text(label,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
         TextField(
           controller: controller,
           decoration: InputDecoration(
@@ -332,7 +380,8 @@ class _RegisterScreenState extends State<RegisterView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
+        Text(label,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
         TextField(
           obscureText: !isVisible,
           controller: controller,
@@ -376,7 +425,9 @@ class _RegisterScreenState extends State<RegisterView> {
           value: passwordRequirements.fold<double>(
             0.0,
             (value, requirement) =>
-                value + (requirement.isValid(controller.text) ? 1 : 0) / passwordRequirements.length,
+                value +
+                (requirement.isValid(controller.text) ? 1 : 0) /
+                    passwordRequirements.length,
           ),
         ),
       ],
@@ -394,7 +445,8 @@ class _RegisterScreenState extends State<RegisterView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
+        Text(label,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w100)),
         TextField(
           obscureText: !isVisible,
           controller: controller,

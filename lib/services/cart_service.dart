@@ -4,7 +4,7 @@ import 'package:crochetify_movil/models/cart.dart';
 import 'package:crochetify_movil/models/sent_cart.dart';
 
 class CartService {
-  final String baseUrl = "http://100.27.71.83:8087/api/crochetify/cart";
+  final String baseUrl = "http://54.146.53.211:8087/api/crochetify/cart";
 
   // Obtener Carrito por ID de usuario
   Future<Cart?> getCartByUserId(int userId) async {
