@@ -66,7 +66,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 // Título
                 Center(
                   child: Text(
-                    'Detalles de Orden #${order.idOrder}',
+                    'Detalles de Orden',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -189,7 +189,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                         : hasShippingDate
                             ? () async {
                                 try {
-                                  await shipmentViewModel.markAsReceived(order.idShipment);
+                                  await shipmentViewModel
+                                      .markAsReceived(order.idShipment);
                                   _showDialog(
                                     context,
                                     '¡Éxito!',
@@ -200,7 +201,9 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                                   setState(() {
                                     order = order.copyWith(
                                       statusShipment: 2,
-                                      deliveryDay: DateTime.now().toString().substring(0, 10),
+                                      deliveryDay: DateTime.now()
+                                          .toString()
+                                          .substring(0, 10),
                                     );
                                   });
                                 } catch (e) {
@@ -235,8 +238,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   Widget _buildProductImage(String base64Image) {
     if (base64Image.isNotEmpty) {
       try {
-        final cleanImage = base64Image.replaceFirst('data:image/jpeg;base64,', '');
-        final decodedBytes = base64Decode(cleanImage);
+        final cleanImage = _cleanBase64(base64Image);
+        final decodedBytes = base64Decode(cleanImage!);
         return ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Image.memory(
@@ -254,6 +257,21 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     } else {
       return const Icon(Icons.image_not_supported, size: 50);
     }
+  }
+
+  String? _cleanBase64(String? base64String) {
+    if (base64String == null) return null;
+    final prefixes = [
+      'data:image/jpeg;base64,',
+      'data:image/jpg;base64,',
+      'data:image/png;base64,',
+    ];
+    for (var prefix in prefixes) {
+      if (base64String.startsWith(prefix)) {
+        return base64String.replaceFirst(prefix, '');
+      }
+    }
+    return base64String;
   }
 
   void _showDialog(BuildContext context, String title, String message,

@@ -211,6 +211,9 @@ class _DirectionViewState extends State<DirectionView> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          color: direction.isDefault
+                              ? Colors.red.shade50
+                              : Colors.white, // Fondo dinámico
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Row(
@@ -222,16 +225,24 @@ class _DirectionViewState extends State<DirectionView> {
                                     children: [
                                       Text(
                                         direction.direction,
-                                        style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: direction.isDefault
+                                              ? Colors.red
+                                              : Colors.black, // Texto dinámico
+                                        ),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         'Teléfono: ${direction.phone}',
                                         style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600]),
+                                          fontSize: 16,
+                                          color: direction.isDefault
+                                              ? Colors.red
+                                              : Colors
+                                                  .grey[600], // Texto dinámico
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -246,10 +257,11 @@ class _DirectionViewState extends State<DirectionView> {
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: direction.isDefault
-                                            ? Colors.red.shade200
-                                            : Colors.grey.shade300),
+                                      shape: BoxShape.circle,
+                                      color: direction.isDefault
+                                          ? Colors.red.shade200
+                                          : Colors.grey.shade300,
+                                    ),
                                     padding: const EdgeInsets.all(8),
                                     child: Icon(
                                       direction.isDefault

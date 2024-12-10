@@ -59,8 +59,8 @@ class _ProductListState extends State<ProductList> {
             children: [
               const SizedBox(height: 40), // Espaciado para la barra de estado
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
                 child: SizedBox(
                   height: 40,
                   child: TextField(
@@ -83,10 +83,10 @@ class _ProductListState extends State<ProductList> {
               ),
               const Center(
                 child: ImageCarousel(imageUrls: [
-                  'https://i.ytimg.com/vi/wj6N6knIHes/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLB2qaMdlw5QRW2C-QRT_d7Ca9h7Ew',
-                  'https://i.pinimg.com/originals/6f/5e/6b/6f5e6b8e22c6cbbd69195c16fd1aec36.jpg',
-                  'https://www.supergurumi.com/wp-content/uploads/2022/10/Patrones-de-Crochet-Amigurumi-Gratis.jpg',
-                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s'
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLjweO621wvjrO9HHSo1isiOTylj863MH8og&s',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjLuwuNoCuQRGEk5CGHX27AJpCAXE-ZEQi-w&s',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjNvdGJI4KEWPt6udwktpY9sU4MAde0c5z0w&s',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1tk9RcAATj7yolyR0XwmunPH676MejY7n7g&s'
                 ]),
               ),
               Expanded(

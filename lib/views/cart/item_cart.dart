@@ -131,9 +131,9 @@ class CartItem extends StatelessWidget {
   Widget _buildImage() {
     if (image.isNotEmpty) {
       try {
-        final cleanImage = image.replaceFirst('data:image/jpeg;base64,', '');
+        final cleanImage = cleanBase64(image); // Usar la función de limpieza
         return Image.memory(
-          base64Decode(cleanImage),
+          base64Decode(cleanImage!),
           width: 80,
           height: 80,
           fit: BoxFit.cover,
@@ -144,6 +144,22 @@ class CartItem extends StatelessWidget {
     } else {
       return const Icon(Icons.image_not_supported, size: 80);
     }
+  }
+
+  // Función para limpiar el prefijo base64
+  String? cleanBase64(String? base64String) {
+    if (base64String == null) return null;
+    final prefixes = [
+      'data:image/jpeg;base64,',
+      'data:image/jpg;base64,',
+      'data:image/png;base64,',
+    ];
+    for (var prefix in prefixes) {
+      if (base64String.startsWith(prefix)) {
+        return base64String.replaceFirst(prefix, '');
+      }
+    }
+    return base64String;
   }
 
   Color _getColorFromHex(String hexColor) {

@@ -127,7 +127,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ),
                         ),
                         title: Text(
-                          'Pedido #${order.idOrder}',
+                          'Tu Pedido',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,

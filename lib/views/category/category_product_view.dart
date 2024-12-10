@@ -45,6 +45,22 @@ class _CategoryProductViewState extends State<CategoryProductView> {
     });
   }
 
+  // Función para limpiar el prefijo base64
+  String? cleanBase64(String? base64String) {
+    if (base64String == null) return null;
+    final prefixes = [
+      'data:image/jpeg;base64,',
+      'data:image/jpg;base64,',
+      'data:image/png;base64,',
+    ];
+    for (var prefix in prefixes) {
+      if (base64String.startsWith(prefix)) {
+        return base64String.replaceFirst(prefix, '');
+      }
+    }
+    return base64String;
+  }
+
   @override
   Widget build(BuildContext context) {
     final stockViewModel = Provider.of<StockViewModel>(context);
@@ -98,7 +114,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                       )
                     : GridView.builder(
                         padding: const EdgeInsets.all(8.0),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, // Dos columnas
                           crossAxisSpacing: 8.0, // Espaciado horizontal
                           mainAxisSpacing: 8.0, // Espaciado vertical
@@ -117,9 +134,8 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                           }
 
                           // Decodificar la imagen
-                          final firstImageBase64 = stock.images.isNotEmpty
-                              ? stock.images[0]
-                              : null;
+                          final firstImageBase64 =
+                              stock.images.isNotEmpty ? stock.images[0] : null;
 
                           return Card(
                             elevation: 4,
@@ -148,13 +164,24 @@ class _CategoryProductViewState extends State<CategoryProductView> {
                                     child: firstImageBase64 != null
                                         ? Image.memory(
                                             base64Decode(
-                                              firstImageBase64.replaceFirst(
-                                                  'data:image/jpeg;base64,',
-                                                  ''),
+                                              cleanBase64(firstImageBase64)!,
                                             ),
                                             height: 120,
                                             width: double.infinity,
                                             fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    const SizedBox(
+                                              height: 120,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons
+                                                      .image_not_supported_outlined,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
                                           )
                                         : const SizedBox(
                                             height: 120,
