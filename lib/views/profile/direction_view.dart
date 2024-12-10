@@ -290,35 +290,7 @@ class _DirectionViewState extends State<DirectionView> {
                                     ],
                                   ),
                                 ),
-                                TextButton(
-                                  onPressed: () async {
-                                    if (user != null) {
-                                      final success =
-                                          await _setDefaultDirection(
-                                        direction.idDirection,
-                                        user.id,
-                                      );
-                                      if (success) {
-                                        await userViewModel
-                                            .fetchDirectionsByUserId(user.id);
-                                      }
-                                    }
-                                  },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: direction.isDefault
-                                        ? Colors.red.shade200
-                                        : Colors.grey.shade300,
-                                    shape: const CircleBorder(),
-                                    padding: const EdgeInsets.all(8),
-                                  ),
-                                  child: Icon(
-                                    direction.isDefault
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: Colors.red,
-                                    size: 28,
-                                  ),
-                                ),
+                                
                                 IconButton(
                                   icon: const Icon(Icons.edit,
                                       color: Colors.blueAccent),
